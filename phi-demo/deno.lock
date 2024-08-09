@@ -1,0 +1,32 @@
+{
+  "version": "3",
+  "packages": {
+    "specifiers": {
+      "jsr:@std/dotenv": "jsr:@std/dotenv@0.225.0",
+      "npm:@huggingface/inference": "npm:@huggingface/inference@2.8.0"
+    },
+    "jsr": {
+      "@std/dotenv@0.225.0": {
+        "integrity": "44db32932c67df82790a3e6847d7007befb6cc22d71f2f3ee7b7d00e1f0d6c94"
+      }
+    },
+    "npm": {
+      "@huggingface/inference@2.8.0": {
+        "integrity": "sha512-Ti681P1qckcCAqgzmL53jBnluPuZGelmMIuXNjgAwC5+RIjF4S0SDQu6oy44ZTwekwNp2ETaZ2sXsOk+45aC4w==",
+        "dependencies": {
+          "@huggingface/tasks": "@huggingface/tasks@0.11.8"
+        }
+      },
+      "@huggingface/tasks@0.11.8": {
+        "integrity": "sha512-HOdx2vwhd/rCmy6gpDPiUbsXD+vwVpYSS/h2Tx+yV1uMDfS98MWl/TvoVGV+u5cJWTFbvdiTHMXIuw8B6JbHuQ==",
+        "dependencies": {}
+      }
+    }
+  },
+  "remote": {},
+  "workspace": {
+    "dependencies": [
+      "jsr:@std/assert@1"
+    ]
+  }
+}
