@@ -6,12 +6,20 @@ import "jsr:@std/dotenv/load";
  * 
  * @param apiKey - The API key to be used for authentication.
  */
-const inference = new HfInference(Deno.env.get("HF_API_KEY"));
-
-for await (const chunk of inference.chatCompletionStream({
+const hf = new HfInference(Deno.env.get("HF_API_KEY"));
+const out = await hf.chatCompletion({
 	model: "microsoft/Phi-3-mini-4k-instruct",
-	messages: [{ role: "user", content: "Can you tell me a joke about dynosaurus" }],
+	messages: [{ role: "user", content: "Tell me a dad joke" }],
 	max_tokens: 500,
-})) {
-	Deno.stdout.write(new TextEncoder().encode(chunk.choices[0]?.delta?.content || ""));
-}
+	temperature: 0.5,
+  });
+// for await (const chunk of inference.chatCompletionStream({
+// 	model: "microsoft/Phi-3-mini-4k-instruct",
+// 	messages: [{ role: "user", content: "Can you tell me a joke about dynosaurus" }],
+// 	max_tokens: 500,
+// })) {
+// 	Deno.stdout.write(new TextEncoder().encode(chunk.choices[0]?.delta?.content || ""));
+// }
+
+
+console.log(out);
