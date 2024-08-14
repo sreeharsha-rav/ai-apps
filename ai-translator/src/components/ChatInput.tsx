@@ -23,7 +23,7 @@ interface ChatInputProps {
  * @param {string} props.value - The value of the input field.
  * @param {Function} props.onChange - The function to handle input field changes.
  * @param {Function} props.onSubmit - The function to handle form submission.
- * @param {boolean} props.isDisabled - Whether the input field is disabled.
+ * @param {boolean} props.isDisabled - Whether the input field is disabled for input.
  * @returns {JSX.Element} The rendered ChatInput component.
  */
 const ChatInput: React.FC<ChatInputProps> = ({ value, onChange, onSubmit, isDisabled }) => {

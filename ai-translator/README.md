@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# AI Translator
+
+A Next.js application that provides real-time language translation using gpt-4o-mini.
+
+### Description
+
+AI Translator is a web application that allows users to input text and receive translations in various languages. It features a chat-like interface for a seamless user experience.
+
+### Features
+
+- Real-time text translation
+- Language selection
+- Chat-like interface for input and output
+- Responsive design
+
+#### Technical Features
+
+- Built with Next.js for server-side rendering
+- Uses React for building the user interface
+- Written in TypeScript for type safety
+- Styled with Tailwind CSS for rapid development
+- Chat input disabled while waiting for translation
+
+## Development
+
+### Project Structure
+
+```
+ai-translator/src/
+├── app/
+│   ├── globals.css          # Global styles
+│   ├── layout.tsx           # Main layout component
+│   └── page.tsx             # Main page component
+├── components/
+│   ├── AiChat.tsx           # Main chat component managing state and logic
+│   ├── ChatInput.tsx        # Input component for user messages
+│   ├── Header.tsx           # Header component
+│   ├── LanguageSelector.tsx # Component for selecting target language
+│   └── Translation.tsx      # Components for displaying input and output messages
+├── subframe/               # Subframe UI components
+└── other files ...
+```
+
+### Technologies
+
+- Next.js 14+ (App Router)
+- React 18+
+- OpenAI JS SDK
+- TypeScript
+- Tailwind CSS
+- pnpm (Package Manager)
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository:
+   ```
+   git clone 
+   cd ai-translator
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+2. Install dependencies:
+   ```
+   pnpm install
+   ```
+
+3. Run the development server:
+   ```
+   pnpm dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Environment Variables
+
+Create a `.env.local` file in the root directory and add the following variables:
+
+```
+NEXT_PUBLIC_API_URL=your_api_url_here
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Replace `your_api_url_here` with the actual URL of your translation API.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Contributing
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Contributions are welcome! Please feel free to submit an issue to report a bug or request a feature. 
+If you would like to contribute code, please fork the repository and submit a pull request.
 
-## Learn More
+## License
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This project is licensed under the MIT License.

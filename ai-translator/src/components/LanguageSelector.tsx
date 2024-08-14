@@ -1,5 +1,7 @@
 // Presentational component that displays a list of languages to select from.
 
+import Image from "next/image";
+
 /**
  * Tailwind CSS styles for the LanguageSelector component.
  */
@@ -54,10 +56,12 @@ const Language: React.FC<LanguageProps> = ({ language, imageUrl })  => {
     return (
         <div className={styles.lang_wrapper}>
               <div className={styles.lang_img_container}>
-                <img
+                <Image
                   className={styles.lang_img}
                   src={imageUrl}
                   alt={language}
+                  width={80}
+                  height={80}
                 />
               </div>
               <div className={styles.lang_text_container}>
