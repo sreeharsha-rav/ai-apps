@@ -15,26 +15,24 @@ A repository for personal AI projects and experiments.
 
 ## LICENSE
 
-This project is licensed under the MPL 2.0. Here are the key points you should know:
+This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) license. Here are the key points you should know:
 
 ### What you can do:
-- ✅ Use the software for any purpose, including commercial use
-- ✅ Modify the software and distribute your modifications
-- ✅ Distribute the original or modified software
-- ✅ Include this software in a larger work under a different license
+- ✅ Share — copy and redistribute the material in any medium or format
+- ✅ Adapt — remix, transform, and build upon the material
 
 ### What you must do:
-- 📄 Provide the source code for any MPL 2.0 licensed files you modify
+- 📝 Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made
 - 🔗 Include the original copyright and license notices
-- 📝 Document any changes you make to MPL 2.0 licensed files
+- 📄 Indicate if you modified the material and retain an indication of previous modifications
 
 ### What you cannot do:
-- ❌ Use any contributor's trademarks or patents without permission
-- ❌ Hold contributors liable for damages
-- ❌ Remove or alter any license notices in the source code
+- ❌ Use the material for commercial purposes
+- ❌ Apply legal terms or technological measures that legally restrict others from doing anything the license permits
 
 ### Other important notes:
-- 🔓 This license is compatible with many other open-source licenses
-- 🏛️ Any litigation related to this software must be in the jurisdiction where the defendant's principal place of business is located
+- 🔓 You do not have to comply with the license for elements of the material in the public domain or where your use is permitted by an applicable exception or limitation
+- ⏳ The license is valid for the duration of the applicable copyright and similar rights
+- 🌐 This is an international license, valid in all jurisdictions where the license terms are enforceable
 
-For the full license text and details, please see the [LICENSE](LICENSE) file in this repository or visit [Mozilla's MPL 2.0 page](https://www.mozilla.org/en-US/MPL/2.0/).
+For the full license text and details, please see the [LICENSE](LICENSE) file in this repository or visit the [Creative Commons CC BY-NC 4.0 page](https://creativecommons.org/licenses/by-nc/4.0/).
