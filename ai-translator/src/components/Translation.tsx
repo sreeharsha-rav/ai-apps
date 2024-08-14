@@ -31,7 +31,7 @@ interface TranslationInputProps {
  * 
  * @returns {JSX.Element} The rendered TranslationInput component.
  */
-export const TranslationInput: React.FC<TranslationInputProps> = ({ text }) => {
+const TranslationInput: React.FC<TranslationInputProps> = ({ text }) => {
   return (
     <li className={styles.input_wrapper}>
       <div className={styles.input_container}>
@@ -66,7 +66,7 @@ interface TranslationOutputProps {
  * 
  * @returns {JSX.Element} The rendered TranslationOutput component.
  */
-export const TranslationOutput: React.FC<TranslationOutputProps> = ({ text }) => {
+const TranslationOutput: React.FC<TranslationOutputProps> = ({ text }) => {
   return (
     <li className={styles.output_wrapper}>
       <span className={styles.output_avatar}>
@@ -80,3 +80,5 @@ export const TranslationOutput: React.FC<TranslationOutputProps> = ({ text }) =>
     </li>
   );
 };
+
+export { TranslationInput, TranslationOutput };

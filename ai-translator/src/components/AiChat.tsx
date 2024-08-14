@@ -16,12 +16,6 @@ interface Message {
   isUser: boolean;
 }
 
-const dummyTranslateFunction = async (text: string, language: string): Promise<string> => {
-  // Simulate a delay to show the loading spinner
-  await new Promise(resolve => setTimeout(resolve, 5000));
-  return `Translated ${text} to ${language}`;
-};
-
 const AiChat: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [selectedLanguage, setSelectedLanguage] = useState<string>("French");
@@ -30,6 +24,34 @@ const AiChat: React.FC = () => {
 
   const handleInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
+  }, []);
+
+
+  const handleLanguageChange = useCallback((language: string) => {
+    setSelectedLanguage(language);
+    console.log("Selected language:", language);
+  }, []);
+
+  const translateText = useCallback(async (text: string, language: string): Promise<string> => {
+    try {
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text, targetLanguage: language }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Translation request failed');
+      }
+
+      const data = await response.json();
+      return data.translatedText;
+    } catch (error) {
+      console.error('Translation error:', error);
+      throw error;
+    }
   }, []);
 
   const handleSubmit = useCallback(async () => {
@@ -41,7 +63,7 @@ const AiChat: React.FC = () => {
 
       try {
         console.log("Translating:", inputValue, selectedLanguage);
-        const translatedText = await dummyTranslateFunction(inputValue, selectedLanguage);
+        const translatedText = await translateText(inputValue, selectedLanguage);
         const aiMessage: Message = { id: Date.now() + 1, text: translatedText, isUser: false };
         setMessages(prev => [...prev, aiMessage]);
       } catch (error) {
@@ -51,12 +73,7 @@ const AiChat: React.FC = () => {
         setIsTranslating(false);
       }
     }
-  }, [inputValue, selectedLanguage, isTranslating]);
-
-  const handleLanguageChange = useCallback((language: string) => {
-    setSelectedLanguage(language);
-    console.log("Selected language:", language);
-  }, []);
+  }, [inputValue, selectedLanguage, isTranslating, translateText]);
 
   return (
     <>

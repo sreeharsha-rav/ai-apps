@@ -28,16 +28,23 @@ AI Translator is a web application that allows users to input text and receive t
 ```
 ai-translator/src/
 ├── app/
-│   ├── globals.css          # Global styles
-│   ├── layout.tsx           # Main layout component
-│   └── page.tsx             # Main page component
+│   ├── api/
+│   │   └── translate/
+│   │       └── route.ts         # New API route for translation
+│   ├── globals.css              # Global styles
+│   ├── layout.tsx               # Main layout component
+│   └── page.tsx                 # Main page component
 ├── components/
-│   ├── AiChat.tsx           # Main chat component managing state and logic
-│   ├── ChatInput.tsx        # Input component for user messages
-│   ├── Header.tsx           # Header component
-│   ├── LanguageSelector.tsx # Component for selecting target language
-│   └── Translation.tsx      # Components for displaying input and output messages
-├── subframe/               # Subframe UI components
+│   ├── AiChat.tsx               # Main chat component managing state and logic
+│   ├── ChatInput.tsx            # Input component for user messages
+│   ├── Header.tsx               # Header component
+│   ├── LanguageSelector.tsx     # Component for selecting target language
+│   └── Translation.tsx          # Components for displaying input and output messages
+├── subframe/                    # Subframe UI components
+├── services/
+│   └── translationService.ts    # Translation service
+├── lib/
+│   └── openai.ts                # OpenAI client configuration
 └── other files ...
 ```
 
