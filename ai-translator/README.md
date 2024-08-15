@@ -6,6 +6,8 @@ A Next.js application that provides real-time language translation using gpt-4o-
 
 AI Translator is a web application that allows users to input text and receive translations in various languages. It features a chat-like interface for a seamless user experience.
 
+![AI Translator](./public/ai-translator.gif)
+
 ### Features
 
 - Real-time text translation
@@ -41,6 +43,10 @@ ai-translator/src/
 │   ├── LanguageSelector.tsx     # Component for selecting target language
 │   └── Translation.tsx          # Components for displaying input and output messages
 ├── subframe/                    # Subframe UI components
+├── hooks/                       # Custom hooks
+│   ├── useTranslation.ts        # Translation hook
+│   ├── useChat.ts               # Chat hook    
+│   └── useLanguage.ts           # Language hook
 ├── services/
 │   └── translationService.ts    # Translation service
 ├── lib/
@@ -70,6 +76,13 @@ ai-translator/src/
    pnpm install
    ```
 
+3. Add environment variables:
+   Create a `.env` file in the root directory and add the following variables:
+   ```
+   OPENAI_API_KEY=your_api_url_here
+   ```
+   Replace `your_api_url_here` with the actual URL of your translation API.
+
 3. Run the development server:
    ```
    pnpm dev
@@ -91,6 +104,18 @@ Replace `your_api_url_here` with the actual URL of your translation API.
 
 Contributions are welcome! Please feel free to submit an issue to report a bug or request a feature. 
 If you would like to contribute code, please fork the repository and submit a pull request.
+
+### Roadmap
+
+- [x] Basic components and layout
+- [x] Chat input and output
+- [x] Language selection
+- [x] Use OpenAI GPT-4 for translation
+- [x] Add translation service
+- [x] Use custom hooks
+- [ ] Implement better state management
+- [ ] Performance optimization
+- [ ] Implement streaming translation
 
 ## License
 
