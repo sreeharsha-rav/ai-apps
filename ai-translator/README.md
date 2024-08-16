@@ -107,15 +107,35 @@ If you would like to contribute code, please fork the repository and submit a pu
 
 ### Roadmap
 
+v 0.1.0
 - [x] Basic components and layout
 - [x] Chat input and output
 - [x] Language selection
 - [x] Use OpenAI GPT-4 for translation
 - [x] Add translation service
 - [x] Use custom hooks
-- [ ] Implement better state management
-- [ ] Performance optimization
+
+v 0.2.0
+- [ ] Implement better state management with Context API
+- [ ] Performance optimization with Memoization
+- [ ] Implement virutal scrolling for efficient rendering
+
+v 0.3.0
 - [ ] Implement streaming translation
+- [ ] Implement code splitting for better performance
+- [ ] Add progressive loading with Skeleton UI
+- [ ] Add streaming translation
+- [ ] SSR optimization with getServerSideProps
+
+v 0.4.0
+- [ ] Better error handling
+- [ ] Add unit tests with Jest and React Testing Library
+- [ ] Add end-to-end tests with Cypress
+
+v 0.5.0
+- [ ] Add voice input and output support
+- [ ] Add real-time translation with WebSockets
+
 
 ## License
 

@@ -13,6 +13,9 @@ A repository for personal AI projects and experiments.
 - [**`ai-translator`**](./ai-translator/README.md): A simple AI translator that uses the OpenAI Gpt-4o-mini model to translate text from one language to another.
     - **Technologies**: React, TypeScript, Node.js, Tailwind CSS, OpenAI Gpt-4o-mini
 
+- [**`ai-contact-manager`**](./ai-contact-manager/README.md): **(In Progress)** A simple AI contact manager that uses Nylas APIs to manage contacts and emails with AI assistance.
+    - **Technologies**: React, TypeScript, Node.js, Nylas APIs, Remix, Tailwind CSS, Hono
+
 ## LICENSE
 
 This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) license. Here are the key points you should know:
