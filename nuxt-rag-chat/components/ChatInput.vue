@@ -1,9 +1,19 @@
 <script setup lang="ts">
-const input = ref("");
+import { useChatStore } from "@/stores/chat";
+const chatStore = useChatStore();
+const input = ref<string>("");
 
-const sendMessage = () => {
+const sendInput = async () => {
+  // If the input is empty, return
   if (input.value.trim() === "") return;
-  console.log(input.value);
+  console.log(input.value.trim());
+
+  // Send the message
+  try {
+    await chatStore.sendMessage(input.value.trim());
+  } catch (error) {
+    console.error(`Failed to send message: ${error}`);
+  }
   input.value = "";
 };
 </script>
@@ -15,13 +25,13 @@ const sendMessage = () => {
       v-model="input"
       placeholder="Ask me anything about Neon..."
       class="flex-grow z-10 w-full resize-none"
-      @keydown.enter.prevent="sendMessage"
+      @keydown.enter.prevent="sendInput"
     />
     <!-- Send Button -->
     <button
       type="button"
       class="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-white bg-green-500 hover:bg-green-400 focus:z-10 focus:outline-none focus:bg-green-500"
-      @click="sendMessage"
+      @click="sendInput"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

@@ -2,6 +2,7 @@
 <template>
   <div class="container mx-auto">
     <NuxtLayout>
+      <NuxtLoadingIndicator />
       <NuxtPage />
     </NuxtLayout>
   </div>
