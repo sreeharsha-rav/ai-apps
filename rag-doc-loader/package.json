@@ -1,0 +1,25 @@
+{
+  "name": "rag-doc-loader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@langchain/community": "^0.2.31",
+    "@langchain/openai": "^0.2.8",
+    "@neondatabase/serverless": "^0.9.4",
+    "dotenv": "^16.4.5",
+    "langchain": "^0.2.17",
+    "rag-doc-loader": "file:"
+  }
+}
