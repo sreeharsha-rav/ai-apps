@@ -1,6 +1,11 @@
 # RAG Chatbot Starter
+   
+![Vercel Deploy](https://deploy-badge.vercel.app/vercel/ai-apps-mu)
 
 This project serves as a starter template for creating Retrieval-Augmented Generation (RAG) chatbots using `NeonDB` and `OpenAI's GPT` models. Built with `Nuxt 3` and `Tailwind CSS`, it provides a solid foundation for developing intelligent, context-aware chatbot applications with a modern web interface.
+
+Live Demo: [RAG Chatbot Starter](https://ai-apps-mu.vercel.app/)
+![alt text](image.png)
 
 ## Features
 
@@ -33,7 +38,7 @@ This project serves as a starter template for creating Retrieval-Augmented Gener
 - pnpm
 - Neon account with a pgvector-enabled database
 - OpenAI account with API access
-- (Optional) Cloudflare account for deployment
+- (Optional) Vercel, Netlify, or Cloudflare Workers account for deployment
 
 ### Setup for Local Development
 
@@ -87,27 +92,23 @@ This project serves as a starter template for creating Retrieval-Augmented Gener
 pnpm run build
 ```
 
-### Deploy to Cloudflare Workers
-
-1. Set up a Cloudflare Workers account
-2. Install NuxtHub:
-   ```bash
-   npm i -g nuxthub
-   ```
-3. Deploy:
-   ```bash
-   npx nuxthub deploy
-   ```
+- For serverless deployment follow the instructions for your chosen platform:
+   - [Nuxt Guide](https://nuxt.com/docs/getting-started/deployment)
+   - [Vercel](https://vercel.com/docs)
+   - [Netlify](https://docs.netlify.com/)
+   - [Cloudflare Workers](https://developers.cloudflare.com/workers/)
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 - **Possible Improvements**:
+  - UI enhancements - Move suggestions to bottom, make it random, etc.
+  - Better error handling and edge case client-server interactions
+  - Add authentication
   - Enhance the RAG pipeline with better retrieval strategies
   - Better handling of conversation history and context with user sessions
   - Option to upload and store custom documents for retrieval
-  - Better error handling and edge case client-server interactions
 
 ## License
 
