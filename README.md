@@ -16,6 +16,12 @@ A repository for personal AI projects and experiments.
 - [**`langchain-chat`**](./langchain-chat/README.md): A RAG-based chatbot that can answer questions and provide information on a Scrimba course.
     - **Technologies**: JavaScript, Langchain, Supabase, OpenAI
 
+- [**`rag-doc-loader`**](./rag-doc-loader/README.md): A simple script to load a text document and generate vector embeddings for chunks of text.
+    - **Technologies**: Node.js, Neon, Langchain, OpenAI
+
+- [**`nuxt-rag-chat`**](./nuxt-rag-chat/README.md): A RAG-based chatbot starter template using Nuxt.js, Langchain, NeonDB, and OpenAI.
+    - **Technologies**: Nuxt.js, Langchain, Neon, OpenAI
+
 ## LICENSE
 
-This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) license. For the full license text and details, please see the [LICENSE](LICENSE) file in this repository or visit the [Creative Commons CC BY-NC 4.0 page](https://creativecommons.org/licenses/by-nc/4.0/).
+This project is licensed under the MIT license. For the full license text and details, please see the [LICENSE](LICENSE) file in this repository.

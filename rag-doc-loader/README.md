@@ -42,3 +42,11 @@ pnpm start
 - Need better documents to generate embeddings from. The current document is a simple text document with no specific structure.
 - The document loader is optimized to load given text document at `./src/db/neon_info.txt`. This can be improved to accept any text document.
 - More cleaning and preprocessing can be done to the text before generating embeddings.
+
+## Contributing
+
+Feel free to contribute to this project. Please create an issue or a pull request with your suggestions or improvements.
+
+## License
+
+This project is under MIT license.
