@@ -31,7 +31,10 @@ importers:
         version: 3.13.0(@parcel/watcher@2.4.1)(@types/node@22.5.1)(ioredis@5.4.1)(magicast@0.3.5)(rollup@4.21.2)(terser@5.31.6)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))
       nuxt-app:
         specifier: 'file:'
-        version: nuxt-rag-chatbot@file:(@parcel/watcher@2.4.1)(@types/node@22.5.1)(ioredis@5.4.1)(magicast@0.3.5)(rollup@4.21.2)(tailwindcss@3.4.10)(terser@5.31.6)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))
+        version: nuxt-rag-chatbot@file:(@parcel/watcher@2.4.1)(@types/node@22.5.1)(ignore@5.3.2)(ioredis@5.4.1)(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(ignore@5.3.2)(ioredis@5.4.1)(lodash@4.17.21)(openai@4.57.0(zod@3.23.8))(ws@8.18.0))(ignore@5.3.2)(ioredis@5.4.1)(openai@4.57.0(zod@3.23.8))(ws@8.18.0))(lodash@4.17.21)(magicast@0.3.5)(openai@4.57.0(zod@3.23.8))(rollup@4.21.2)(tailwindcss@3.4.10)(terser@5.31.6)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))(ws@8.18.0)
+      nuxt-rag-chatbot:
+        specifier: 'file:'
+        version: file:(@parcel/watcher@2.4.1)(@types/node@22.5.1)(ignore@5.3.2)(ioredis@5.4.1)(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(ignore@5.3.2)(ioredis@5.4.1)(lodash@4.17.21)(openai@4.57.0(zod@3.23.8))(ws@8.18.0))(ignore@5.3.2)(ioredis@5.4.1)(openai@4.57.0(zod@3.23.8))(ws@8.18.0))(lodash@4.17.21)(magicast@0.3.5)(openai@4.57.0(zod@3.23.8))(rollup@4.21.2)(tailwindcss@3.4.10)(terser@5.31.6)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))(ws@8.18.0)
       pinia:
         specifier: ^2.2.2
         version: 2.2.2(vue@3.4.38)
@@ -42,7 +45,7 @@ importers:
         specifier: ^10.0.0
         version: 10.0.0
       vue:
-        specifier: latest
+        specifier: 3.4.38
         version: 3.4.38
     devDependencies:
       '@nuxtjs/color-mode':
@@ -7470,8 +7473,11 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  nuxt-rag-chatbot@file:(@parcel/watcher@2.4.1)(@types/node@22.5.1)(ioredis@5.4.1)(magicast@0.3.5)(rollup@4.21.2)(tailwindcss@3.4.10)(terser@5.31.6)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6)):
+  nuxt-rag-chatbot@file:(@parcel/watcher@2.4.1)(@types/node@22.5.1)(ignore@5.3.2)(ioredis@5.4.1)(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(ignore@5.3.2)(ioredis@5.4.1)(lodash@4.17.21)(openai@4.57.0(zod@3.23.8))(ws@8.18.0))(ignore@5.3.2)(ioredis@5.4.1)(openai@4.57.0(zod@3.23.8))(ws@8.18.0))(lodash@4.17.21)(magicast@0.3.5)(openai@4.57.0(zod@3.23.8))(rollup@4.21.2)(tailwindcss@3.4.10)(terser@5.31.6)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))(ws@8.18.0):
     dependencies:
+      '@langchain/community': 0.2.31(@neondatabase/serverless@0.9.4)(ignore@5.3.2)(ioredis@5.4.1)(lodash@4.17.21)(openai@4.57.0(zod@3.23.8))(ws@8.18.0)
+      '@langchain/core': 0.2.31(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(ignore@5.3.2)(ioredis@5.4.1)(lodash@4.17.21)(openai@4.57.0(zod@3.23.8))(ws@8.18.0))(ignore@5.3.2)(ioredis@5.4.1)(openai@4.57.0(zod@3.23.8))(ws@8.18.0))(openai@4.57.0(zod@3.23.8))
+      '@langchain/openai': 0.2.8(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(ignore@5.3.2)(ioredis@5.4.1)(lodash@4.17.21)(openai@4.57.0(zod@3.23.8))(ws@8.18.0))(ignore@5.3.2)(ioredis@5.4.1)(openai@4.57.0(zod@3.23.8))(ws@8.18.0))
       '@neondatabase/serverless': 0.9.4
       '@nuxt/ui': 2.18.4(magicast@0.3.5)(rollup@4.21.2)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))(vue@3.4.38)
       '@pinia/nuxt': 0.5.4(magicast@0.3.5)(rollup@4.21.2)(vue@3.4.38)
@@ -7481,46 +7487,164 @@ snapshots:
       uuid: 10.0.0
       vue: 3.4.38
     transitivePeerDependencies:
+      - '@aws-crypto/sha256-js'
+      - '@aws-sdk/client-bedrock-agent-runtime'
+      - '@aws-sdk/client-bedrock-runtime'
+      - '@aws-sdk/client-dynamodb'
+      - '@aws-sdk/client-kendra'
+      - '@aws-sdk/client-lambda'
+      - '@aws-sdk/client-s3'
+      - '@aws-sdk/client-sagemaker-runtime'
+      - '@aws-sdk/client-sfn'
+      - '@aws-sdk/credential-provider-node'
       - '@azure/app-configuration'
       - '@azure/cosmos'
       - '@azure/data-tables'
       - '@azure/identity'
       - '@azure/keyvault-secrets'
+      - '@azure/search-documents'
       - '@azure/storage-blob'
       - '@biomejs/biome'
+      - '@browserbasehq/sdk'
       - '@capacitor/preferences'
+      - '@clickhouse/client'
+      - '@cloudflare/ai'
+      - '@datastax/astra-db-ts'
+      - '@elastic/elasticsearch'
+      - '@getmetal/metal-sdk'
+      - '@getzep/zep-cloud'
+      - '@getzep/zep-js'
+      - '@gomomento/sdk'
+      - '@gomomento/sdk-core'
+      - '@gomomento/sdk-web'
+      - '@google-ai/generativelanguage'
+      - '@google-cloud/storage'
+      - '@gradientai/nodejs-sdk'
+      - '@huggingface/inference'
+      - '@langchain/anthropic'
+      - '@langchain/aws'
+      - '@langchain/cohere'
+      - '@langchain/google-genai'
+      - '@langchain/google-vertexai'
+      - '@langchain/groq'
+      - '@langchain/langgraph'
+      - '@langchain/mistralai'
+      - '@langchain/ollama'
+      - '@layerup/layerup-security'
       - '@libsql/client'
+      - '@mendable/firecrawl-js'
+      - '@mlc-ai/web-llm'
+      - '@mozilla/readability'
       - '@netlify/blobs'
+      - '@notionhq/client'
+      - '@opensearch-project/opensearch'
       - '@parcel/watcher'
+      - '@pinecone-database/pinecone'
       - '@planetscale/database'
+      - '@premai/prem-sdk'
+      - '@qdrant/js-client-rest'
+      - '@raycast/api'
+      - '@rockset/client'
+      - '@smithy/eventstream-codec'
+      - '@smithy/protocol-http'
+      - '@smithy/signature-v4'
+      - '@smithy/util-utf8'
+      - '@spider-cloud/spider-client'
+      - '@supabase/supabase-js'
+      - '@tensorflow-models/universal-sentence-encoder'
+      - '@tensorflow/tfjs-converter'
+      - '@tensorflow/tfjs-core'
       - '@types/node'
+      - '@upstash/ratelimit'
       - '@upstash/redis'
+      - '@upstash/vector'
       - '@vercel/kv'
+      - '@vercel/postgres'
       - '@vue/composition-api'
+      - '@writerai/writer-sdk'
+      - '@xata.io/client'
+      - '@xenova/transformers'
+      - '@zilliz/milvus2-sdk-node'
+      - apify-client
+      - assemblyai
       - async-validator
       - axios
       - better-sqlite3
       - bufferutil
+      - cassandra-driver
+      - cborg
       - change-case
+      - cheerio
+      - chromadb
+      - closevector-common
+      - closevector-node
+      - closevector-web
+      - cohere-ai
+      - convex
+      - couchbase
+      - crypto-js
+      - d3-dsv
+      - discord.js
       - drauu
+      - dria
       - drizzle-orm
+      - duck-duck-scrape
       - encoding
+      - epub2
       - eslint
+      - faiss-node
+      - fast-xml-parser
+      - firebase-admin
       - focus-trap
+      - google-auth-library
+      - googleapis
+      - handlebars
+      - hnswlib-node
+      - html-to-text
       - idb-keyval
+      - ignore
+      - interface-datastore
       - ioredis
+      - it-all
+      - jsdom
+      - jsonwebtoken
       - jwt-decode
+      - langchain
       - less
       - lightningcss
+      - llmonitor
+      - lodash
+      - lunary
       - magicast
+      - mammoth
       - meow
+      - mongodb
+      - mysql2
+      - neo4j-driver
+      - node-llama-cpp
+      - notion-to-md
       - nprogress
+      - officeparser
+      - openai
       - optionator
+      - pdf-parse
+      - peggy
+      - pg
+      - pg-copy-streams
+      - pickleparser
+      - playwright
+      - portkey-ai
+      - puppeteer
+      - pyodide
       - qrcode
+      - redis
+      - replicate
       - rollup
       - sass
       - sass-embedded
+      - sonix-speech-recognition
       - sortablejs
+      - srt-parser-2
       - stylelint
       - stylus
       - sugarss
@@ -7528,15 +7652,25 @@ snapshots:
       - tailwindcss
       - terser
       - ts-node
+      - typeorm
       - typescript
+      - typesense
       - uWebSockets.js
       - universal-cookie
+      - usearch
       - utf-8-validate
+      - vectordb
       - vite
       - vls
+      - voy-search
       - vti
       - vue-tsc
+      - weaviate-ts-client
+      - web-auth-library
+      - ws
       - xml2js
+      - youtube-transcript
+      - youtubei.js
 
   nuxt@3.13.0(@parcel/watcher@2.4.1)(@types/node@22.5.1)(ioredis@5.4.1)(magicast@0.3.5)(rollup@4.21.2)(terser@5.31.6)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6)):
     dependencies:

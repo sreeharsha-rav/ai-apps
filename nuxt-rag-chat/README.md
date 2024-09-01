@@ -2,6 +2,8 @@
 
 This project serves as a starter template for creating Retrieval-Augmented Generation (RAG) chatbots using `NeonDB` and `OpenAI's GPT` models. Built with `Nuxt 3` and `Tailwind CSS`, it provides a solid foundation for developing intelligent, context-aware chatbot applications with a modern web interface.
 
+View the live demo [here]().
+
 ## Features
 
 - **RAG Architecture**: Implements a Retrieval-Augmented Generation system for more accurate and context-aware responses.
@@ -33,7 +35,7 @@ This project serves as a starter template for creating Retrieval-Augmented Gener
 - pnpm
 - Neon account with a pgvector-enabled database
 - OpenAI account with API access
-- (Optional) Cloudflare account for deployment
+- (Optional) Vercel, Netlify for serverless deployment
 
 ### Setup for Local Development
 
@@ -89,15 +91,36 @@ pnpm run build
 
 ### Deploy to Cloudflare Workers
 
-1. Set up a Cloudflare Workers account
-2. Install NuxtHub:
+1. Set up a Netlify account and install the Netlify CLI:
    ```bash
-   npm i -g nuxthub
+   npm install -g netlify-cli
    ```
-3. Deploy:
+2. Link your Netlify account:
    ```bash
-   npx nuxthub deploy
+   netlify login
    ```
+3. Deploy the application:
+   ```bash
+   netlify deploy --prod
+   ```
+4. Access the deployed application at the provided URL.
+
+### Deploy to Vercel
+
+1. Set up a Vercel account and install the Vercel CLI:
+   ```bash
+   npm install -g vercel
+   ```
+2. Link your Vercel account:
+   ```bash
+   vercel login
+   ```
+3. Deploy the application:
+   ```bash
+   vercel
+   ```
+4. Access the deployed application at the provided URL.
+
 
 ## Contributing
 
