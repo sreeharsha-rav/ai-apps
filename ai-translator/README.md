@@ -131,7 +131,7 @@ v 0.4.0
 - [ ] Better error handling
 - [ ] Add unit tests with Jest and React Testing Library
 - [ ] Add end-to-end tests with Cypress
-
+mkdir
 v 0.5.0
 - [ ] Add voice input and output support
 - [ ] Add real-time translation with WebSockets

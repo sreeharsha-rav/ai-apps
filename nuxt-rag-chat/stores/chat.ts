@@ -1,72 +1,98 @@
-import type { Message } from "~/types/message.model"
+import { ChatRequestBody, ChatResponseBody, Message, Role } from '~/types/chat.model'
 import { defineStore } from 'pinia'
+import { v4 as uuidv4 } from 'uuid'
 
 /**
  * This is a simple chat store that holds chat messages and provides methods to send messages
  */
 export const useChatStore = defineStore('chat', {
   state: () => ({
-    messages: [] as Message[],    // Array of chat messages
-    isLoading: false,        // Indicates if the chat is currently loading  a message
-    error: null as Error | null // Holds the last error that occurred
+    messages: [] as Message[],
+    isLoading: false, 
+    error: null as Error | null
   }),
-  getters: {
-    // This is a simple getter that returns true if there are messages
-    hasMessages: (state) => state.messages.length > 0,
 
-    // This is a simple getter that returns the last message
-    lastMessage(): Message | undefined {
-      return this.messages[this.messages.length - 1]
-    }
+  getters: {
+    hasMessages: (state) => state.messages.length > 0,
+    lastMessage: (state) => state.messages[state.messages.length - 1],
+    userMessages: (state) => state.messages.filter(message => message.role === Role.User),
+    assistantMessages: (state) => state.messages.filter(message => message.role === Role.Assistant),
   },
+
   actions: {
-    // Simple action to add a message to the chat
     addMessage(message: Omit<Message, 'id'>) {
       this.messages.push({ 
         ...message, 
-        id: this.messages.length + 1
+        id: uuidv4()
       })
     },
 
-    // This is an action that sends a message
     async sendMessage(content: string) {
-      this.addMessage({ 
-        role: 'user', 
-        content: content,
-        processing: false
-      })
-
       this.isLoading = true
-      this.addMessage({ 
-        role: 'assistant', 
-        content: '',
-        processing: true
-      })
+      this.error = null
 
       try {
-        // TODO: Implement the actual API call
-        const response = await new Promise((resolve, reject) => {
-          setTimeout(() => {
-            console.log("Message sent to server:", content)
-            resolve("This is a response from the server")
-          }, 2000); // Simulate 1 second delay
-        });
+        this.addMessage({
+          role: Role.User,
+          content,
+          processing: false
+        })
 
-        // update the last message with the response
+        this.addMessage({
+          role: Role.Assistant,
+          content: '',
+          processing: true
+        })
+
+        const response = await this.fetchReply(content) as ChatResponseBody;
+
         const lastMessage = this.lastMessage
-        if (lastMessage) {
-          lastMessage.content = response as string
+        if (lastMessage && lastMessage.role === Role.Assistant) {
+          lastMessage.content = response.body.reply
           lastMessage.processing = false
         }
       } catch (error) {
         console.error(`Failed to send message: ${error}`)
-        this.error = error as Error
+        this.error = error instanceof Error ? error : new Error('An unknown error occurred')
+
+        const lastMessage = this.lastMessage
+        if (lastMessage && lastMessage.role === Role.Assistant) {
+          lastMessage.content = 'An error occurred while processing your request, please try again'
+          lastMessage.processing = false
+        }
       } finally {
         this.isLoading = false
       }
     },
 
-    // This is a simple example of a method that clears all messages
+    async fetchReply(content: string) {
+      try {
+        const response = await $fetch<ChatResponseBody>('/api/chat', {
+          method: 'POST',
+          body: { question: content } as ChatRequestBody,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        if (!response) {
+          throw new Error('No data received from server')
+        }
+
+        if (response.error) {
+          throw new Error(response.error)
+        }
+
+        if (response.statusCode !== 200) {
+          throw new Error(`Failed to send message: ${response.body.reply}`)
+        }
+
+        return response
+      } catch (error) {
+        throw new Error(error instanceof Error ? error.message : 'An unknown error occurred')
+      }
+    },
+    
     clearMessages() {
       this.messages = []
     }

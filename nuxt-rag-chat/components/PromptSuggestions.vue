@@ -1,9 +1,9 @@
 <script setup lang="ts">
 //TODO: Change suggested prompts for Neon DB
 const suggestions = ref<string[]>([
-  "Is Tailwind CSS a free library?",
-  "What's the latest Tailwind CSS version?",
-  "Is it a utility-class based CSS framework?",
+  "What is Neon?",
+  "What are some features of Neon?",
+  "Can I use Neon to build AI applications?",
 ]);
 
 const emit = defineEmits(["suggestion-click"]);

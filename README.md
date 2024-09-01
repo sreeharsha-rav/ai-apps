@@ -13,29 +13,9 @@ A repository for personal AI projects and experiments.
 - [**`ai-translator`**](./ai-translator/README.md): A simple AI translator that uses the OpenAI Gpt-4o-mini model to translate text from one language to another.
     - **Technologies**: React, TypeScript, Node.js, Tailwind CSS, OpenAI Gpt-4o-mini
 
-- [**`ai-contact-manager`**](./ai-contact-manager/README.md): **(In Progress)** A simple AI contact manager that uses Nylas APIs to manage contacts and emails with AI assistance.
-    - **Technologies**: React, TypeScript, Node.js, Nylas APIs, Remix, Tailwind CSS, Hono
+- [**`langchain-chat`**](./langchain-chat/README.md): A RAG-based chatbot that can answer questions and provide information on a Scrimba course.
+    - **Technologies**: JavaScript, Langchain, Supabase, OpenAI
 
 ## LICENSE
 
-This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) license. Here are the key points you should know:
-
-### What you can do:
-- ✅ Share — copy and redistribute the material in any medium or format
-- ✅ Adapt — remix, transform, and build upon the material
-
-### What you must do:
-- 📝 Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made
-- 🔗 Include the original copyright and license notices
-- 📄 Indicate if you modified the material and retain an indication of previous modifications
-
-### What you cannot do:
-- ❌ Use the material for commercial purposes
-- ❌ Apply legal terms or technological measures that legally restrict others from doing anything the license permits
-
-### Other important notes:
-- 🔓 You do not have to comply with the license for elements of the material in the public domain or where your use is permitted by an applicable exception or limitation
-- ⏳ The license is valid for the duration of the applicable copyright and similar rights
-- 🌐 This is an international license, valid in all jurisdictions where the license terms are enforceable
-
-For the full license text and details, please see the [LICENSE](LICENSE) file in this repository or visit the [Creative Commons CC BY-NC 4.0 page](https://creativecommons.org/licenses/by-nc/4.0/).
+This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) license. For the full license text and details, please see the [LICENSE](LICENSE) file in this repository or visit the [Creative Commons CC BY-NC 4.0 page](https://creativecommons.org/licenses/by-nc/4.0/).

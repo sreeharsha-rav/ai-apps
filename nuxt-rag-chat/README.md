@@ -1,101 +1,114 @@
-# Nuxt 3 Minimal Starter
+# RAG Chatbot Starter
 
-This project is a starter for creating a chatbot using NeonDB and OpenAI's gpt-4o model. It is built with Nuxt 3 and Tailwind CSS. It's designed to be easy to use and get started with.
+This project serves as a starter template for creating Retrieval-Augmented Generation (RAG) chatbots using `NeonDB` and `OpenAI's GPT` models. Built with `Nuxt 3` and `Tailwind CSS`, it provides a solid foundation for developing intelligent, context-aware chatbot applications with a modern web interface.
 
 ## Features
 
-- **Neon Postgres Integration**: The project uses Neon Postgres as a vectorized database to store and retrieve data with ease.
-- **OpenAI Integration**: The project uses OpenAI's GPT-4o model to generate responses to user queries.
-- **Nuxt 3**: The project is built with Nuxt 3, a modern web framework for building Vue.js applications.
-- **Tailwind CSS**: The project uses Tailwind CSS, a utility-first CSS framework for building custom designs.
-- **Easily Customizable**: The project is designed to be easy to customize and extend.
-- **Easy Deployment**: The project is easy to deploy to cloudflare workers or any other serverless platform.
+- **RAG Architecture**: Implements a Retrieval-Augmented Generation system for more accurate and context-aware responses.
+- **Converstation History**: Stores chat history for enhanced context and continuity.
+- **Neon Postgres Integration**: Uses Neon Postgres as a vector database for efficient storage and retrieval of embeddings.
+- **OpenAI Integration**: Leverages OpenAI's powerful language models for generating responses.
+- **Nuxt 3 Framework**: Built on Nuxt 3, offering a modern, performant foundation for web applications.
+- **Tailwind CSS**: Utilizes Tailwind CSS for rapid UI development and easy customization.
+- **Modular Design**: Structured for easy understanding and extension of core functionalities.
+- **Serverless-Ready**: Prepared for deployment on serverless platforms like Cloudflare Workers.
+
+## Architecture Overview
+
+1. **Frontend**: Nuxt 3 application with Tailwind CSS for styling.
+2. **Backend**: Nuxt server routes for handling API requests.
+3. **Vector Database**: Neon Postgres with pgvector for storing and querying document embeddings.
+4. **Language Model**: OpenAI's GPT model for generating responses.
+5. **RAG Pipeline**:
+   - Query embedding
+   - Vector similarity search
+   - Context retrieval
+   - Response generation
 
 ## Getting Started
 
 ### Prerequisites
 
-- A [Neon](https://neon.tech/) account.
-  - A Neon pgvector database.
-- An [OpenAI](https://platform.openai.com/) account.
+- Node.js (v18+)
+- pnpm
+- Neon account with a pgvector-enabled database
+- OpenAI account with API access
+- (Optional) Cloudflare account for deployment
+
+### Setup for Local Development
+
+1. Clone the repository:
+   ```bash
+   https://github.com/sreeharsha-rav/ai-apps/tree/main/nuxt-rag-chat
+   cd nuxt-rag-chat
+   ```
+
+2. Install dependencies:
+   ```bash
+   pnpm install
+   ```
+
+3. Set up environment variables:
+   Create a `.env` file in the project root:
+   ```
+   OPENAI_API_KEY=your_openai_api_key
+   NEON_CONNECTION_STRING=your_neon_connection_string
+   ```
+
+4. Prepare your vector database:
+   - Use the [RAG Document Loader](https://github.com/sreeharsha-rav/ai-apps/tree/main/rag-doc-loader) to generate and store vector embeddings in your Neon database.
+
+5. Start the development server:
+   ```bash
+   pnpm run dev
+   ```
+
+   Access the application at `http://localhost:3000`
+
+## Customization Guide
+
+1. **Modify the UI**: Edit Vue components in the `components/` directory.
+
+2. **Adjust RAG Logic**: Modify the retrieval and generation process in `server/utils/aiSingleton.ts`.
+
+3. **Prompt Engineering**: Update the prompts and responses in `server/utils/prompts.ts`.
+
+3. **Change Language Model**: Update the OpenAI model or switch to a different provider in `server/utils/aiSingleton.ts`.
+
+4. **Extend Vector Store**: Modify or replace the Neon Postgres integration in `server/utils/aiSingleton.ts`.
+
+5. **Add New Features**: Implement additional server routes in `server/api/` and corresponding client-side logic.
 
 ## Deployment
 
-### Cloudflare 
-
-- Deploy to cloudflare using NuxtHub
-```bash
-npx nuxthub deploy
-```
-
-## Setup
-
-Make sure to install the dependencies:
+### Build for Production
 
 ```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
 pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
-Locally preview production build:
+### Deploy to Cloudflare Workers
 
-```bash
-# npm
-npm run preview
+1. Set up a Cloudflare Workers account
+2. Install NuxtHub:
+   ```bash
+   npm i -g nuxthub
+   ```
+3. Deploy:
+   ```bash
+   npx nuxthub deploy
+   ```
 
-# pnpm
-pnpm run preview
+## Contributing
 
-# yarn
-yarn preview
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-# bun
-bun run preview
-```
+- **Possible Improvements**:
+  - Enhance the RAG pipeline with better retrieval strategies
+  - Better handling of conversation history and context with user sessions
+  - Option to upload and store custom documents for retrieval
+  - Better error handling and edge case client-server interactions
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## License
+
+This project is open source and available under the [MIT License](LICENSE).

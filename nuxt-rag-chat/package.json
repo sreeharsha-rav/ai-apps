@@ -1,8 +1,10 @@
 {
-  "name": "nuxt-app",
+  "name": "nuxt-rag-chatbot",
   "private": true,
   "version": "1.0.0",
   "description": "An AI RAG chatbot built with Nuxt, Vue, Neon and Tailwind",
+  "author": "Sreeharsha Raveendra",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "build": "nuxt build",
@@ -12,13 +14,19 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@langchain/community": "^0.2.31",
+    "@langchain/core": "^0.2.31",
+    "@langchain/openai": "^0.2.8",
+    "@neondatabase/serverless": "^0.9.4",
     "@nuxt/ui": "^2.18.4",
     "@pinia/nuxt": "^0.5.4",
-    "nuxt": "^3.13.0",
+    "nuxt": "^3.9.0",
     "nuxt-app": "file:",
+    "nuxt-rag-chatbot": "file:",
     "pinia": "^2.2.2",
     "tailwind-scrollbar": "^3.1.0",
-    "vue": "latest"
+    "uuid": "^10.0.0",
+    "vue": "3.4.38"
   },
   "devDependencies": {
     "@nuxtjs/color-mode": "^3.4.4"

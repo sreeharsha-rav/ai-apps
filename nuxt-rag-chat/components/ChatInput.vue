@@ -6,7 +6,6 @@ const input = ref<string>("");
 const sendInput = async () => {
   // If the input is empty, return
   if (input.value.trim() === "") return;
-  console.log(input.value.trim());
 
   // Send the message
   try {

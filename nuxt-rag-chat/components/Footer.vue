@@ -28,7 +28,7 @@
         icon="i-simple-icons-github"
         color="gray"
         variant="ghost"
-        to="https://github.com/neondatabase/neon"
+        to="https://github.com/sreeharsha-rav/ai-apps/tree/main/nuxt-rag-chat"
         target="_blank"
       />
     </div>
