@@ -1,0 +1,20 @@
+# node_modules
+node_modules
+
+# dist
+dist
+
+# .env
+.env
+.env.local
+.env.development.local
+.env.test.local
+
+# .vscode
+.vscode
+
+# .idea
+.idea
+
+# .DS_Store
+.DS_Store

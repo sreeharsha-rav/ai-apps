@@ -1,0 +1,17 @@
+{
+  "name": "node_client",
+  "version": "1.0.0",
+  "description": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/text-to-speech": "^5.8.0",
+    "@google-cloud/translate": "^8.5.0"
+  }
+}
