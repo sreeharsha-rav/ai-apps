@@ -1,0 +1,70 @@
+# Python Virtual Environments
+.env
+.venv/
+env/
+venv/
+ENV/
+.Python
+pyvenv.cfg
+pip-selfcheck.json
+
+# Python Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.mypy_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+.tox/
+.nox/
+
+# Build and Distribution
+build/
+dist/
+*.egg-info/
+*.egg
+wheels/
+MANIFEST
+
+# Package Management
+poetry.lock
+Pipfile.lock
+.pdm.toml
+__pypackages__/
+
+# IDE and Editor Files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+.idea/*
+*.code-workspace
+.history/
+
+# Documentation and Reports
+docs/_build/
+htmlcov/
+/site
+
+# Temporary and Log Files
+*.log
+*.tmp
+.cache
+celerybeat-schedule
+celerybeat.pid
+
+# Development Tools
+.scrapy
+.pybuilder/
+.ipynb_checkpoints
+*.sage.py
+cython_debug/
+
+# Local Configuration
+.env
+*.local
+

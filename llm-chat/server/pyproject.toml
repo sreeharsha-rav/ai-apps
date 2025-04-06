@@ -1,0 +1,20 @@
+[project]
+name = "server"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "bs4>=0.0.2",
+    "cohere>=5.14.2",
+    "fastapi>=0.115.12",
+    "google-genai>=1.9.0",
+    "openai>=1.70.0",
+    "pydantic-settings>=2.8.1",
+    "python-ulid>=3.0.0",
+    "uvicorn>=0.34.0",
+]
+
+[project.scripts]
+dev = "src.main:main"
+start = "src.main:main"
