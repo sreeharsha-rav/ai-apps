@@ -7,6 +7,8 @@ class ModelID(str, Enum):
     AZURE_GPT4O = "azure_gpt-4o"
     GOOGLE_GEMINI2_FLASH = "google_gemini-2.0-flash"
     OPENAI_GPT4O_MINI = "openai_gpt-4o-mini"
+    ## Add more models as you implement them
+    #COHERE_COMMAND_AI = "cohere_command-a"
 
 class ModelInfo(BaseModel):
     """Information about the model"""

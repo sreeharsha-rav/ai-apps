@@ -1,12 +1,12 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.config.settings import settings
-from src.routers.v1 import chat, models
+from src.core.config import app_settings
+from src.api.v1 import chat_router, models_router
 
 def is_production() -> bool:
     """Check if the application is running in production mode"""
-    return settings.ENVIRONMENT.lower() == "production"
+    return app_settings.ENVIRONMENT == "production"
 
 def get_cors_origins() -> list:
     """Get the list of allowed CORS origins based on environment"""
@@ -21,7 +21,7 @@ def get_cors_origins() -> list:
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application"""
     is_env_production: bool = is_production()
-    app = FastAPI(
+    fastapi_app = FastAPI(
         title="LLM Chat API",
         description="API for LLM Chat application",
         version="1.0.0",
@@ -35,8 +35,8 @@ def create_app() -> FastAPI:
     )
 
     # configure CORS
-    app.add_middleware(
-        CORSMiddleware,
+    fastapi_app.add_middleware(
+        CORSMiddleware,         # type: ignore
         allow_origins=get_cors_origins(),
         allow_credentials=True,
         allow_methods=["*"],
@@ -44,22 +44,22 @@ def create_app() -> FastAPI:
     )
 
     # add health check endpoint if needed
-    @app.get("/health", status_code=200)
+    @fastapi_app.get("/health", status_code=200)
     async def health_check():
         return {"status": "OK"}
 
     # register routers
-    app.include_router(chat.router)
-    app.include_router(models.router)
+    fastapi_app.include_router(prefix="/api", router=chat_router)
+    fastapi_app.include_router(prefix="/api", router=models_router)
 
-    return app
+    return fastapi_app
 
 def get_server_config() -> dict:
     """Get the uvicorn server configuration based on environment"""
     if is_production():
         return {
             "host": "0.0.0.0",
-            "port": 8000,
+            "port": app_settings.PORT,
             "workers": 4,
             "reload": False,
             "log_level": "info",
@@ -68,8 +68,8 @@ def get_server_config() -> dict:
         }
     else:
         return {
-            "host": "127.0.0.1",
-            "port": 8000,
+            "host": app_settings.HOST,
+            "port": app_settings.PORT,
             "reload": True,
             "workers": 1,
             "log_level": "debug",

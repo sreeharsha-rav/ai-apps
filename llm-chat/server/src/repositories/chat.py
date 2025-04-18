@@ -1,6 +1,6 @@
 from datetime import datetime
-from typing import Dict, List, Optional
-from src.schemas.chat import Chat, Message
+from typing import Optional, List
+from src.models.chat import Chat, Message
 from src.utils.decorators import singleton
 from ulid import ULID
 
@@ -9,7 +9,7 @@ class ChatRepository:
     """Repository for managing chat objects in memory"""
 
     def __init__(self):
-        self._chats: Dict[ULID, Chat] = {}
+        self._chats: dict[ULID, Chat] = {}
 
     async def create(self, chat: Chat) -> Chat:
         """Create a new chat"""
@@ -25,7 +25,7 @@ class ChatRepository:
         """Get a chat by ID"""
         return self._chats.get(chat_id)
 
-    async def list(self) -> List[Chat]:
+    async def list(self) -> list[Chat]:
         """List all chats"""
         return list(self._chats.values())
 

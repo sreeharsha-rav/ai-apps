@@ -1,25 +1,20 @@
-from typing import Dict, List
-from src.llm.models.base_llm import BaseLLM
-from src.schemas.llm import ModelInfo, ModelID
+from src.models.llm import ModelInfo, ModelID
 from src.utils.decorators import singleton
-from src.llm.models.azure_gpt4o_mini import AzureGPT4oMini
-from src.llm.models.azure_gpt4o import AzureGPT4o
-from src.llm.models.google_gemini2_flash import GoogleGemini2Flash
-from src.llm.models.openai_gpt4o_mini import OpenAIGPT4oMini
-from src.exceptions.llm import ModelNotFoundError
+from src.core.llm.models import BaseLLM, AzureGPT4oMini, AzureGPT4o, GoogleGemini2Flash, OpenAIGPT4oMini
+from src.core.exceptions.llm import ModelNotFoundError
 
 @singleton
 class LLMRegistry:
     """Registry for managing LLM models"""
     
-    _models: Dict[ModelID, BaseLLM] = {
+    _models: dict[ModelID, BaseLLM] = {
         ModelID.AZURE_GPT4O_MINI: AzureGPT4oMini(),
         ModelID.AZURE_GPT4O: AzureGPT4o(),
         ModelID.GOOGLE_GEMINI2_FLASH: GoogleGemini2Flash(),
         ModelID.OPENAI_GPT4O_MINI: OpenAIGPT4oMini(),
     }
 
-    def list_models(self) -> List[ModelInfo]:
+    def list_models(self) -> list[ModelInfo]:
         """List all available models"""
         return [model.MODEL_INFO for model in self._models.values()]
 

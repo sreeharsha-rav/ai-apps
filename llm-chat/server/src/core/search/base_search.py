@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import ClassVar
 from src.schemas.search import SearchEngineInfo, SearchResult
-from typing import List
 
 class BaseSearch(ABC):
     """Base class for search engine implementations"""
@@ -13,6 +12,6 @@ class BaseSearch(ABC):
         return
 
     @abstractmethod
-    def search(self, query: str, num_results: int = 5) -> List[SearchResult]:
+    async def search(self, query: str, num_results: int = 5) -> list[SearchResult]:
         """Perform a search and return results."""
         pass
