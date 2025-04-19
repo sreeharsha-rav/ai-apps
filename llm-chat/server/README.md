@@ -22,7 +22,7 @@ The project is structured as follows:
    │       └── models.py     # Models API endpoints
    ├── core/                 # Core components
    │   ├── config/           # Configuration settings
-   │   ├── exceptions/       # Custom exceptions
+   │   ├── exceptions/       # Custom exceptions (can be omitted if not needed or just to keep project simple)
    │   ├── llm/              # LLM components
    │   ├── prompts/          # Prompts for LLM
    │   └── search/           # Search components

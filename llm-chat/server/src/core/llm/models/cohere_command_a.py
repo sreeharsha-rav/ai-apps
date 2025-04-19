@@ -6,37 +6,37 @@ from src.core.config import llm_settings
 from src.core.exceptions.llm import ClientInitializationError, GenerateCompletionError
 from typing import ClassVar
 from langchain.schema.messages import SystemMessage
-from langchain_openai import AzureChatOpenAI
+from langchain_cohere.chat_models import ChatCohere
+
 
 @singleton
-class AzureGPT4oMini(BaseLLM):
-    """Azure GPT-4o-mini LLM implementation"""
+class CohereCommandA(BaseLLM):
+    """OpenAI GPT-4o-mini LLM implementation"""
 
     MODEL_INFO: ClassVar[ModelInfo] = ModelInfo(
-        model_id=ModelID.AZURE_GPT4O_MINI,
-        name="GPT-4o mini",
-        description="A smaller version of the GPT-4o model, optimized for faster inference and lower resource usage hosted on Azure",
-        provider="Azure",
-        context_length=128000,
-        max_output_tokens=16384,
+        model_id=ModelID.COHERE_COMMAND_A,
+        name="Command-A",
+        description="A flagship model from Cohere, optimized for faster inference and lower resource usage hosted on Cohere",
+        provider="Cohere",
+        context_length=256000,
+        max_output_tokens=8192,
     )
 
     def __init__(self):
         if not hasattr(self, '_initialized'):
             super().__init__()
             try:
-                self.chat_client = AzureChatOpenAI(
-                    azure_endpoint=llm_settings.AZURE_GPT4O_MINI_API_ENDPOINT,
-                    api_key=llm_settings.AZURE_GPT4O_MINI_API_KEY,
-                    api_version=llm_settings.AZURE_GPT4O_MINI_API_VERSION,
+                self.chat_client = ChatCohere(
+                    cohere_api_key=llm_settings.COHERE_API_KEY,
+                    model=llm_settings.COHERE_COMMAND_A_MODEL
                 )
             except Exception as e:
-                raise ClientInitializationError(f"Failed to initialize Azure OpenAI client: {str(e)}")
-                
+                raise ClientInitializationError(f"Failed to initialize Cohere client: {str(e)}")
+
             self._initialized = True
 
     async def get_completion(self, system_instruction: str, messages: list[Message]) -> Message:
-        """Get completion from Azure GPT-4o Mini model"""
+        """Get completion from Cohere Command-A model"""
         try:
             # format messages for Langchain
             formatted_messages = self._format_messages_for_langchain(messages)

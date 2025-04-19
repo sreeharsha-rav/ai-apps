@@ -6,41 +6,27 @@ class AppSettings(BaseSettings):
     PORT: int = 8000
     HOST: str = "127.0.0.1"
 
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding='utf-8',
-        case_sensitive=True,  # Since your vars are uppercase
-        extra='ignore',       # Ignore any extra env vars
-        validate_assignment=True  # Validate on assignment
-    )
-
 class LLMSettings(BaseSettings):
     """Settings for all LLMs"""
     # Azure LLM Settings
-    AZURE_GPT4O_MINI_API_KEY: str = ""
-    AZURE_GPT4O_MINI_API_ENDPOINT: str = ""
-    AZURE_GPT4O_MINI_API_VERSION: str = "2023-07-01-preview"
-    AZURE_GPT4O_MINI_DEPLOYMENT: str = ""
-
     AZURE_GPT4O_API_KEY: str = ""
     AZURE_GPT4O_API_ENDPOINT: str = ""
     AZURE_GPT4O_API_VERSION: str = "2023-07-01-preview"
     AZURE_GPT4O_DEPLOYMENT: str = ""
-
     # Google LLM Settings
     GOOGLE_GEMINI2_FLASH_MODEL: str = "gemini-2.0-flash-001"
     GOOGLE_GEMINI2_FLASH_API_KEY: str = ""
-
     # OpenAI LLM Settings
     OPENAI_API_KEY: str = ""
     OPENAI_MODEL: str = "gpt-4o-mini"
+    # Cohere LLM Settings
+    COHERE_API_KEY: str = ""
+    COHERE_COMMAND_A_MODEL: str = "command-a-03-2025"
 
     model_config = SettingsConfigDict(
         env_file=".env",
-        env_file_encoding='utf-8',
-        case_sensitive=True,  # Since your vars are uppercase
-        extra='ignore',       # Ignore any extra env vars
-        validate_assignment=True  # Validate on assignment
+        env_file_encoding="utf-8",
+        extra="allow",
     )
 
 class SearchSettings(BaseSettings):
@@ -49,14 +35,35 @@ class SearchSettings(BaseSettings):
     GOOGLE_CSE_ID: str = ""
     GOOGLE_CSE_API_KEY: str = ""
     GOOGLE_CSE_BASE_URL: str = "https://www.googleapis.com/customsearch/v1"
-
     # DuckDuckGo Search Settings
     # TODO: Add DuckDuckGo search settings
 
     model_config = SettingsConfigDict(
         env_file=".env",
-        env_file_encoding='utf-8',
-        case_sensitive=True,  # Since your vars are uppercase
-        extra='ignore',       # Ignore any extra env vars
-        validate_assignment=True  # Validate on assignment
+        env_file_encoding="utf-8",
+        extra="allow",
+    )
+
+class AzureStorageSettings(BaseSettings):
+    """Settings for Azure Storage"""
+    AZURE_STORAGE_CONNECTION_STRING: str = ""
+    AZURE_STORAGE_CONTAINER_NAME: str = ""
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="allow",
+    )
+
+class AuthSettings(BaseSettings):
+    """Settings for authentication"""
+    MICROSOFT_CLIENT_ID: str = ""
+    MICROSOFT_JWKS_URL: str = "https://login.microsoftonline.com/common/discovery/keys"
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_JWKS_URL: str = "https://www.googleapis.com/oauth2/v3/certs"
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="allow",
     )
