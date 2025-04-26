@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, ConfigDict, model_validator
 from typing import Optional
-from src.models.llm import ModelID
+from src.schemas.llm import ModelID
 from src.models.chat import Message, Role
 from ulid import ULID
 
