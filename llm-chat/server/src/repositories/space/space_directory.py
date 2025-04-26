@@ -10,19 +10,22 @@ class SpaceDirectoryManager(BaseAzureBlobRepository, ISpaceDirectoryManager):
         super().__init__(storage_settings.SPACE_CONTAINER_NAME)
         self._spaces_dir_blob = "spaces/_info.json"
 
-    async def ensure_directory_exists(self) -> None:
+    async def spaces_dir_exists(self) -> bool:
+        """Check if spaces directory exists"""
+        return await self._blob_exists(self._spaces_dir_blob)
+
+    async def create_spaces_dir(self) -> None:
         """Ensure spaces directory exists"""
         try:
-            if not await self._blob_exists(self._spaces_dir_blob):
-                await self._upload_json(
-                    self._spaces_dir_blob,
-                    SpacesDir().model_dump_json(indent=2),
-                    overwrite=False
-                )
+            await self._upload_json(
+                self._spaces_dir_blob,
+                SpacesDir().model_dump_json(indent=2),
+                overwrite=False
+            )
         except Exception as e:
             raise Exception(f"Failed to ensure directory exists: {str(e)}")
 
-    async def add_space(self, space: Space) -> None:
+    async def add_space_to_spaces_info(self, space: Space) -> None:
         """Add space to directory"""
         try:
             data = await self._download_json(self._spaces_dir_blob)
@@ -39,7 +42,7 @@ class SpaceDirectoryManager(BaseAzureBlobRepository, ISpaceDirectoryManager):
         except Exception as e:
             raise Exception(f"Failed to add space to directory: {str(e)}")
 
-    async def remove_space(self, space_name: str) -> None:
+    async def remove_space_from_spaces_info(self, space_name: str) -> None:
         """Remove space from directory"""
         try:
             data = await self._download_json(self._spaces_dir_blob)
