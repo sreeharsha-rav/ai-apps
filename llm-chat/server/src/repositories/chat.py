@@ -4,7 +4,7 @@ from src.models.chat import Chat, Message
 from src.utils.decorators import singleton
 from ulid import ULID
 from azure.storage.blob.aio import ContainerClient
-from src.core.config import azure_storage_settings
+from src.core.config import storage_settings
 from src.core.exceptions.chat import ChatNotFoundError
 from src.utils.loggers import setup_logger
 from pydantic import ValidationError
@@ -14,14 +14,14 @@ class ChatRepository:
     """Repository for managing chat objects in memory"""
 
     def __init__(self):
-        """Initialize the ChatRepository"""
+        """Initialize the ChatRepository using Azure Blob Storage"""
         try:
-            self._chats_container_client = ContainerClient.from_connection_string(
-                conn_str=azure_storage_settings.AZURE_STORAGE_CONNECTION_STRING,
-                container_name=azure_storage_settings.AZURE_STORAGE_CONTAINER_NAME
+            self._chat_container_client = ContainerClient.from_connection_string(
+                conn_str=storage_settings.AZURE_STORAGE_CONNECTION_STRING,
+                container_name=storage_settings.CHAT_CONTAINER_NAME
             )
             # TODO: fix await - check if container exists and create if not
-            # if not self._chats_container_client.exists():
+            # if not self._chat_container_client.exists():
             #     self._chats_container_client.create_container()
             # setup logger
             self.logger = setup_logger(name="chat_repository")
@@ -47,7 +47,7 @@ class ChatRepository:
             Exception: If there's an error during the creation process
         """
         try:
-            chat_blob_client = self._chats_container_client.get_blob_client(
+            chat_blob_client = self._chat_container_client.get_blob_client(
                 blob=self._get_chat_blob_name(chat.chat_id)
             )
 
@@ -72,7 +72,7 @@ class ChatRepository:
         Returns:
             bool: True if the chat exists, False otherwise
         """
-        chat_blob_client = self._chats_container_client.get_blob_client(
+        chat_blob_client = self._chat_container_client.get_blob_client(
             blob=self._get_chat_blob_name(chat_id)
         )
         return await chat_blob_client.exists()
@@ -93,7 +93,7 @@ class ChatRepository:
             Exception: For any other unexpected errors
         """
         try:
-            chat_blob_client = self._chats_container_client.get_blob_client(
+            chat_blob_client = self._chat_container_client.get_blob_client(
                 blob=self._get_chat_blob_name(chat_id)
             )
             if await chat_blob_client.exists():
@@ -128,7 +128,7 @@ class ChatRepository:
             chats: list[Chat] = []
 
             # async iterator
-            chat_blobs = self._chats_container_client.list_blobs(name_starts_with="chats/")
+            chat_blobs = self._chat_container_client.list_blobs(name_starts_with="chats/")
             async for blob in chat_blobs:
                 # only consider JSON files
                 if blob.name.endswith('.json'):
@@ -165,7 +165,7 @@ class ChatRepository:
         Dependency: get_chat_data
         """
         try:
-            chat_blob_client = self._chats_container_client.get_blob_client(
+            chat_blob_client = self._chat_container_client.get_blob_client(
                 blob=self._get_chat_blob_name(chat_id)
             )
             if await chat_blob_client.exists():
@@ -202,7 +202,7 @@ class ChatRepository:
             Exception: If there's an error during the deletion process
         """
         try:
-            chat_blob_client = self._chats_container_client.get_blob_client(
+            chat_blob_client = self._chat_container_client.get_blob_client(
                 blob=self._get_chat_blob_name(chat_id)
             )
             if await chat_blob_client.exists():

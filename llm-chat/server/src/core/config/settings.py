@@ -45,10 +45,13 @@ class SearchSettings(BaseSettings):
         extra="allow",
     )
 
-class AzureStorageSettings(BaseSettings):
-    """Settings for Azure Storage"""
+class StorageSettings(BaseSettings):
+    """Settings for Storage"""
     AZURE_STORAGE_CONNECTION_STRING: str = ""
-    AZURE_STORAGE_CONTAINER_NAME: str = ""
+    # Container name for storing chat objects
+    CHAT_CONTAINER_NAME: str = ""
+    # Container name for storing space objects
+    SPACE_CONTAINER_NAME: str = ""
 
     model_config = SettingsConfigDict(
         env_file=".env",

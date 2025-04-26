@@ -1,13 +1,13 @@
-from .settings import AppSettings, LLMSettings, SearchSettings, AzureStorageSettings
+from .settings import AppSettings, LLMSettings, SearchSettings, StorageSettings
 
 app_settings = AppSettings()
 llm_settings = LLMSettings()
 search_settings = SearchSettings()
-azure_storage_settings = AzureStorageSettings()
+storage_settings = StorageSettings()
 
 __all__ = [
     "app_settings",
     "llm_settings",
     "search_settings",
-    "azure_storage_settings",
+    "storage_settings",
 ]
