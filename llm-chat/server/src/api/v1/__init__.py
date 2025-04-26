@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from .endpoints import chat_router, models_router
+from .endpoints import chat_router, models_router, space_router
 
 v1_router = APIRouter(
     prefix="/v1",
@@ -8,6 +8,7 @@ v1_router = APIRouter(
 # include feature-specific routers
 v1_router.include_router(chat_router)
 v1_router.include_router(models_router)
+v1_router.include_router(space_router)
 
 __all__ = [
     "v1_router",
