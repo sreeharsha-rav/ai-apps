@@ -9,16 +9,17 @@ class AppSettings(BaseSettings):
 class LLMSettings(BaseSettings):
     """Settings for all LLMs"""
     # Azure LLM Settings
-    AZURE_GPT4O_API_KEY: str = ""
-    AZURE_GPT4O_API_ENDPOINT: str = ""
-    AZURE_GPT4O_API_VERSION: str = "2023-07-01-preview"
-    AZURE_GPT4O_DEPLOYMENT: str = ""
+    AZURE_OPENAI_API_KEY_GPT4O: str = ""
+    AZURE_OPENAI_ENDPOINT_GPT4O: str = ""
+    AZURE_OPENAI_DEPLOYMENT_GPT4O: str = ""
+    AZURE_OPENAI_API_VERSION_GPT4O: str = "2024-12-01-preview"
+    AZURE_OPENAI_GPT4O_MODEL: str = "gpt-4o"
     # Google LLM Settings
     GOOGLE_GEMINI2_FLASH_MODEL: str = "gemini-2.0-flash-001"
     GOOGLE_GEMINI2_FLASH_API_KEY: str = ""
     # OpenAI LLM Settings
     OPENAI_API_KEY: str = ""
-    OPENAI_MODEL: str = "gpt-4o-mini"
+    OPENAI_GPT4O_MINI_MODEL: str = "gpt-4o-mini"
     # Cohere LLM Settings
     COHERE_API_KEY: str = ""
     COHERE_COMMAND_A_MODEL: str = "command-a-03-2025"

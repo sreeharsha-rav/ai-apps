@@ -89,10 +89,6 @@ This project structure is based on the [FastAPI Clean Architecture](https://gith
    ```
 6. Run the server:
    ```bash
-   # using uv
-   uv run
-
-   # without uv
    uvicorn src.main:app --reload
    ```
 7. View swagger docs (only available in development mode):

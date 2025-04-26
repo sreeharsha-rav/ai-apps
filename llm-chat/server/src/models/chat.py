@@ -44,12 +44,12 @@ class Chat(BaseModel):
         default_factory=list,
         description="List of messages in the chat."
     )
-    created_at: str = Field(
-        default_factory=lambda: datetime.now().isoformat(),
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(),
         description="Timestamp when the chat was created."
     )
-    updated_at: str = Field(
-        default_factory=lambda: datetime.now().isoformat(),
+    updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(),
         description="Timestamp when the chat was last updated."
     )
 

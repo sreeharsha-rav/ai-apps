@@ -20,7 +20,3 @@ dependencies = [
     "python-ulid>=3.0.0",
     "uvicorn>=0.34.0",
 ]
-
-[project.scripts]
-dev = "src.main:main"
-start = "src.main:main"

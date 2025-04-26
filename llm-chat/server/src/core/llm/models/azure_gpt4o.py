@@ -1,5 +1,3 @@
-from langchain_core.language_models import BaseChatModel
-
 from .base_llm import BaseLLM
 from src.models.llm import ModelInfo, ModelID
 from src.utils.decorators import singleton
@@ -32,9 +30,9 @@ class AzureGPT4o(BaseLLM):
         """Initialize the Azure GPT-4o LLM"""
         try:
             self._chat_client = AzureChatOpenAI(
-                azure_endpoint=llm_settings.AZURE_OPENAI_API_ENDPOINT_GPT4O,
+                azure_endpoint=llm_settings.AZURE_OPENAI_ENDPOINT_GPT4O,
                 azure_deployment=llm_settings.AZURE_OPENAI_DEPLOYMENT_GPT4O,
-                api_key=llm_settings.AZURE_OPENAI_API_DEPLOYMENT_GPT4O,
+                api_key=llm_settings.AZURE_OPENAI_API_KEY_GPT4O,
                 api_version=llm_settings.AZURE_OPENAI_API_VERSION_GPT4O,
                 model=llm_settings.AZURE_OPENAI_GPT4O_MODEL,
                 # temperature=0.7,
