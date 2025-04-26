@@ -1,6 +1,6 @@
 from src.models.llm import ModelInfo, ModelID
 from src.utils.decorators import singleton
-from src.core.llm.models import BaseLLM, GoogleGemini2Flash, OpenAIGPT4oMini, CohereCommandA
+from src.core.llm.models import BaseLLM, AzureGPT4o, GoogleGemini2Flash, OpenAIGPT4oMini, CohereCommandA
 from src.core.exceptions.llm import ModelNotFoundError
 
 @singleton
@@ -8,7 +8,7 @@ class LLMRegistry:
     """Registry for managing LLM models"""
     
     _models: dict[ModelID, BaseLLM] = {
-        # ModelID.AZURE_GPT4O: AzureGPT4o(),
+        ModelID.AZURE_GPT4O: AzureGPT4o(),
         ModelID.GOOGLE_GEMINI2_FLASH: GoogleGemini2Flash(),
         ModelID.OPENAI_GPT4O_MINI: OpenAIGPT4oMini(),
         ModelID.COHERE_COMMAND_A: CohereCommandA(),
