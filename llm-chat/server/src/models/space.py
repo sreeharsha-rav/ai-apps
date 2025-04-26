@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from src.models.file import FileBase
 from ulid import ULID
 from typing import Optional
 from datetime import datetime
@@ -24,7 +25,10 @@ class Space(SpaceBase):
         max_length=256,
         description="Description of the space."
     )
-    # TODO: add files here
+    files: list[FileBase] = Field(
+        default=[],
+        description="List of files in the space."
+    )
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(),
         description="Timestamp when the space was created."
