@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import ClassVar, Optional
-from src.models.llm import ModelInfo
+from src.schemas.llm import ModelInfo
 from src.schemas.chat import Message, Role
 from src.core.exceptions.llm import GenerateCompletionError, ClientInitializationError
 from langchain.schema.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage

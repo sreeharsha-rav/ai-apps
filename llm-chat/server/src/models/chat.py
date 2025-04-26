@@ -27,6 +27,13 @@ class Message(BaseModel):
 
     model_config = {
         'str_strip_whitespace': True,
+        "json_schema_extra": {
+            "example": {
+                "message_id": "01HQ8RDZQ24YBGN7PB9XQJM8JD",
+                "role": "user",
+                "content": "Hello, how are you?",
+            }
+        }
     }
 
 class Chat(BaseModel):
@@ -55,4 +62,24 @@ class Chat(BaseModel):
 
     model_config = {
         'str_strip_whitespace': True,
+        "json_schema_extra": {
+            "example": {
+                "chat_id": "01HQ8RDZQ24YBGN7PB9XQJM8JD",
+                "title": "General Chat",
+                "messages": [
+                    {
+                        "message_id": "01HQ8RDZQ24YBGN7PB9XQJM8JD",
+                        "role": "user",
+                        "content": "Hello, how are you?",
+                    },
+                    {
+                        "message_id": "01HQ8RDZQ24YBGN7PB9XQJM8JD",
+                        "role": "assistant",
+                        "content": "I'm doing well, thank you!",
+                    },
+                ],
+                "created_at": "2023-09-10T12:00:00",
+                "updated_at": "2023-09-10T12:00:00",
+            }
+        }
     }

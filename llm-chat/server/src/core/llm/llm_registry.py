@@ -1,4 +1,4 @@
-from src.models.llm import ModelInfo, ModelID
+from src.schemas.llm import ModelInfo, ModelID
 from src.utils.decorators import singleton
 from src.core.llm.models import BaseLLM, AzureGPT4o, GoogleGemini2Flash, OpenAIGPT4oMini, CohereCommandA
 from src.core.exceptions.llm import ModelNotFoundError

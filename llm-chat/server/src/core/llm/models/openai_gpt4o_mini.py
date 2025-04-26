@@ -1,5 +1,5 @@
 from .base_llm import BaseLLM
-from src.models.llm import ModelInfo, ModelID
+from src.schemas.llm import ModelInfo, ModelID
 from src.utils.decorators import singleton
 from src.core.config import llm_settings
 from src.core.exceptions.llm import ClientInitializationError

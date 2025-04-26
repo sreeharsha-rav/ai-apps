@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, Path
 from src.core.llm import llm_registry
-from src.models.llm import ModelInfo, ModelID
+from src.schemas.llm import ModelInfo, ModelID
 
 models_router = APIRouter(
     prefix="/models",
