@@ -1,5 +1,5 @@
-from .directory import SpaceDirectoryManager
-from .repository import SpaceRepository
+from .space_directory import SpaceDirectoryManager
+from .space_repository import SpaceRepository
 
 __all__ = [
     "SpaceDirectoryManager",

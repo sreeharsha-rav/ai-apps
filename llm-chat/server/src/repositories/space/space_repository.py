@@ -3,7 +3,7 @@ from src.core.config import storage_settings
 from src.utils.decorators import singleton
 from src.core.exceptions.space import SpaceError, SpaceNotFoundError, SpaceAlreadyExistsError
 from src.repositories.base import BaseAzureBlobRepository
-from .directory import SpaceDirectoryManager
+from .space_directory import SpaceDirectoryManager
 from .interfaces import ISpaceRepository
 from typing import List
 
