@@ -32,9 +32,15 @@ async def get_chat(chat_id: ULID = Path(description="The chat ID to get")) -> Ch
 @chat_router.get("", response_model=list[Chat], status_code=status.HTTP_200_OK)
 async def list_chats() -> list[Chat]:
     """List all chats"""
-    return await chat_service.list_chats()
+    try:
+        return await chat_service.list_chats()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error listing chats: {str(e)}")
 
 @chat_router.delete("/{chat_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_chat(chat_id: ULID = Path(description="The chat ID to delete")) -> None:
     """Delete a chat"""
-    await chat_service.delete_chat(chat_id)
+    try:
+        await chat_service.delete_chat(chat_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error deleting chat: {str(e)}")
