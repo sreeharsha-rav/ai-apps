@@ -38,7 +38,7 @@ The project is structured as follows:
    │   └── space.py                                     # Space model
    ├── repositories/                                # Data repositories
    │   ├── chat.py                                      # Chat repository
-   │   └── spaces.py                                     # Space repository
+   │   └── spaces.py                                    # Space repository
    ├── schemas/                                     # Schemas for data validation
    │   ├── chat.py                                      # Chat schema
    │   ├── llm.py                                       # LLM schema

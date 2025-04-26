@@ -1,5 +1,6 @@
 from .chat import chat_router
 from .models import models_router
+from .space import space_router
 
 __all__ = [
     "chat_router",
