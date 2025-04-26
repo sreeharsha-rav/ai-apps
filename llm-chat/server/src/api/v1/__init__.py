@@ -1,7 +1,5 @@
-from .chat import chat_router
-from .models import models_router
+from .routes import v1_router
 
 __all__ = [
-    "chat_router",
-    "models_router",
+    "v1_router",
 ]

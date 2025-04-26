@@ -6,7 +6,7 @@ from src.core.exceptions.chat import ChatNotFoundError
 from ulid import ULID
 
 chat_router = APIRouter(
-    prefix="/v1/chat",
+    prefix="/chat",
     tags=["chat"],
 )
 

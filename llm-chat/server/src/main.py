@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.core.config import app_settings
-from src.api.v1 import chat_router, models_router
+from src.api.v1 import v1_router
 
 def is_production() -> bool:
     """Check if the application is running in production mode"""
@@ -49,8 +49,7 @@ def create_app() -> FastAPI:
         return {"status": "OK"}
 
     # register routers
-    fastapi_app.include_router(prefix="/api", router=chat_router)
-    fastapi_app.include_router(prefix="/api", router=models_router)
+    fastapi_app.include_router(prefix="/api", router=v1_router)
 
     return fastapi_app
 
