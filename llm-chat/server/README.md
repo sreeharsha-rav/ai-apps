@@ -16,39 +16,48 @@ The project is structured as follows:
 - `src/`: Contains the source code for the server.
    ```
    src/
-   ├── api/                  # API endpoints
-   │   └── v1/               # Version 1 of the API
-   │       ├── chat.py       # Chat API endpoints
-   │       └── models.py     # Models API endpoints
-   ├── core/                 # Core components
-   │   ├── config/           # Configuration settings
-   │   ├── exceptions/       # Custom exceptions (can be omitted if not needed or just to keep project simple)
-   │   ├── llm/              # LLM components
-   │   ├── prompts/          # Prompts for LLM
-   │   └── search/           # Search components
-   ├── models/               # Data models for repositories
-   │   ├── chat.py           # Chat model
-   │   └── llm.py            # LLM model
-   ├── repositories/         # Data repositories
-   │   └── chat.py           # Chat repository
-   ├── schemas/              # Schemas for data validation
-   │   ├── chat.py           # Chat schema
-   │   └── llm.py            # LLM schema
-   ├── services/             # Business logic services
-   │   └── chat.py           # Chat service
-   ├── utils/                # Utility functions
-   │   ├── decorators.py     # Decorators
-   │   └── loggers.py        # Loggers
-   ├── main.py               # Main entry point
-   └── __init__.py           # Initialization file
+   ├── api/                                         # API endpoints
+   │   ├── __init__.py                                  # Initialization file containing api_router
+   │   └── v1/                                          # Version 1 of the API
+   │       ├── __init__.py                                  # Initialization file containing v1_router
+   │       ├── endpoints/                                   # API endpoint implementations
+   │       │   ├── __init__.py                                  # Initialization file
+   │       │   ├── chat.py                                      # Chat API endpoints
+   │       │   ├── models.py                                    # Models API endpoints
+   │       │   └── space.py                                     # Space API endpoints
+   │       └── dependencies.py                          # Dependencies for the API
+   ├── core/                                        # Core components
+   │   ├── config/                                      # Configuration settings
+   │   ├── exceptions/                                  # Custom exceptions (can be omitted if not needed or just to keep project simple)
+   │   ├── llm/                                         # LLM components
+   │   ├── prompts/                                     # Prompts for LLM
+   │   ├── retriever/                                   # Retriever components
+   │   └── search/                                      # Search components
+   ├── models/                                      # Data models for storage representation
+   │   ├── chat.py                                      # Chat model
+   │   └── space.py                                     # Space model
+   ├── repositories/                                # Data repositories
+   │   ├── chat.py                                      # Chat repository
+   │   └── spaces.py                                     # Space repository
+   ├── schemas/                                     # Schemas for data validation
+   │   ├── chat.py                                      # Chat schema
+   │   ├── llm.py                                       # LLM schema
+   │   ├── search.py                                    # Search schema
+   │   └── space.py                                     # Space schema
+   ├── services/                                    # Business logic services
+   │   ├── chat.py                                      # Chat service
+   │   └── space.py                                     # Space service
+   ├── utils/                                       # Utility functions
+   │   ├── decorators.py                                # Decorators
+   │   └── loggers.py                                   # Loggers
+   ├── main.py                                      # Main entry point
+   └── __init__.py                                  # Initialization file
    ```
 - `tests/`: Contains the test suite for the server.
    ```
    tests/
    ├── api/                  # API tests
    │   └── v1/               # Version 1 of the API
-   │       ├── chat.py       # Chat API tests
-   │       └── models.py     # Models API tests
    ├── others/               # Other tests to be added
    ```
 - `uv.lock`: Lock file for `uv` dependency management.
