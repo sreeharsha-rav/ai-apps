@@ -1,6 +1,8 @@
-from fastapi import APIRouter, status, HTTPException, Query, Depends
+from fastapi import APIRouter, status, HTTPException, Depends
 from src.schemas.space import SpaceRequest, SpaceResponse, RESERVED_SPACE_NAMES
+from src.api.v1.dependencies import validate_space_name
 from src.services.space import SpaceService
+from src.core.exceptions.space import SpaceError
 
 space_router = APIRouter(
     prefix="/spaces",
@@ -9,28 +11,13 @@ space_router = APIRouter(
 
 space_service = SpaceService()
 
-# Dependency function to validate space name
-def validate_space_name(
-    space_name: str = Query(
-        min_length=1,
-        max_length=100,
-        pattern=r'^[a-zA-Z0-9_\- ]+$',
-        description="The space name",
-    )
-) -> str:
-    """Validate space name from query parameters"""
-    if space_name in RESERVED_SPACE_NAMES:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Space name '{space_name}' is reserved and cannot be used"
-        )
-    return space_name
-
 @space_router.post("", response_model=SpaceResponse, status_code=status.HTTP_201_CREATED)
 async def create_space(space_request: SpaceRequest) -> SpaceResponse:
     """Create a space"""
     try:
         return await space_service.create_new_space(space_request)
+    except SpaceError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error creating space: {str(e)}")
 
@@ -38,7 +25,9 @@ async def create_space(space_request: SpaceRequest) -> SpaceResponse:
 async def get_space(space_name: str = Depends(validate_space_name)) -> SpaceResponse:
     """Get a space by name"""
     try:
-        return await space_service.get_space(space_name)
+        return await space_service.get_space_by_name(space_name)
+    except SpaceError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error getting space: {str(e)}")
 
@@ -46,7 +35,9 @@ async def get_space(space_name: str = Depends(validate_space_name)) -> SpaceResp
 async def list_spaces() -> list[SpaceResponse]:
     """List all spaces"""
     try:
-        return await space_service.list_spaces()
+        return await space_service.list_all_spaces()
+    except SpaceError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error listing spaces: {str(e)}")
 
@@ -54,6 +45,8 @@ async def list_spaces() -> list[SpaceResponse]:
 async def delete_space(space_name: str = Depends(validate_space_name)) -> None:
     """Delete a space by name"""
     try:
-        await space_service.delete_space(space_name)
+        await space_service.delete_space_by_name(space_name)
+    except SpaceError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error deleting space: {str(e)}")

@@ -32,10 +32,10 @@ class SpaceService:
         except Exception as e:
             raise SpaceError(f"Failed to create space: {str(e)}")
 
-    async def get_space(self, space_name: str) -> SpaceResponse:
+    async def get_space_by_name(self, space_name: str) -> SpaceResponse:
         """Get a space by name"""
         try:
-            space = await self._space_repository.get_space_by_name(space_name)
+            space = await self._space_repository.get_by_name(space_name)
             return SpaceResponse(
                 space_id=space.space_id,
                 name=space.name,
@@ -48,7 +48,7 @@ class SpaceService:
         except Exception as e:
             raise SpaceError(f"Failed to get space: {str(e)}")
 
-    async def list_spaces(self) -> list[SpaceResponse]:
+    async def list_all_spaces(self) -> list[SpaceResponse]:
         """List all spaces"""
         try:
             spaces = await self._space_repository.list_all_spaces_info()
@@ -62,9 +62,9 @@ class SpaceService:
         except Exception as e:
             raise Exception(f"Failed to list spaces: {str(e)}")
 
-    async def delete_space(self, space_id: str) -> None:
-        """Delete a space by ID"""
+    async def delete_space_by_name(self, space_name: str) -> None:
+        """Delete a space by name"""
         try:
-            await self._space_repository.delete_space_by_name(space_id)
+            await self._space_repository.delete_by_name(space_name)
         except Exception as e:
             raise Exception(f"Failed to delete space: {str(e)}")
