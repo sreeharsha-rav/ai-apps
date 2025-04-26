@@ -12,16 +12,17 @@ from ulid import ULID
 class ChatService:
     def __init__(self):
         self._chat_repository = ChatRepository()
-        self.logger = setup_logger(name="chat")
+        self.logger = setup_logger(name="chat_service")
 
     async def generate_chat_completion(self, chat_request: ChatMessageRequest) -> ChatMessageResponse:
         """Generate a chat completion from a user message."""
         llm = llm_registry.get_model(model_id=chat_request.model_id)
         chat_exists = await self._chat_repository.chat_exists(chat_id=chat_request.chat_id)
 
+        # TODO: cleanup and use tools with appropriate prompts
         if chat_exists:
             # handle existing chat
-            existing_chat = await self._chat_repository.get(chat_request.chat_id)
+            existing_chat = await self._chat_repository.get_chat_data(chat_request.chat_id)
 
             # generate completion using existing chat history
             ai_message = await llm.get_completion(
@@ -34,7 +35,7 @@ class ChatService:
 
             # update the chat history
             existing_chat.messages.extend([chat_request.message,ai_message])
-            await self._chat_repository.update_messages(
+            await self._chat_repository.update_chat_messages(
                 chat_id=chat_request.chat_id,
                 messages=existing_chat.messages
             )
@@ -52,7 +53,7 @@ class ChatService:
                 title=chat_request.message.content,         # Use the user message as the title, TODO: can improve this using AI generated title if possible
                 messages=chat_history,
             )
-            await self._chat_repository.create(new_chat)
+            await self._chat_repository.create_chat_data(new_chat)
 
         return ChatMessageResponse(
             chat_id=chat_request.chat_id,
@@ -64,15 +65,15 @@ class ChatService:
 
     async def get_chat(self, chat_id: ULID) -> Chat:
         """Retrieve a chat by its ID."""
-        chat = await self._chat_repository.get(chat_id)
+        chat = await self._chat_repository.get_chat_data(chat_id)
         if chat is None:
             raise ChatNotFoundError(f"Chat with ID {chat_id} not found")
         return chat
 
     async def list_chats(self) -> list[Chat]:
         """Retrieve all chats."""
-        return await self._chat_repository.list()
+        return await self._chat_repository.list_chats_data()
 
     async def delete_chat(self, chat_id: ULID) -> None:
         """Delete a chat by its ID."""
-        await self._chat_repository.delete(chat_id)
+        await self._chat_repository.delete_chat_data(chat_id)
