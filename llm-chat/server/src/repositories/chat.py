@@ -20,9 +20,9 @@ class ChatRepository:
                 conn_str=azure_storage_settings.AZURE_STORAGE_CONNECTION_STRING,
                 container_name=azure_storage_settings.AZURE_STORAGE_CONTAINER_NAME
             )
-            # create container if it doesn't exist
-            if not self._chats_container_client.exists():
-                self._chats_container_client.create_container()
+            # TODO: fix await - check if container exists and create if not
+            # if not self._chats_container_client.exists():
+            #     self._chats_container_client.create_container()
             # setup logger
             self.logger = setup_logger(name="chat_repository")
         except Exception as e:
@@ -96,7 +96,7 @@ class ChatRepository:
             chat_blob_client = self._chats_container_client.get_blob_client(
                 blob=self._get_chat_blob_name(chat_id)
             )
-            if chat_blob_client.exists():
+            if await chat_blob_client.exists():
                 # Download blob data and validate directly as JSON
                 stream = await chat_blob_client.download_blob()
                 chat_blob_data = await stream.readall()
@@ -168,7 +168,7 @@ class ChatRepository:
             chat_blob_client = self._chats_container_client.get_blob_client(
                 blob=self._get_chat_blob_name(chat_id)
             )
-            if chat_blob_client.exists():
+            if await chat_blob_client.exists():
                 # get existing chat data
                 chat = await self.get_chat_data(chat_id)
 
@@ -177,7 +177,7 @@ class ChatRepository:
                 chat.updated_at = datetime.now()
 
                 # upload updated chat data and overwrite
-                chat_blob_client.upload_blob(
+                await chat_blob_client.upload_blob(
                     chat.model_dump_json(), 
                     overwrite=True,
                 )
@@ -205,7 +205,7 @@ class ChatRepository:
             chat_blob_client = self._chats_container_client.get_blob_client(
                 blob=self._get_chat_blob_name(chat_id)
             )
-            if chat_blob_client.exists():
-                chat_blob_client.delete_blob()
+            if await chat_blob_client.exists():
+                await chat_blob_client.delete_blob()
         except Exception as e:
             raise Exception(f"Failed to delete chat: {str(e)}")
