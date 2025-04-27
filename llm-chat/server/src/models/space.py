@@ -1,11 +1,10 @@
-from pydantic import BaseModel, Field
-from src.models.file import FileBase
+from pydantic import BaseModel, Field, ConfigDict
 from ulid import ULID
 from typing import Optional
 from datetime import datetime
 
-class SpaceBase(BaseModel):
-    """Base schema for a space info."""
+class Space(BaseModel):
+    """Model for a space metadata."""
     space_id: ULID = Field(
         default_factory=ULID,
         description="Unique identifier for the space using ULID."
@@ -16,18 +15,11 @@ class SpaceBase(BaseModel):
         pattern=r'^[a-zA-Z0-9_\- ]+$',  # NOTE: name of space should only contain alphanumeric characters, underscores, hyphens, and spaces
         description="Name of the space."
     )
-
-class Space(SpaceBase):
-    """Schema for a space info with additional metadata."""
     description: Optional[str] = Field(
         default="",
         min_length=0,
         max_length=256,
         description="Description of the space."
-    )
-    files: list[FileBase] = Field(
-        default=[],
-        description="List of files in the space."
     )
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(),
@@ -38,9 +30,6 @@ class Space(SpaceBase):
         description="Timestamp when the space was last updated."
     )
 
-class SpacesDir(BaseModel):
-    """Schema for spaces dir info with some optional metadata."""
-    spaces: list[SpaceBase] = Field(
-        default=[],
-        description="List of spaces with base information."
+    model_config = ConfigDict(
+        str_strip_whitespace=True,
     )

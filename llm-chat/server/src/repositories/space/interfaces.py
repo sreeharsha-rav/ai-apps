@@ -41,13 +41,3 @@ class ISpaceDirectoryManager(ABC):
     async def create_spaces_dir(self) -> None:
         """Create spaces directory with _info.json"""
         pass
-
-    @abstractmethod
-    async def add_space_to_spaces_info(self, space: Space) -> None:
-        """Add space to spaces/_info.json"""
-        pass
-
-    @abstractmethod
-    async def remove_space_from_spaces_info(self, space_name: str) -> None:
-        """Remove space from spaces/_info.json"""
-        pass

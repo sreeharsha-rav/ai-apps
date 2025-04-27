@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field, ConfigDict, model_validator
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 from typing import Optional
 from src.models.space import Space
+from src.models.file import FileBase
 
 RESERVED_SPACE_NAMES = {
     "spaces",
@@ -32,16 +33,20 @@ class SpaceRequest(BaseModel):
         frozen=True,
     )
 
-    @model_validator(mode='after')
-    def validate_name_not_reserved(self) -> 'SpaceRequest':
-        if self.name.lower() in RESERVED_SPACE_NAMES:
-            raise ValueError(f"Name '{self.name}' is reserved")
-        return self
+    @field_validator('name')
+    @classmethod
+    def validate_name_not_reserved(cls, v: str) -> str:
+        if v.lower() in RESERVED_SPACE_NAMES:
+            raise ValueError(f"Name '{v}' is reserved")
+        return v
 
 class SpaceResponse(Space):
     """Response body for space endpoint"""
 
-    # TODO: add required response fields here, not implemented yet
+    files: list[FileBase] = Field(
+        default=[],
+        description="List of files in the space"
+    )
 
     model_config = ConfigDict(
         str_strip_whitespace=True,
@@ -50,6 +55,18 @@ class SpaceResponse(Space):
                 "space_id": "01HQ8RDZQ24YBGN7PB9XQJM8JD",
                 "name": "Demo Space",
                 "description": "This is a description of the demo space.",
+                "files": [
+                    {
+                        "file_id": "01HQ8RDZQ24YBGN7PB9XQJM8JD",
+                        "base_name": "demo_file",
+                        "extension": "txt",
+                    },
+                    {
+                        "file_id": "01HQ8RDZQ24YBGN7PB9XQJM8JD",
+                        "base_name": "demo_file_2",
+                        "extension": "pdf",
+                    },
+                ],
                 "created_at": "2023-09-10T12:00:00",
                 "updated_at": "2023-09-10T12:00:00",
             }
