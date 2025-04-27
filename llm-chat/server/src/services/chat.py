@@ -65,10 +65,18 @@ class ChatService:
 
     async def get_chat(self, chat_id: ULID) -> Chat:
         """Retrieve a chat by its ID."""
-        chat = await self._chat_repository.get_chat_by_id(chat_id)
-        if chat is None:
-            raise ChatNotFoundError(f"Chat with ID {chat_id} not found")
-        return chat
+        try:
+            # check if chat exists
+            if not await self._chat_repository.chat_exists(chat_id):
+                raise ChatNotFoundError(f"Chat with ID {chat_id} not found")
+
+            # get chat
+            chat = await self._chat_repository.get_chat_by_id(chat_id)
+            return chat
+        except ChatNotFoundError:
+            raise
+        except Exception as e:
+            raise Exception(f"Failed to get chat: {str(e)}")
 
     async def list_chats(self) -> list[Chat]:
         """Retrieve all chats."""

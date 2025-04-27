@@ -1,7 +1,8 @@
 from pydantic import BaseModel, Field, ConfigDict, field_validator
 from typing import Optional
 from src.models.space import Space
-from src.models.file import FileBase
+from src.models.file import File
+from ulid import ULID
 
 RESERVED_SPACE_NAMES = {
     "spaces",
@@ -22,7 +23,7 @@ class SpaceRequest(BaseModel):
     )
 
     model_config = ConfigDict(
-        str_strip_whitespace=True,
+        from_attributes=True,
         json_schema_extra = {
             "example": {
                 "name": "Demo Space",
@@ -30,7 +31,7 @@ class SpaceRequest(BaseModel):
             }
         },
         validate_default=True,
-        frozen=True,
+        frozen=True
     )
 
     @field_validator('name')
@@ -42,14 +43,13 @@ class SpaceRequest(BaseModel):
 
 class SpaceResponse(Space):
     """Response body for space endpoint"""
-
-    files: list[FileBase] = Field(
+    files: list[File] = Field(
         default=[],
         description="List of files in the space"
     )
 
     model_config = ConfigDict(
-        str_strip_whitespace=True,
+        from_attributes=True,
         json_schema_extra = {
             "example": {
                 "space_id": "01HQ8RDZQ24YBGN7PB9XQJM8JD",
@@ -60,17 +60,14 @@ class SpaceResponse(Space):
                         "file_id": "01HQ8RDZQ24YBGN7PB9XQJM8JD",
                         "base_name": "demo_file",
                         "extension": "txt",
-                    },
-                    {
-                        "file_id": "01HQ8RDZQ24YBGN7PB9XQJM8JD",
-                        "base_name": "demo_file_2",
-                        "extension": "pdf",
-                    },
+                        "created_at": "2023-09-10T12:00:00",
+                        "updated_at": "2023-09-10T12:00:00",
+                    }
                 ],
                 "created_at": "2023-09-10T12:00:00",
                 "updated_at": "2023-09-10T12:00:00",
             }
         },
         validate_default=True,
-        frozen=True,
+        frozen=True
     )

@@ -47,10 +47,12 @@ class ChatRepository(IChatRepository):
     async def list_all_chats(self) -> list[Chat]:
         """List all chats"""
         chats = []
-        async for blob in self._chat_container_client.list_blobs(name_starts_with="chats/", delimiter=".json"):
-            stream = await blob.download_blob()
+        async for blob in self._chat_container_client.walk_blobs(name_starts_with="chats/", delimiter=".json"):
+            chat_blob_client = self._chat_container_client.get_blob_client(blob=blob.name)
+            stream = await chat_blob_client.download_blob()
             data = await stream.readall()
-            chats.append(Chat.model_validate_json(data))
+            chat = Chat.model_validate_json(data)
+            chats.append(chat)
         return chats
 
     async def delete_chat_by_id(self, chat_id: ULID) -> None:

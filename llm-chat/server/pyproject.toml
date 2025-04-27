@@ -17,6 +17,7 @@ dependencies = [
     "lxml>=5.3.2",
     "pydantic>=2.11.2",
     "pydantic-settings>=2.8.1",
+    "python-multipart>=0.0.20",
     "python-ulid>=3.0.0",
     "uvicorn>=0.34.0",
 ]
