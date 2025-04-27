@@ -39,7 +39,7 @@ async def upload_file(
         logger.error(f"Unexpected error uploading file '{file_data.filename}' to space '{space_name}': {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error uploading file: {str(e)}")
 
-@file_router.get("{file_name}", response_model=FileResponse)
+@file_router.get("/{file_name}", response_model=FileResponse)
 async def get_file(
     file_name: str = Depends(validate_file_name),
     space_name: str = Depends(validate_space_name)
@@ -60,7 +60,7 @@ async def get_file(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error getting file: {str(e)}")
 
-@file_router.get("/all", response_model=List[FileResponse])
+@file_router.get("", response_model=List[FileResponse])
 async def list_files(
     space_name: str = Depends(validate_space_name)
 ) -> List[FileResponse]:

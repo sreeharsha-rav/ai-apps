@@ -28,7 +28,7 @@ async def create_space(space_request: SpaceRequest) -> SpaceResponse:
         logger.error(f"Unexpected error while creating space '{space_request.name}': {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error creating space: {str(e)}")
 
-@space_router.get("{space_name}", response_model=SpaceResponse, status_code=status.HTTP_200_OK)
+@space_router.get("/{space_name}", response_model=SpaceResponse, status_code=status.HTTP_200_OK)
 async def get_space(space_name: str = Depends(validate_space_name)) -> SpaceResponse:
     """Get a space by name"""
     try:
@@ -43,7 +43,7 @@ async def get_space(space_name: str = Depends(validate_space_name)) -> SpaceResp
         logger.error(f"Unexpected error while getting space '{space_name}': {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error getting space: {str(e)}")
 
-@space_router.get("/all", response_model=list[SpaceResponse], status_code=status.HTTP_200_OK)
+@space_router.get("", response_model=list[SpaceResponse], status_code=status.HTTP_200_OK)
 async def list_spaces() -> list[SpaceResponse]:
     """List all spaces"""
     try:
@@ -58,7 +58,7 @@ async def list_spaces() -> list[SpaceResponse]:
         logger.error(f"Unexpected error while listing spaces: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error listing spaces: {str(e)}")
 
-@space_router.delete("{space_name}", status_code=status.HTTP_204_NO_CONTENT)
+@space_router.delete("/{space_name}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_space(space_name: str = Depends(validate_space_name)) -> None:
     """Delete a space by name"""
     try:
