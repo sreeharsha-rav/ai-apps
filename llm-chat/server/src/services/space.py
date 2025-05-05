@@ -16,7 +16,7 @@ class SpaceService:
         self._space_repository = SpaceRepository()
         self._space_directory_manager = SpaceDirectoryManager()
         self._file_directory_manager = FileDirectoryManager()
-        self._indexer = Indexer(user_id="sreeharsha-dev")       # TODO: get user_id from auth
+        self._indexer = Indexer()
         self.logger = setup_logger(name="space_service")
 
     async def create_new_space(self, space_request: SpaceRequest) -> SpaceResponse:
@@ -127,7 +127,10 @@ class SpaceService:
         """Index a space"""
         try:
             self.logger.info(f"Indexing space: {space_name}")
-            await self._indexer.run(space_name)
+            await self._indexer.run(
+                user_id="sreeharsha-dev",       # NOTE: get user_id from auth
+                space_name=space_name
+            )
         except Exception as e:
             self.logger.error(f"Failed to index space '{space_name}': {str(e)}")
             raise SpaceError(f"Failed to index space: {str(e)}")
