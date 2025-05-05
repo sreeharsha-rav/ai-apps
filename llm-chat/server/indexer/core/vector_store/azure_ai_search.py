@@ -26,7 +26,7 @@ class AzureAISearch(BaseVectorStore):
 
             # define credential for Azure AI Search
             self.azure_search_credential = AzureKeyCredential(
-                key=azure_search_settings.AZURE_AI_SEARCH_KEY,
+                key=azure_search_settings.AZURE_AI_SEARCH_API_KEY,
             )
 
             # initialize index client

@@ -41,7 +41,7 @@ class Chunker:
             
             chunks = [
                 TextChunk(
-                    chunk_id=f"chunk:{document.doc_id}:{idx}",
+                    chunk_id=f"chunk-{document.doc_id}-{idx}",
                     doc_id=document.doc_id,
                     user_id=document.user_id,
                     space_name=document.space_name,
@@ -75,7 +75,7 @@ class Chunker:
             # TODO: research and implement text splitters based on chunking strategies and async generator
             for idx, chunk in enumerate(split_chunks, 1):
                 yield TextChunk(
-                    chunk_id=f"chunk:{document.doc_id}:{idx}",
+                    chunk_id=f"chunk-{document.doc_id}-{idx}",
                     doc_id=document.doc_id,
                     user_id=document.user_id,
                     space_name=document.space_name,

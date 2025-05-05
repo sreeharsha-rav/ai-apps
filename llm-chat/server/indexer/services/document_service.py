@@ -39,13 +39,18 @@ class DocumentService:
             AsyncGenerator[VectorizedChunk, None]: Generator of vectorized chunks
         """
         try:
+            # check if space exists
+            if not await self.storage_client.does_space_exist(space_name):
+                self.logger.warning(f"Space with name '{space_name}' not found")
+                raise FileNotFoundError(f"Space with name '{space_name}' not found")
+
+            # list all files in the space
             files = await self.storage_client.list_all_files(space_name)
             self.logger.info(f"Found {len(files)} files in space: {space_name}")
 
-            files_generator = await self.storage_client.load_all_files(space_name, files)
-
-            # process documents in batches
-            current_batch: list[TextChunk] = []
+            # load all files in the space
+            files_generator = self.storage_client.load_all_files(space_name, files)
+            current_batch: list[TextChunk] = []                                     # batch of text chunks to process
             async for raw_document in files_generator:
                 # parse document based on file extension
                 parsed_document: ParsedDocument = self.content_parser.parse(raw_document)

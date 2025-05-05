@@ -2,6 +2,14 @@ from pydantic import BaseModel, Field, ConfigDict
 from ulid import ULID
 from typing import Optional
 from datetime import datetime
+from enum import Enum
+
+class IndexingStatus(str, Enum):
+    """Enum representing the status of indexing."""
+    PENDING = "pending"
+    IN_PROGRESS = "in_progress"
+    COMPLETE = "complete"
+    # FAILED = "failed"             # TODO
 
 class Space(BaseModel):
     """Model for a space metadata."""
@@ -20,6 +28,14 @@ class Space(BaseModel):
         min_length=0,
         max_length=256,
         description="Description of the space."
+    )
+    indexing_status: IndexingStatus = Field(
+        default=IndexingStatus.PENDING,
+        description="Indexing status of the space."
+    )
+    last_indexed: Optional[str] = Field(
+        default="",
+        description="Timestamp of the last indexing."
     )
     created_at: str = Field(
         default_factory=lambda: datetime.now().isoformat(),

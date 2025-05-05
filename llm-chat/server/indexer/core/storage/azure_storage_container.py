@@ -26,11 +26,6 @@ class AzureStorageContainer(BaseStorage):
                 container_name=f"{self.user_id}-container"
             )
 
-            # check if container exists
-            if not self.container_client.exists():
-                self.logger.error(f"Container {self.user_id}-container does not exist")
-                raise Exception("Container does not exist")
-                
             self.logger.debug(f"Azure Storage container initialized successfully")
 
         except Exception as e:
@@ -53,12 +48,29 @@ class AzureStorageContainer(BaseStorage):
             blob_client = self.container_client.get_blob_client(blob=blob_name)
 
             # check if blob exists
-            if not blob_client.exists():
+            if not await blob_client.exists():
                 raise Exception("Blob does not exist")
 
             return blob_client
         except Exception as e:
             print(f"Error getting blob client for {space_name}: {str(e)}")
+            raise e
+
+    async def does_space_exist(self, space_name: str) -> bool:
+        """
+        Check if a space exists.
+
+        Args:
+            space_name: Space name
+
+        Returns:
+            True if the space exists, False otherwise
+        """
+        try:
+            blob_client = await self._get_space_blob_client(space_name)
+            return await blob_client.exists()
+        except Exception as e:
+            self.logger.error(f"Error checking if space exists: {str(e)}")
             raise e
 
     async def get_space_metadata(self, space_name: str) -> SpaceMetadata:
@@ -116,50 +128,57 @@ class AzureStorageContainer(BaseStorage):
             List of file names in the space
         """
         try:
-            file_blobs = await self.container_client.walk_blobs(name_starts_with=f"spaces/{space_name}/files/")
             files = []
+            prefix = f"spaces/{space_name}/files/"
 
-            for blob in file_blobs:
-                file_name = blob.name.split("/")[-1]
+            async for blob in self.container_client.walk_blobs(name_starts_with=prefix):
+                # Skip directories/prefixes
+                if hasattr(blob, 'name'):  # Only process actual blobs, not prefixes
+                    file_name = blob.name.split("/")[-1]
 
-                # skip metadata files
-                if file_name == "_info.json":
-                    continue
+                    # Skip metadata files
+                    if file_name == "_info.json":
+                        continue
 
-                files.append(file_name)
+                    files.append(file_name)
             return files
         except Exception as e:
             print(f"Error listing files in {space_name}: {str(e)}")
             raise e
 
-    async def load_all_files(self, space_name: str, files: list[str]) -> AsyncGenerator[RawDocument, None]:
+    def load_all_files(self, space_name: str, files: list[str]) -> AsyncGenerator[RawDocument, None]:
         """
         Load all files in a space as an async generator.
 
         Args:
             space_name: Space name
             files: List of file names in the space
+            
+        Returns:
+            AsyncGenerator of RawDocument objects
         """
-        try:
-            for idx, file in enumerate(files, 1):
-                blob_path = f"spaces/{space_name}/files/{file}"
-                extension = file.split(".")[-1]
-                blob_client = self.container_client.get_blob_client(blob=blob_path)
+        async def _load_files():
+            try:
+                for idx, file in enumerate(files, 1):
+                    blob_path = f"spaces/{space_name}/files/{file}"
+                    extension = file.split(".")[-1]
+                    blob_client = self.container_client.get_blob_client(blob=blob_path)
 
-                print(f"Downloading {idx}/{len(files)}: {blob_path}")
+                    self.logger.info(f"Downloading {idx}/{len(files)}: {blob_path}")
 
-                stream = await blob_client.download_blob()
-                content = await stream.readall()
-                yield RawDocument(
-                    user_id=self.user_id,
-                    space_name=space_name,
-                    file_name=file,
-                    file_extension=extension,
-                    blob_path=blob_path,
-                    content=content,
-                    # content_type= TODO: future implementation when needed
-                )
+                    stream = await blob_client.download_blob()
+                    content = await stream.readall()
+                    yield RawDocument(
+                        user_id=self.user_id,
+                        space_name=space_name,
+                        file_name=file,
+                        file_extension=extension,
+                        blob_path=blob_path,
+                        content=content,
+                    )
 
-        except Exception as e:
-            print(f"Error loading documents from {space_name}: {str(e)}")
-            raise e
+            except Exception as e:
+                self.logger.error(f"Error loading documents from {space_name}: {str(e)}")
+                raise e
+                
+        return _load_files()

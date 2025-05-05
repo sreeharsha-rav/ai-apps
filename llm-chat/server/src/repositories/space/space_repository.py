@@ -62,6 +62,20 @@ class SpaceRepository(ISpaceRepository):
             self.logger.error(f"Failed to get space '{space_name}': {str(e)}")
             raise
 
+    # async def get_by_id(self, space_id: str) -> Space:
+    #     """Get a space by id"""
+    #     try:
+    #         self.logger.info(f"Getting space by id: {space_id}")
+    #         space_blob_client = self._get_space_blob_client(space_id)
+    #         space_blob_properties = await space_blob_client.get_blob_properties()
+    #         space_blob_metadata = space_blob_properties.metadata
+    #         space = Space(**space_blob_metadata)
+    #         self.logger.info(f"Successfully retrieved space: {space_id}")
+    #         return space
+    #     except Exception as e:
+    #         self.logger.error(f"Failed to get space '{space_id}': {str(e)}")
+    #         raise
+
     async def list_all_spaces(self) -> List[Space]:
         """List all spaces"""
         try:

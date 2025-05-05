@@ -42,6 +42,8 @@ class IndexManager:
             if not await self.vector_store_client.does_index_exist():
                 self.logger.error("Index does not exist")
                 raise Exception("Index does not exist")
+                # self.logger.warning("Index does not exist, creating new index")
+                # await self.vector_store_client.create_index()
 
             # convert vectorized chunks to index documents
             self.logger.info(f"Indexing {len(vectorized_chunks)} documents")

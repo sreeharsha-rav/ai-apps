@@ -6,6 +6,7 @@ from indexer.services.index_manager import IndexManager
 from indexer.schemas.document import VectorizedChunk
 from indexer.schemas.metadata import IndexingStatus
 from indexer.utils.logging import setup_logger
+from datetime import datetime
 
 class Indexer:
     """Main entry point for the indexer application."""
@@ -84,6 +85,7 @@ class Indexer:
             # Update indexing status
             self.logger.debug("Updating space metadata status to COMPLETE")
             space_metadata.indexing_status = IndexingStatus.COMPLETE
+            space_metadata.last_indexed = datetime.now().isoformat()
             await self.storage_client.update_space_metadata(space_name, space_metadata)
             
             self.logger.info(f"Indexing completed successfully for space: {space_name}")

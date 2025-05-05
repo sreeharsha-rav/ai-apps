@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, HTTPException, Depends
-from src.schemas.space import SpaceRequest, SpaceResponse, RESERVED_SPACE_NAMES
+from src.schemas.space import SpaceRequest, SpaceResponse
 from src.api.v1.dependencies import validate_space_name
 from src.services.space import SpaceService
 from src.core.exceptions.space import SpaceError
@@ -71,3 +71,17 @@ async def delete_space(space_name: str = Depends(validate_space_name)) -> None:
     except Exception as e:
         logger.error(f"Unexpected error while deleting space '{space_name}': {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error deleting space: {str(e)}")
+
+@space_router.post("/{space_name}/index", status_code=status.HTTP_200_OK)
+async def index_space(space_name: str = Depends(validate_space_name)) -> None:
+    """Index all files in a space"""
+    try:
+        logger.info(f"Indexing space with name: {space_name}")
+        await space_service.index_space(space_name)
+        logger.info(f"Successfully indexed space: {space_name}")
+    except SpaceError as e:
+        logger.error(f"Space error while indexing space '{space_name}': {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Unexpected error while indexing space '{space_name}': {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error indexing space: {str(e)}")

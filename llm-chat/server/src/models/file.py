@@ -9,6 +9,7 @@ class FileExtension(str, Enum):
     PDF = "pdf"
     DOCX = "docx"
     DOC = "doc"
+    MD = "md"
     # add more as needed
 
 class File(BaseModel):

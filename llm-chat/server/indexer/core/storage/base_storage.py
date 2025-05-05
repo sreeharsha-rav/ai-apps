@@ -7,6 +7,18 @@ class BaseStorage(ABC):
     """Base class for all storage implementations"""
 
     @abstractmethod
+    async def does_space_exist(self, space_name: str) -> bool:
+        """Check if a space exists.
+
+        Args:
+            space_name: Space name
+
+        Returns:
+            True if the space exists, False otherwise
+        """
+        pass
+
+    @abstractmethod
     async def get_space_metadata(self, space_name: str) -> SpaceMetadata:
         """Get metadata for a space.
 
@@ -41,7 +53,7 @@ class BaseStorage(ABC):
         pass
 
     @abstractmethod
-    async def load_all_files(self, space_name: str, files: list[str]) -> AsyncGenerator[RawDocument, None]:
+    def load_all_files(self, space_name: str, files: list[str]) -> AsyncGenerator[RawDocument, None]:
         """Load all files in a space.
 
         Args:

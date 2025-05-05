@@ -34,7 +34,7 @@ class SpaceMetadata(BaseModel):
         description="Indexing status of the space."
     )
     last_indexed: str = Field(
-        default=None,
+        default="",
         description="Timestamp of the last indexing."
     )
     created_at: str = Field(
