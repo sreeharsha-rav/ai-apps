@@ -54,7 +54,7 @@ def create_app() -> FastAPI:
     return fastapi_app
 
 def get_server_config() -> dict:
-    """Get the uvicorn server configuration based on environment"""
+    """Get the uvicorn src configuration based on environment"""
     if is_production():
         return {
             "host": "0.0.0.0",

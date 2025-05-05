@@ -60,6 +60,27 @@ The project is structured as follows:
    │   └── v1/               # Version 1 of the API
    ├── others/               # Other tests to be added
    ```
+- `indexer/`: Contains the indexer function application.
+    ```
+   indexer/
+   ├── config/                                      # Configuration settings
+   │   ├── settings.py                                  # Settings for Azure Storage, Azure AI Search, and Azure OpenAI Embedding
+   │   └── constants.py                                 # Constants for the indexer application
+   ├── core/                                        # Core components
+   │   ├── embedding/                                   # Embedding components
+   │   ├── processors/                                  # Processor components
+   │   ├── storage/                                     # Storage components
+   │   └── vector_store/                                # Vector store components
+   ├── schemas/                                      # Data models for schema representation
+   │   ├── document.py                                  # Document schemas
+   │   ├── metadata.py                                  # Metadata schemas
+   │   └── vector_store.py                              # Vector store schemas
+   ├── services/                                     # Business logic services
+   │   ├── document_service.py                          # Document service
+   │   └── index_manager.py                             # Index manager service
+   ├── main.py                                      # Main entry point
+   └── __init__.py                                  # Initialization file
+    ```
 - `uv.lock`: Lock file for `uv` dependency management.
 - `pyproject.toml`: Configuration file for `uv` and `pip`.
 
@@ -70,7 +91,7 @@ This project structure is based on the [FastAPI Clean Architecture](https://gith
 1. Clone the repository:
     ```bash
     git clone https://github.com/sreeharsa-rav/ai-apps/tree/main/llm-chat
-    cd llm-chat/server
+    cd llm-chat/src
     ```
 2. Create a virtual environment if not using uv (uv automatically creates a virtual environment):
     ```bash
