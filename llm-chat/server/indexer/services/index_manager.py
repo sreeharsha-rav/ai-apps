@@ -79,3 +79,12 @@ class IndexManager:
         except Exception as e:
             self.logger.error(f"Error deleting documents: {str(e)}")
             raise e
+
+    async def close(self):
+        """Close all clients and release resources."""
+        try:
+            self.logger.debug("Closing IndexManager resources")
+            await self.vector_store_client.close()
+            self.logger.debug("IndexManager resources closed successfully")
+        except Exception as e:
+            self.logger.error(f"Error closing IndexManager resources: {str(e)}")

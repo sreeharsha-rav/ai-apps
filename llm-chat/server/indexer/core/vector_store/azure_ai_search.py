@@ -47,6 +47,16 @@ class AzureAISearch(BaseVectorStore):
         except Exception as e:
             self.logger.error(f"Error initializing Azure AI Search client: {str(e)}")
             raise e
+            
+    async def close(self):
+        """Close all clients and release resources."""
+        try:
+            self.logger.debug("Closing Azure AI Search clients")
+            await self.index_client.close()
+            await self.search_client.close()
+            self.logger.debug("Azure AI Search clients closed successfully")
+        except Exception as e:
+            self.logger.error(f"Error closing Azure AI Search clients: {str(e)}")
 
     async def does_index_exist(self) -> bool:
         """Check if the index exists."""

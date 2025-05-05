@@ -45,14 +45,12 @@ class Indexer:
         try:
             self.logger.info(f"Starting indexing for user: {user_id}, space: {space_name}")
             
-            # Initialize clients with user_id
+            # Initialize clients and services with user_id
             storage_client = AzureStorageContainer(user_id=user_id)
-
-            # Initialize services with user_id
             document_service = DocumentService(
                 storage_client=storage_client,
                 embedding_client=self.embedding_client,
-                vectorize_batch_size=10                     # TODO: research for optimal value
+                vectorize_batch_size=10
             )
             
             # Initialize indexing status
@@ -91,6 +89,12 @@ class Indexer:
         except Exception as e:
             self.logger.error(f"Error running indexer: {str(e)}")
             raise e
+        finally:
+            # Clean up resources
+            if self.index_manager:
+                await self.index_manager.close()
+            # Add other cleanup as needed for other resources
+            self.logger.debug("Cleaned up all resources")
 
     def stop(self):
         """Stop the indexer application."""

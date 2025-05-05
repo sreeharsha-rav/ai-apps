@@ -50,3 +50,8 @@ class BaseVectorStore(ABC):
         pass
 
     # TODO: future delete only selected documents
+
+    @abstractmethod
+    async def close(self):
+        """Close all clients and release resources."""
+        pass
