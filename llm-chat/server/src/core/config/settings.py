@@ -1,10 +1,26 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field, AnyUrl
+from enum import Enum
+
+
+class Environment(str, Enum):
+    """Environment settings for the application."""
+    DEVELOPMENT = "development"
+    PRODUCTION = "production"
 
 class AppSettings(BaseSettings):
-    # Environment
-    ENVIRONMENT: str = "development"
-    PORT: int = 8000
+    ENVIRONMENT: Environment = Field(
+        default=Environment.DEVELOPMENT,
+        description="Running environment (development/production)"
+    )
     HOST: str = "127.0.0.1"
+    PORT: int = 8020
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="allow",
+    )
 
 class LLMSettings(BaseSettings):
     """Settings for all LLMs"""

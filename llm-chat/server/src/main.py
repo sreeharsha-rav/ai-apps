@@ -1,12 +1,12 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.core.config import app_settings
+from src.core.config import app_settings, Environment
 from src.api import api_router
 
 def is_production() -> bool:
     """Check if the application is running in production mode"""
-    return app_settings.ENVIRONMENT == "production"
+    return app_settings.ENVIRONMENT == Environment.PRODUCTION
 
 def get_cors_origins() -> list:
     """Get the list of allowed CORS origins based on environment"""
@@ -46,7 +46,12 @@ def create_app() -> FastAPI:
     # add health check endpoint if needed
     @fastapi_app.get("/health", status_code=200)
     async def health_check():
-        return {"status": "OK"}
+        return {
+            "status": "OK",
+            "environment": app_settings.ENVIRONMENT,
+            "debug": not is_env_production,
+            "workers": app_settings.WORKERS,
+        }
 
     # register api router
     fastapi_app.include_router(api_router)
