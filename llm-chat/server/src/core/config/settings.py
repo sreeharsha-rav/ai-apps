@@ -69,6 +69,12 @@ class StorageSettings(BaseSettings):
     # Container name for storing space objects
     SPACE_CONTAINER_NAME: str = ""
 
+    # cosmos db settings
+    AZURE_COSMOS_DB_URI: str = ""
+    AZURE_COSMOS_DB_KEY: str = ""
+    AZURE_COSMOS_DB_DATABASE_NAME: str = "spursense-poc"
+    AZURE_COSMOS_DB_CONTAINER_NAME: str = "threads"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

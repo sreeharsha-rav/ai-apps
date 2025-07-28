@@ -1,5 +1,5 @@
 from src.core.llm import llm_registry
-from src.repositories.chat import ChatRepository
+from src.repositories.chat.azure_storage_container import ChatRepository
 from src.core.exceptions.chat import ChatNotFoundError
 from src.core.prompts import GENERAL_CHAT_SYSTEM_PROMPT
 from src.schemas.chat import ChatMessageRequest, ChatMessageResponse

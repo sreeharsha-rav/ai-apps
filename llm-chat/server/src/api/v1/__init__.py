@@ -8,8 +8,8 @@ v1_router = APIRouter(
 # include feature-specific routers
 v1_router.include_router(chat_router)
 v1_router.include_router(models_router)
-v1_router.include_router(space_router)
-v1_router.include_router(file_router)
+# v1_router.include_router(space_router)
+# v1_router.include_router(file_router)
 
 __all__ = [
     "v1_router",
