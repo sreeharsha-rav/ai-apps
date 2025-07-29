@@ -27,9 +27,29 @@ class AppConfig(BaseSettings):
         description="List of allowed CORS origins",
     )
 
+class StorageSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        case_sensitive=True,
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    uploads_container_name: str = Field("user-uploads", env="AZURE_STORAGE_CONTAINER_NAME")
+    azure_storage_connection_string: str = Field(
+        ...,
+        env="AZURE_STORAGE_CONNECTION_STRING",
+        description="Azure Blob Storage connection string"
+    )
+
 @lru_cache(maxsize=1)
 def get_app_config() -> AppConfig:
     """Create and cache a single instance of AppConfig."""
     return AppConfig()
+
+@lru_cache(maxsize=1)
+def get_storage_settings() -> StorageSettings:
+    """Create and cache a single instance of StorageSettings."""
+    return StorageSettings()
 
 
