@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import get_app_config
 from src.middleware.logging import LoggingMiddleware
+from src.api import api_router
 
 app_config = get_app_config()
 is_env_production: bool = app_config.environment.lower() == "production"
@@ -43,3 +44,5 @@ async def health_check():
         "environment": app_config.environment,
         "debug": app_config.log_level
     }
+
+app.include_router(api_router)
