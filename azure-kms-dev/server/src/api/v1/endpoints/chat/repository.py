@@ -1,7 +1,7 @@
 from azure.storage.blob.aio import ContainerClient
 from typing import Optional
 
-from src.config import get_storage_settings
+from src.config.settings import get_storage_settings
 from src.middleware.logging import logger
 
 
@@ -12,12 +12,12 @@ class FileRepository:
 
     def __init__(self):
         self._blob_container_client = ContainerClient.from_connection_string(
-            conn_str=storage_settings.azure_storage_connection_string,
-            container_name=storage_settings.uploads_container_name
+            conn_str=storage_settings.AZURE_STORAGE_CONNECTION_STRING,
+            container_name=storage_settings.AZURE_STORAGE_CONTAINER_NAME
         )
         logger.info("Initialized FileRepository with Async Azure Blob Storage client.")
 
-    async def upload_to_blob(self, blob_name: str, content: bytes, metadata: Optional[dict[str, str]] = None) -> None:
+    async def upload_to_blob(self, blob_name: str, content: bytes, metadata: Optional[dict[str, str]] = None) -> str:
         """
         Uploads a file to Azure Blob Storage.
 
@@ -25,6 +25,9 @@ class FileRepository:
             blob_name: Path to the blob
             content: Content to upload
             metadata: Optional metadata to store with the blob
+
+        Returns:
+            str: URL of the uploaded blob
         """
         try:
             blob_client = self._blob_container_client.get_blob_client(blob=blob_name)
@@ -33,7 +36,9 @@ class FileRepository:
                 overwrite=True,
                 metadata=metadata
             )
+            blob_url = blob_client.url
             logger.info(f"Successfully uploaded file to blob storage: {blob_name}")
+            return blob_url
         except Exception as e:
             logger.error(f"Failed to upload file to blob storage: {e}")
             raise RuntimeError(f"Failed to upload file to blob storage: {e}")

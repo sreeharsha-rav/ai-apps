@@ -1,6 +1,11 @@
-from fastapi import APIRouter, status, Path, Query, UploadFile, File
+from fastapi import APIRouter, status, Path, Query, UploadFile, File, HTTPException, Depends
 from uuid import uuid4
 from typing import Optional
+
+from .schemas import FileUploadResponse
+from .service import ChatService
+from .dependencies import get_chat_service
+
 
 chat_router = APIRouter(
     prefix="/chat",
@@ -40,18 +45,39 @@ async def upload_file(
         description="The ID of the chat for file upload",
         example="chat_123e4567-e89b-12d3-a456-426614174000"
     ),
-    file: UploadFile = File(...)
+    file: UploadFile = File(..., description="The file to upload for chat processing (max 50MB)"),
+    chat_service: ChatService = Depends(get_chat_service)
 ):
     """
     Endpoint to upload a file for chat processing.
     """
-    if chat_id is None:
-        return {
-            "message": "File uploaded successfully!",
-            "filename": file.filename
-        }
-    else:
-        return {
-            "message": f"File uploaded successfully for chat {chat_id}!",
-            "filename": file.filename
-        }
+    try:
+        # FUTURE: Use chat_id to associate the file with a specific chat if needed
+
+        filename = file.filename
+        if not filename or not filename.strip():
+            raise HTTPException(status_code=400, detail="Filename cannot be empty or whitespace.")
+        file_extension = filename.split('.')[-1].lower()
+        content = await file.read()
+
+        uploaded_file = await chat_service.upload_file_and_process(
+            file_extension=file_extension,
+            filename=filename,
+            content=content,
+            size=file.size
+        )
+
+        return FileUploadResponse(
+            id=uploaded_file.id,
+            filename=uploaded_file.filename,
+            type=uploaded_file.type,
+            size=uploaded_file.size,
+            uploaded_at=uploaded_file.uploaded_at,
+            url=uploaded_file.url,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error uploading file: {str(e)}")

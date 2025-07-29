@@ -12,19 +12,15 @@ class AppConfig(BaseSettings):
         extra="ignore",
     )
 
-    version: str = Field("0.1.0", env="VERSION")
-    host: str = Field("0.0.0.0", env="SERVER_HOST")
-    port: int = Field(8000, env="SERVER_PORT")
-    reload: bool = Field(True, env="SERVER_RELOAD")
-    log_level: str = Field("info", env="LOG_LEVEL")
-    environment: Literal["development", "staging", "production"] = Field(
-        default="development",
-        env="ENVIRONMENT",
-    )
-    cors_origins: list[str] = Field(
+    VERSION: str = "1.0.0"
+    ENVIRONMENT: Literal["development", "staging", "production"] = "development"
+    SERVER_HOST: str = "0.0.0.0"
+    SERVER_PORT: int = 8080
+    SERVER_RELOAD: bool = True
+    SERVER_LOG_LEVEL: Literal["debug", "info", "warning", "error", "critical"] = "debug"
+    CORS_ORIGINS: list[str] = Field(
         default=["*"],
-        env="CORS_ORIGINS",
-        description="List of allowed CORS origins",
+        description="List of allowed CORS origins"
     )
 
 class StorageSettings(BaseSettings):
@@ -35,12 +31,8 @@ class StorageSettings(BaseSettings):
         extra="ignore",
     )
 
-    uploads_container_name: str = Field("user-uploads", env="AZURE_STORAGE_CONTAINER_NAME")
-    azure_storage_connection_string: str = Field(
-        ...,
-        env="AZURE_STORAGE_CONNECTION_STRING",
-        description="Azure Blob Storage connection string"
-    )
+    AZURE_STORAGE_CONTAINER_NAME: str = "user-uploads"
+    AZURE_STORAGE_CONNECTION_STRING: str = ""
 
 @lru_cache(maxsize=1)
 def get_app_config() -> AppConfig:

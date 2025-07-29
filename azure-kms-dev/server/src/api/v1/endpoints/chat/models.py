@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from enum import Enum
-from typing import Literal
+from typing import Literal, Optional
 from uuid import uuid4
 from datetime import datetime
 
@@ -59,6 +59,9 @@ class FileExtension(str, Enum):
 class File(BaseModel):
     id: str = Field(
         default_factory=lambda: f"file_{uuid4()}",
+        max_length=41,
+        min_length=41,
+        pattern=r"^file_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         description="Unique identifier for the file"
     )
     filename: str = Field(
@@ -79,7 +82,7 @@ class File(BaseModel):
         default_factory=lambda: datetime.now().isoformat(),
         description="Upload timestamp"
     )
-    url: str = Field(
-        ...,
-        description="URL where the file is stored"
+    url: Optional[str] = Field(
+        None,
+        description="Blob Storage URL for the file"
     )
