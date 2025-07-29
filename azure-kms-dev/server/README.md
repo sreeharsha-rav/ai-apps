@@ -49,7 +49,7 @@
 ### Development Setup
 
 ```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000 --log-level debug
+uvicorn app.main:app --reload --no-access-log --host 0.0.0.0 --port 8000 --log-level debug
 ```
 
 View swagger docs (only available in development mode):

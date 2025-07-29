@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import get_app_config
-
+from src.middleware.logging import LoggingMiddleware
 
 app_config = get_app_config()
 is_env_production: bool = app_config.environment.lower() == "production"
@@ -25,6 +25,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(LoggingMiddleware)   # type: ignore
 
 @app.get("/")
 async def root():
