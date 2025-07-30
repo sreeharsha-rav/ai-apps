@@ -37,14 +37,14 @@ async def create_chat():
 
 @chat_router.post("/upload", status_code=status.HTTP_201_CREATED)
 async def upload_file(
-    chat_id: Optional[str] = Query(
-        default=None,
-        min_length=41,
-        max_length=41,
-        pattern=r"^chat_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
-        description="The ID of the chat for file upload",
-        example="chat_123e4567-e89b-12d3-a456-426614174000"
-    ),
+    # chat_id: Optional[str] = Query(
+    #     default=None,
+    #     min_length=41,
+    #     max_length=41,
+    #     pattern=r"^chat_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    #     description="The ID of the chat for file upload",
+    #     example="chat_123e4567-e89b-12d3-a456-426614174000"
+    # ),
     file: UploadFile = File(..., description="The file to upload for chat processing (max 50MB)"),
     chat_service: ChatService = Depends(get_chat_service)
 ):
@@ -54,19 +54,7 @@ async def upload_file(
     try:
         # FUTURE: Use chat_id to associate the file with a specific chat if needed
 
-        filename = file.filename
-        if not filename or not filename.strip():
-            raise HTTPException(status_code=400, detail="Filename cannot be empty or whitespace.")
-        file_extension = filename.split('.')[-1].lower()
-        content = await file.read()
-
-        uploaded_file = await chat_service.upload_file_and_process(
-            file_extension=file_extension,
-            filename=filename,
-            content=content,
-            size=file.size
-        )
-
+        uploaded_file = await chat_service.upload_file_and_process_stream(file=file)
         return FileUploadResponse(
             id=uploaded_file.id,
             filename=uploaded_file.filename,

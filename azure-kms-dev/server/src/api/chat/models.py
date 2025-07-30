@@ -4,6 +4,8 @@ from typing import Literal, Optional
 from uuid import uuid4
 from datetime import datetime
 
+from .constants import FILENAME_PATTERN
+
 
 class Role(str, Enum):
     USER = "user"
@@ -65,9 +67,8 @@ class File(BaseModel):
         description="Unique identifier for the file"
     )
     filename: str = Field(
-        min_length=1,
-        max_length=255,
-        pattern=r'^[a-zA-Z0-9_\-\[\]\(\)\{\} ]+\.[a-zA-Z]+$',
+        ...,
+        pattern=FILENAME_PATTERN,
         description="Original file name"
     )
     type: FileExtension = Field(

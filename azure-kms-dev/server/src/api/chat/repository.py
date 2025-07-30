@@ -1,5 +1,6 @@
 from azure.storage.blob.aio import ContainerClient
 from typing import Optional
+from fastapi import UploadFile
 
 from src.config.settings import get_storage_settings
 from src.middleware.logging import logger
@@ -17,28 +18,28 @@ class FileRepository:
         )
         logger.info("Initialized FileRepository with Async Azure Blob Storage client.")
 
-    async def upload_to_blob(self, blob_name: str, content: bytes, metadata: Optional[dict[str, str]] = None) -> str:
+    async def upload_file_stream_to_blob(self, blob_name: str, file: UploadFile, metadata: Optional[dict[str, str]] = None) -> str:
         """
-        Uploads a file to Azure Blob Storage.
+        Uploads a file stream to Azure Blob Storage.
 
         Args:
             blob_name: Path to the blob
-            content: Content to upload
+            file: file stream
             metadata: Optional metadata to store with the blob
 
         Returns:
             str: URL of the uploaded blob
         """
         try:
-            blob_client = self._blob_container_client.get_blob_client(blob=blob_name)
-            await blob_client.upload_blob(
-                data=content,
+            blob_client = await self._blob_container_client.upload_blob(
+                name=blob_name,
+                data=file.file,
+                blob_type="BlockBlob",
                 overwrite=True,
                 metadata=metadata
             )
-            blob_url = blob_client.url
             logger.info(f"Successfully uploaded file to blob storage: {blob_name}")
-            return blob_url
+            return blob_client.url
         except Exception as e:
             logger.error(f"Failed to upload file to blob storage: {e}")
             raise RuntimeError(f"Failed to upload file to blob storage: {e}")

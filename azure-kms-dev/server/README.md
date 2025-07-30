@@ -49,12 +49,12 @@
 ### Development Setup
 
 ```bash
-uvicorn app.main:app --reload --no-access-log --host 0.0.0.0 --port 8000 --log-level debug
+uvicorn app.main:app --reload --no-access-log --host 0.0.0.0 --port 8080 --log-level debug
 ```
 
 View swagger docs (only available in development mode):
 ```bash
-http://localhost:8000/docs
+http://localhost:8080/docs
 ```
 
 ### Production Setup
@@ -62,3 +62,7 @@ http://localhost:8000/docs
 ```bash
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4 --log-level info
 ```
+
+## Tech Debt
+
+- [ ] Add proper cleanup of unclosed Async aiohttp sessions
