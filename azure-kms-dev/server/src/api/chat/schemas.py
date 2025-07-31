@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, field_validator, ConfigDict
 from typing import Optional
 
-from .models import Role
+from .models import Role, FileProcessingStatus
 
 
 class ChatRequest(BaseModel):
@@ -65,14 +65,14 @@ class FileUploadResponse(BaseModel):
         description="Unique identifier for the uploaded file",
         example="file_123e4567-e89b-12d3-a456-426614174000"
     )
-    filename: str = Field(
+    name: str = Field(
         ...,
         description="Original file name",
         example="example_file.pdf"
     )
-    type: str = Field(
+    extension: str = Field(
         ...,
-        description="Type of the file (e.g., pdf, docx)",
+        description="extension of the file (e.g., txt, pdf, docx)",
         example="pdf"
     )
     size: int = Field(
@@ -89,4 +89,14 @@ class FileUploadResponse(BaseModel):
         ...,
         description="URL to access the uploaded file",
         example="https://azureblobstorage.com/user_uploads/temp/file_123e4567-e89b-12d3-a456-426614174000/example_file.pdf"
+    )
+    extracted_content_url: Optional[str] = Field(
+        None,
+        description="URL to access the extracted content of the file, if available",
+        example="https://azureblobstorage.com/threads/thread_12345/extracted/file_12345.json"
+    )
+    processing_status: FileProcessingStatus = Field(
+        ...,
+        description="Current processing status of the file",
+        example=FileProcessingStatus.PENDING
     )

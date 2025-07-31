@@ -1,8 +1,12 @@
 from azure.storage.blob.aio import ContainerClient
 from typing import Optional
+from pathlib import Path
+import aiofiles
+import tempfile
 from fastapi import UploadFile
 
 from src.config.settings import get_storage_settings
+from src.core.document_processor import Document
 from src.middleware.logging import logger
 
 
@@ -44,22 +48,57 @@ class FileRepository:
             logger.error(f"Failed to upload file to blob storage: {e}")
             raise RuntimeError(f"Failed to upload file to blob storage: {e}")
 
-    async def download_from_blob(self, blob_name: str) -> bytes:
+    async def upload_document_to_blob(self, blob_name: str, document: Document, metadata: Optional[dict[str, str]] = None) -> str:
         """
-        Downloads a file from Azure Blob Storage.
+        Uploads a document to Azure Blob Storage.
+
+        Args:
+            blob_name: Path to the blob
+            document: Document object containing name and content
+            metadata: Optional metadata to store with the blob
+
+        Returns:
+            str: URL of the uploaded blob
+        """
+        try:
+            blob_client = await self._blob_container_client.upload_blob(
+                name=blob_name,
+                data=document.model_dump_json(indent=2).encode('utf-8'),
+                blob_type="BlockBlob",
+                overwrite=True,
+                metadata=metadata
+            )
+            logger.info(f"Successfully uploaded document '{document.id}' to blob storage: {blob_name}")
+            return blob_client.url
+        except Exception as e:
+            logger.error(f"Failed to upload document to blob storage: {e}")
+            raise RuntimeError(f"Failed to upload document to blob storage: {e}") from e
+
+    async def download_blob_to_temp_file(self, blob_name: str) -> Path:
+        """
+        Downloads a blob to a temporary file.
 
         Args:
             blob_name: Path to the blob
 
         Returns:
-            bytes: Content of the downloaded blob
+            Path: Path to the temporary file
         """
+        temp_path = None
         try:
-            blob_client = self._blob_container_client.get_blob_client(blob=blob_name)
-            download_stream = await blob_client.download_blob()
-            data = await download_stream.readall()
-            logger.info(f"Successfully downloaded file from blob storage: {blob_name}")
-            return data
+            temp_file = tempfile.NamedTemporaryFile(delete=False)
+            temp_path = Path(temp_file.name)
+            temp_file.close()
+
+            download_stream = await self._blob_container_client.download_blob(blob=blob_name)
+            async with aiofiles.open(temp_path, 'wb') as f:
+                async for chunk in download_stream.chunks():
+                    await f.write(chunk)
+
+            logger.info(f"Downloaded blob '{blob_name}' to temporary file '{temp_path}'")
+            return temp_path
         except Exception as e:
-            logger.error(f"Failed to download file from blob storage: {e}")
-            raise RuntimeError(f"Failed to download file from blob storage: {e}")
+            logger.error(f"Failed to download blob '{blob_name}' to temporary file: {e}")
+            if temp_path and temp_path.exists():
+                temp_path.unlink(missing_ok=True)
+            raise RuntimeError(f"Failed to download blob '{blob_name}' to temporary file: {e}") from e

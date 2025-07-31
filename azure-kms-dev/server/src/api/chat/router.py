@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Path, Query, UploadFile, File, HTTPException, Depends
+from fastapi import APIRouter, status, Path, Query, UploadFile, File, HTTPException, Depends, BackgroundTasks
 from uuid import uuid4
 from typing import Optional
 
@@ -37,6 +37,7 @@ async def create_chat():
 
 @chat_router.post("/upload", status_code=status.HTTP_201_CREATED)
 async def upload_file(
+    background_tasks: BackgroundTasks,
     # chat_id: Optional[str] = Query(
     #     default=None,
     #     min_length=41,
@@ -54,14 +55,21 @@ async def upload_file(
     try:
         # FUTURE: Use chat_id to associate the file with a specific chat if needed
 
-        uploaded_file = await chat_service.upload_file_and_process_stream(file=file)
+        uploaded_file = await chat_service.upload_file_stream(file=file)
+        background_tasks.add_task(
+            chat_service.process_file_background,
+            uploaded_file
+        )
+
         return FileUploadResponse(
             id=uploaded_file.id,
-            filename=uploaded_file.filename,
-            type=uploaded_file.type,
+            name=uploaded_file.name,
+            extension=uploaded_file.extension,
             size=uploaded_file.size,
             uploaded_at=uploaded_file.uploaded_at,
             url=uploaded_file.url,
+            extracted_content_url=uploaded_file.extracted_content_url,
+            processing_status=uploaded_file.processing_status
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

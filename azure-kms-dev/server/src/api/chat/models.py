@@ -58,6 +58,12 @@ class FileExtension(str, Enum):
     PDF = "pdf"
     DOCX = "docx"
 
+class FileProcessingStatus(str, Enum):
+    PENDING = "pending"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
 class File(BaseModel):
     id: str = Field(
         default_factory=lambda: f"file_{uuid4()}",
@@ -66,14 +72,14 @@ class File(BaseModel):
         pattern=r"^file_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         description="Unique identifier for the file"
     )
-    filename: str = Field(
+    name: str = Field(
         ...,
         pattern=FILENAME_PATTERN,
         description="Original file name"
     )
-    type: FileExtension = Field(
+    extension: FileExtension = Field(
         ...,
-        description="Type of the file (e.g., txt, pdf, docx)"
+        description="Extension of the file (e.g., txt, pdf, docx)"
     )
     size: int = Field(
         ...,
@@ -86,4 +92,12 @@ class File(BaseModel):
     url: Optional[str] = Field(
         None,
         description="Blob Storage URL for the file"
+    )
+    extracted_content_url: Optional[str] = Field(
+        None,
+        description="URL for the extracted content of the file, if applicable"
+    )
+    processing_status: FileProcessingStatus = Field(
+        default=FileProcessingStatus.PENDING,
+        description="Current processing status of the file"
     )
