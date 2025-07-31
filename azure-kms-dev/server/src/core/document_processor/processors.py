@@ -7,7 +7,7 @@ from pypdf import PdfReader
 from typing import Dict, Type
 
 from .schemas import Document
-from src.api.chat.models import FileExtension
+from src.api.chat.models import FileType
 
 
 class BaseDocumentProcessor(ABC):
@@ -103,14 +103,14 @@ class PDFProcessor(BaseDocumentProcessor):
 class DocumentProcessorFactory:
     """Factory class to create document processors based on file extension."""
 
-    _processors: Dict[FileExtension, Type[BaseDocumentProcessor]] = {
-        FileExtension.TXT: TXTProcessor,
-        FileExtension.DOCX: DOCXProcessor,
-        FileExtension.PDF: PDFProcessor,
+    _processors: Dict[FileType, Type[BaseDocumentProcessor]] = {
+        FileType.TXT: TXTProcessor,
+        FileType.DOCX: DOCXProcessor,
+        FileType.PDF: PDFProcessor,
     }
 
     @classmethod
-    def get_processor(cls, file_extension: FileExtension) -> BaseDocumentProcessor:
+    def get_processor(cls, file_extension: FileType) -> BaseDocumentProcessor:
         """Get the appropriate document processor for the given file extension."""
         if file_extension not in cls._processors:
             raise ValueError(f"No processor available for file extension: {file_extension}")

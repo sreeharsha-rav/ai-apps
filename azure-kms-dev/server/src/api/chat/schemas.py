@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, field_validator, ConfigDict
 from typing import Optional
 
-from .models import Role, FileProcessingStatus
+from .models import Role, FileType, FileSource, FileProcessingStatus
 
 
 class ChatRequest(BaseModel):
@@ -70,20 +70,20 @@ class FileUploadResponse(BaseModel):
         description="Original file name",
         example="example_file.pdf"
     )
-    extension: str = Field(
+    type: FileType = Field(
         ...,
         description="extension of the file (e.g., txt, pdf, docx)",
-        example="pdf"
+        example=FileType.PDF
     )
     size: int = Field(
         ...,
         description="File size in bytes",
         example=102400
     )
-    uploaded_at: str = Field(
+    source: FileSource = Field(
         ...,
-        description="Timestamp when the file was uploaded",
-        example="2023-10-01T12:00:00Z"
+        description="Source of the file (e.g., system, onedrive)",
+        example=FileSource.SYSTEM
     )
     url: str = Field(
         ...,
@@ -99,4 +99,9 @@ class FileUploadResponse(BaseModel):
         ...,
         description="Current processing status of the file",
         example=FileProcessingStatus.PENDING
+    )
+    uploaded_at: str = Field(
+        ...,
+        description="Timestamp when the file was uploaded",
+        example="2023-10-01T12:00:00Z"
     )

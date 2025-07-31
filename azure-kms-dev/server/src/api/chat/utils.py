@@ -3,10 +3,10 @@ from typing import Optional, Tuple
 from fastapi import UploadFile
 
 from .constants import FILENAME_PATTERN, MAX_FILE_SIZE, READ_CHUNK_SIZE
-from .models import FileExtension
+from .models import FileType
 
 
-def validate_filename(filename: str) -> Tuple[str, FileExtension]:
+def validate_filename(filename: str) -> Tuple[str, FileType]:
     """Validates the filename with a specific pattern and checks the file extension."""
     if not filename or not filename.strip():
         raise ValueError("Filename cannot be empty or whitespace.")
@@ -15,12 +15,12 @@ def validate_filename(filename: str) -> Tuple[str, FileExtension]:
         raise ValueError(f"Invalid file name: {filename}. Must match pattern: {FILENAME_PATTERN}")
 
     extension = filename.split('.')[-1].lower()
-    valid_extensions = {ext.value for ext in FileExtension}
+    valid_extensions = {ext.value for ext in FileType}
     if extension not in valid_extensions:
         raise ValueError(f"Invalid file type: {extension}. Supported types are: {', '.join(valid_extensions)}")
 
     # FUTURE: validate filename length based on storage system limits
-    return filename, FileExtension(extension)
+    return filename, FileType(extension)
 
 async def validate_file_size(upload_file: UploadFile) -> Optional[int]:
     """Validates the file size asynchronously in chunks."""

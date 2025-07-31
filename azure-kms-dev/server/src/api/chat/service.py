@@ -1,11 +1,9 @@
 import time
 from uuid import uuid4
-from typing import Optional
-from fastapi import UploadFile
+from typing import Optional, BinaryIO
 
-from .models import File, FileProcessingStatus
+from .models import File, FileProcessingStatus, FileSource, FileType
 from .repository import FileRepository
-from .utils import validate_filename, validate_file_size
 from src.core.document_processor import DocumentProcessorFactory
 from src.middleware.logging import logger
 
@@ -14,36 +12,37 @@ class ChatService:
     def __init__(self, file_repository: FileRepository):
         self.file_repository = file_repository
 
-    async def upload_file_stream(self, file: UploadFile) -> File:
+    async def upload_file_stream(self, source: FileSource, filename: str, file_type: FileType, size: int, file_stream: BinaryIO) -> File:
         """
         Upload a file asynchronously.
 
         Args:
-            file (UploadFile):
+            source (FileSource): Source of the file (e.g., system, onedrive)
+            filename (str): Name of the file to upload
+            file_type (FileType): Type of the file (e.g., pdf, docx)
+            size (int): Size of the file in bytes
+            file_stream (BinaryIO): Stream of the file to upload
 
         Returns:
             File: An instance of the File model containing file details
         """
         try:
-            # validate file
-            filename, extension = validate_filename(filename=file.filename)
-            size = await validate_file_size(upload_file=file)
-
             # generate blob name
             file_id = f"file_{uuid4()}"
             blob_name = f"temp/{file_id}/{filename}"
 
-            logger.info(f"Uploading file: {file_id}, name: {filename}, size: {size} bytes, extension: {extension}")
+            logger.info(f"Uploading file: {file_id}, name: {filename}, size: {size} bytes, type: {type}")
             blob_url = await self.file_repository.upload_file_stream_to_blob(
                 blob_name=blob_name,
-                file=file
+                file_stream=file_stream
             )
 
             file = File(
                 id=file_id,
                 name=filename,
-                extension=extension,
+                type=file_type,  # type is already validated
                 size=size,  # size is already validated
+                source=source,
                 url=blob_url,
                 extracted_content_url=None,     # yet to be processed
                 processing_status=FileProcessingStatus.PENDING

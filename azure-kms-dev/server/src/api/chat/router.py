@@ -1,10 +1,12 @@
-from fastapi import APIRouter, status, Path, Query, UploadFile, File, HTTPException, Depends, BackgroundTasks
+from fastapi import APIRouter, status, Path, UploadFile, File, HTTPException, Depends, BackgroundTasks, Form
 from uuid import uuid4
-from typing import Optional
+from typing import Annotated
 
 from .schemas import FileUploadResponse
+from .models import FileSource
 from .service import ChatService
 from .dependencies import get_chat_service
+from .utils import validate_filename, validate_file_size
 
 
 chat_router = APIRouter(
@@ -38,14 +40,7 @@ async def create_chat():
 @chat_router.post("/upload", status_code=status.HTTP_201_CREATED)
 async def upload_file(
     background_tasks: BackgroundTasks,
-    # chat_id: Optional[str] = Query(
-    #     default=None,
-    #     min_length=41,
-    #     max_length=41,
-    #     pattern=r"^chat_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
-    #     description="The ID of the chat for file upload",
-    #     example="chat_123e4567-e89b-12d3-a456-426614174000"
-    # ),
+    source: Annotated[FileSource, Form()] = FileSource.SYSTEM,
     file: UploadFile = File(..., description="The file to upload for chat processing (max 50MB)"),
     chat_service: ChatService = Depends(get_chat_service)
 ):
@@ -53,9 +48,16 @@ async def upload_file(
     Endpoint to upload a file for chat processing.
     """
     try:
-        # FUTURE: Use chat_id to associate the file with a specific chat if needed
+        filename, file_type = validate_filename(filename=file.filename)
+        size = await validate_file_size(upload_file=file)
 
-        uploaded_file = await chat_service.upload_file_stream(file=file)
+        uploaded_file = await chat_service.upload_file_stream(
+            source=source,
+            filename=filename,
+            file_type=file_type,
+            size=size,
+            file_stream=file.file
+        )
         background_tasks.add_task(
             chat_service.process_file_background,
             uploaded_file
@@ -64,8 +66,9 @@ async def upload_file(
         return FileUploadResponse(
             id=uploaded_file.id,
             name=uploaded_file.name,
-            extension=uploaded_file.extension,
+            type=uploaded_file.type,
             size=uploaded_file.size,
+            source=uploaded_file.source,
             uploaded_at=uploaded_file.uploaded_at,
             url=uploaded_file.url,
             extracted_content_url=uploaded_file.extracted_content_url,

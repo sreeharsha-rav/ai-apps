@@ -1,9 +1,8 @@
 from azure.storage.blob.aio import ContainerClient
-from typing import Optional
+from typing import Optional, BinaryIO
 from pathlib import Path
 import aiofiles
 import tempfile
-from fastapi import UploadFile
 
 from src.config.settings import get_storage_settings
 from src.core.document_processor import Document
@@ -22,13 +21,13 @@ class FileRepository:
         )
         logger.info("Initialized FileRepository with Async Azure Blob Storage client.")
 
-    async def upload_file_stream_to_blob(self, blob_name: str, file: UploadFile, metadata: Optional[dict[str, str]] = None) -> str:
+    async def upload_file_stream_to_blob(self, blob_name: str, file_stream: BinaryIO, metadata: Optional[dict[str, str]] = None) -> str:
         """
         Uploads a file stream to Azure Blob Storage.
 
         Args:
             blob_name: Path to the blob
-            file: file stream
+            file_stream: File stream to upload
             metadata: Optional metadata to store with the blob
 
         Returns:
@@ -37,7 +36,7 @@ class FileRepository:
         try:
             blob_client = await self._blob_container_client.upload_blob(
                 name=blob_name,
-                data=file.file,
+                data=file_stream,
                 blob_type="BlockBlob",
                 overwrite=True,
                 metadata=metadata

@@ -53,7 +53,11 @@ class Chat(BaseModel):
         description="Timestamp when the chat was last updated"
     )
 
-class FileExtension(str, Enum):
+class FileSource(str, Enum):
+    SYSTEM = "system"
+    ONEDRIVE = "onedrive"
+
+class FileType(str, Enum):
     TXT = "txt"
     PDF = "pdf"
     DOCX = "docx"
@@ -66,10 +70,7 @@ class FileProcessingStatus(str, Enum):
 
 class File(BaseModel):
     id: str = Field(
-        default_factory=lambda: f"file_{uuid4()}",
-        max_length=41,
-        min_length=41,
-        pattern=r"^file_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+        ...,
         description="Unique identifier for the file"
     )
     name: str = Field(
@@ -77,17 +78,17 @@ class File(BaseModel):
         pattern=FILENAME_PATTERN,
         description="Original file name"
     )
-    extension: FileExtension = Field(
+    type: FileType = Field(
         ...,
-        description="Extension of the file (e.g., txt, pdf, docx)"
+        description="Type of the file (e.g., txt, pdf, docx)"
     )
     size: int = Field(
         ...,
         description="File size in bytes"
     )
-    uploaded_at: str = Field(
-        default_factory=lambda: datetime.now().isoformat(),
-        description="Upload timestamp"
+    source: FileSource = Field(
+        ...,
+        description="Source of the file (e.g., system, onedrive)"
     )
     url: Optional[str] = Field(
         None,
@@ -100,4 +101,8 @@ class File(BaseModel):
     processing_status: FileProcessingStatus = Field(
         default=FileProcessingStatus.PENDING,
         description="Current processing status of the file"
+    )
+    uploaded_at: str = Field(
+        default_factory=lambda: datetime.now().isoformat(),
+        description="Upload timestamp"
     )
