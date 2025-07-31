@@ -59,7 +59,7 @@ class ChatResponse(BaseModel):
         example="2023-10-01T12:00:00Z"
     )
 
-class FileUploadResponse(BaseModel):
+class FileResponse(BaseModel):
     id: str = Field(
         ...,
         description="Unique identifier for the uploaded file",

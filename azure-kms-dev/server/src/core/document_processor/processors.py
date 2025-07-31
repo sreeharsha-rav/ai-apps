@@ -1,62 +1,53 @@
 from abc import ABC, abstractmethod
-from pathlib import Path
+from io import BytesIO
 import asyncio
-import aiofiles
 import docx2txt
-from pypdf import PdfReader
+import fitz
 from typing import Dict, Type
 
-from .schemas import Document
 from src.api.chat.models import FileType
 
 
 class BaseDocumentProcessor(ABC):
     @abstractmethod
-    async def extract_text(self, temp_file_path: Path) -> Document:
-        """Extract text from the given file path."""
+    async def extract_text(self, filename: str, file_bytes: BytesIO) -> str:
+        """Extract text from given file stream."""
         pass
 
 
 class TXTProcessor(BaseDocumentProcessor):
-    async def extract_text(self, temp_file_path: Path) -> Document:
-        """Extract text from a TXT file."""
+    async def extract_text(self, filename: str, file_bytes: BytesIO) -> str:
+        """Extract text from a TXT file stream."""
         try:
-            async with aiofiles.open(temp_file_path, 'r', encoding='utf-8') as f:
-                content = await f.read()
+            file_bytes.seek(0)
+            content = file_bytes.read().decode('utf-8')
 
             if not content.strip():
                 raise ValueError("TXT file is empty or contains only whitespace")
 
-            return Document(
-                name=temp_file_path.name,
-                content=content.strip()
-            )
+            return content.strip()
+        except UnicodeDecodeError as e:
+            raise RuntimeError(f"Failed to decode TXT file - invalid UTF-8 encoding: {e}")
         except Exception as e:
             raise RuntimeError(f"Failed to process TXT file: {e}")
 
-
 class DOCXProcessor(BaseDocumentProcessor):
-    async def extract_text(self, temp_file_path: Path) -> Document:
-        """Extract text from a DOCX file using docx2txt."""
+    async def extract_text(self, filename: str, file_bytes: BytesIO) -> str:
+        """Extract text from a DOCX file stream using docx2txt."""
         try:
-            content = await asyncio.to_thread(
-                docx2txt.process,
-                str(temp_file_path),
-            )
+            file_bytes.seek(0)
+            content = await asyncio.to_thread(docx2txt.process, file_bytes)
 
             if not content or not content.strip():
                 raise ValueError("DOCX file is empty or contains no extractable text")
 
-            return Document(
-                name=temp_file_path.name,
-                content=content.strip()
-            )
+            return content.strip()
         except Exception as e:
             raise RuntimeError(f"Failed to process DOCX file: {e}")
 
 
 class PDFProcessor(BaseDocumentProcessor):
-    async def extract_text(self, temp_file_path: Path) -> Document:
+    async def extract_text(self, filename: str, file_bytes: BytesIO) -> str:
         """Extract text from a PDF file using pypdf."""
         try:
             # Run PDF processing in a thread pool to avoid blocking
@@ -64,40 +55,27 @@ class PDFProcessor(BaseDocumentProcessor):
             content = await loop.run_in_executor(
                 None,
                 self._extract_pdf_text,
-                temp_file_path
+                file_bytes
             )
 
             if not content or not content.strip():
                 raise ValueError("PDF file is empty or contains no extractable text")
 
-            return Document(
-                name=temp_file_path.name,
-                content=content.strip()
-            )
+            return content.strip()
         except Exception as e:
             raise RuntimeError(f"Failed to process PDF file: {e}")
 
-    def _extract_pdf_text(self, temp_file_path: Path) -> str:
+    def _extract_pdf_text(self, file_bytes: BytesIO) -> str:
         """Synchronous PDF text extraction helper."""
-        with open(temp_file_path, 'rb') as file:
-            pdf_reader = PdfReader(file)
-
-            if len(pdf_reader.pages) == 0:
-                raise ValueError("PDF file has no pages")
-
-            text_content = []
-            for page_num, page in enumerate(pdf_reader.pages):
-                try:
-                    page_text = page.extract_text()
-                    if page_text.strip():
-                        text_content.append(page_text)
-                except Exception:
-                    continue
-
-            if not text_content:
-                raise ValueError("No text content could be extracted from PDF")
-
-            return '\n\n'.join(text_content)
+        text_content = []
+        with fitz.open(stream=file_bytes, filetype="pdf") as doc:
+            for page in doc:
+                page_text = page.get_text()
+                if page_text and page_text.strip():
+                    text_content.append(page_text)
+        if not text_content:
+            raise ValueError("No text content could be extracted from PDF")
+        return '\n\n'.join(text_content)
 
 
 class DocumentProcessorFactory:
