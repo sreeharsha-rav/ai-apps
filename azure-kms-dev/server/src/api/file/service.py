@@ -1,7 +1,7 @@
 import time
 from uuid import uuid4
 from io import BytesIO
-from typing import Dict, Optional, BinaryIO
+from typing import Dict, Optional, BinaryIO, List, Tuple
 
 from .models import File, FileProcessingStatus, FileSource, FileType
 from .repository import FileRepository
@@ -86,6 +86,38 @@ class FileService:
         except Exception as e:
             logger.error(f"File upload failed: {str(e)}")
             raise RuntimeError(f"Failed to process file upload: {str(e)}") from e
+
+    async def upload_multiple_files(self, source: FileSource, files_data: List[Tuple[str, FileType, int, BinaryIO]]) -> Tuple[List[File], List[str]]:
+        """
+        Upload multiple files asynchronously.
+
+        Args:
+            source (FileSource): Source of the files
+            files_data (List[Tuple[str, FileType, int, BinaryIO]]): List of tuples containing (filename, file_type, size, file_stream)
+
+        Returns:
+            Tuple[List[File], List[str]]: Tuple of successfully uploaded files and failed filenames
+        """
+        uploaded_files = []
+        failed_files = []
+
+        for filename, file_type, size, file_stream in files_data:
+            try:
+                uploaded_file = await self.upload_file_stream(
+                    source=source,
+                    filename=filename,
+                    file_type=file_type,
+                    size=size,
+                    file_stream=file_stream
+                )
+                uploaded_files.append(uploaded_file)
+                logger.info(f"Successfully uploaded file: {filename}")
+            except Exception as e:
+                failed_files.append(filename)
+                logger.error(f"Failed to upload file {filename}: {str(e)}")
+
+        logger.info(f"Multiple file upload completed: {len(uploaded_files)} successful, {len(failed_files)} failed")
+        return uploaded_files, failed_files
 
     async def process_file_background(self, file: File, content: bytes) -> Optional[File]:
         """

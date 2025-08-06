@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 
 from .models import FileType, FileSource, FileProcessingStatus
 
@@ -49,4 +49,26 @@ class FileResponse(BaseModel):
         ...,
         description="Timestamp when the file was uploaded",
         example="2023-10-01T12:00:00Z"
+    )
+
+class MultipleFileResponse(BaseModel):
+    files: List[FileResponse] = Field(
+        ...,
+        description="List of uploaded files",
+        example=[]
+    )
+    total_count: int = Field(
+        ...,
+        description="Total number of files uploaded",
+        example=3
+    )
+    success_count: int = Field(
+        ...,
+        description="Number of files successfully uploaded",
+        example=2
+    )
+    failed_files: List[str] = Field(
+        default_factory=list,
+        description="List of filenames that failed to upload",
+        example=["corrupted_file.pdf"]
     )

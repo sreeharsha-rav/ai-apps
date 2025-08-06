@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, Path, UploadFile, File, HTTPException, Depends, BackgroundTasks, Form
-from typing import Annotated
+from typing import Annotated, List
 
-from .schemas import FileResponse
+from .schemas import FileResponse, MultipleFileResponse
 from .models import FileSource
 from .service import FileService
 from .dependencies import get_file_service
@@ -92,3 +92,70 @@ async def get_file_metadata(
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving file status: {str(e)}")
+
+
+@file_router.post("/upload/multiple", status_code=status.HTTP_201_CREATED, response_model=MultipleFileResponse)
+async def upload_multiple_files(
+        background_tasks: BackgroundTasks,
+        source: Annotated[FileSource, Form()] = FileSource.SYSTEM,
+        files: List[UploadFile] = File(..., description="Multiple files to upload for chat processing (max 50MB each)"),
+        file_service: FileService = Depends(get_file_service)
+):
+    """
+    Endpoint to upload multiple files for chat processing.
+    """
+    try:
+        validated_files = []
+        failed_files = []
+
+        # Validate all files first
+        for file in files:
+            try:
+                filename, file_type = validate_filename(filename=file.filename)
+                size = await validate_file_size(upload_file=file)
+                validated_files.append((filename, file_type, size, file.file))
+            except Exception as e:
+                failed_files.append(file.filename or "unknown")
+                continue
+
+        # Upload validated files
+        uploaded_files, upload_failed = await file_service.upload_multiple_files(
+            source=source,
+            files_data=validated_files
+        )
+
+        failed_files.extend(upload_failed)
+
+        # Process files in background
+        for i, uploaded_file in enumerate(uploaded_files):
+            files[i].file.seek(0)  # Reset file pointer
+            content = await files[i].read()
+            background_tasks.add_task(
+                file_service.process_file_background,
+                uploaded_file, content
+            )
+
+        file_responses = [
+            FileResponse(
+                id=file.id,
+                name=file.name,
+                type=file.type,
+                size=file.size,
+                source=file.source,
+                uploaded_at=file.uploaded_at,
+                url=file.url,
+                extracted_content_url=file.extracted_content_url,
+                processing_status=file.processing_status
+            )
+            for file in uploaded_files
+        ]
+
+        return MultipleFileResponse(
+            files=file_responses,
+            total_count=len(files),
+            success_count=len(uploaded_files),
+            failed_files=failed_files
+        )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error uploading files: {str(e)}")
