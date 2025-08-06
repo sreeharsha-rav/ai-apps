@@ -5,7 +5,7 @@ import docx2txt
 import fitz
 from typing import Dict, Type
 
-from src.api.chat.models import FileType
+from src.api.file.models import FileType
 
 
 class BaseDocumentProcessor(ABC):

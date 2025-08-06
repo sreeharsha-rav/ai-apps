@@ -28,11 +28,6 @@ app.add_middleware(
 )
 app.add_middleware(LoggingMiddleware)   # type: ignore
 
-@app.get("/")
-async def root():
-    """Root endpoint"""
-    return {"message": "Azure KMS Server is running"}
-
 @app.get("/health", status_code=200)
 async def health_check():
     """Health check endpoint"""
