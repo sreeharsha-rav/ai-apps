@@ -20,7 +20,7 @@
     "@neondatabase/serverless": "^0.9.4",
     "@nuxt/ui": "^2.18.4",
     "@pinia/nuxt": "^0.5.4",
-    "nuxt": "^3.9.0",
+    "nuxt": "^3.19.0",
     "nuxt-app": "file:",
     "nuxt-rag-chatbot": "file:",
     "pinia": "^2.2.2",
