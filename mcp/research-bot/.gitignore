@@ -1,2 +1,6 @@
 .env
 uv.lock
+data/*
+logs/*
+__pycache__/
+*.pyc
