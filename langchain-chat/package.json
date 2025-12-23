@@ -18,7 +18,7 @@
     "@langchain/openai": "^0.2.7",
     "@supabase/supabase-js": "^2.45.1",
     "dotenv": "^16.4.5",
-    "langchain": "^0.2.16"
+    "langchain": "^0.3.37"
   },
   "devDependencies": {
     "nodemon": "^3.1.4",
