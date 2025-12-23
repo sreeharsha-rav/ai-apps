@@ -14,9 +14,9 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@langchain/community": "^0.2.31",
-    "@langchain/core": "^0.2.31",
-    "@langchain/openai": "^0.2.8",
+    "@langchain/community": "^1.1.1",
+    "@langchain/core": "^1.1.8",
+    "@langchain/openai": "^1.2.0",
     "@neondatabase/serverless": "^0.9.4",
     "@nuxt/ui": "^2.18.4",
     "@pinia/nuxt": "^0.5.4",
