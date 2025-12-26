@@ -1,0 +1,15 @@
+[project]
+name = "client-streamlit"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "asyncio>=4.0.0",
+    "dotenv>=0.9.9",
+    "ipykernel>=7.1.0",
+    "numpy>=2.4.0",
+    "openai>=2.14.0",
+    "pydantic>=2.12.5",
+    "streamlit>=1.52.2",
+]
