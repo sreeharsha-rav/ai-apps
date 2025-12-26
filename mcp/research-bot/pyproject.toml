@@ -1,0 +1,12 @@
+[project]
+name = "research-bot"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "arxiv>=2.3.1",
+    "ipykernel>=7.1.0",
+    "mcp>=1.23.1",
+    "openai>=2.8.1",
+]

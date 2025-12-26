@@ -1,0 +1,74 @@
+{
+  "2409.18827v1": {
+    "title": "ARLBench: Flexible and Efficient Benchmarking for Hyperparameter Optimization in Reinforcement Learning",
+    "authors": [
+      "Jannis Becktepe",
+      "Julian Dierkes",
+      "Carolin Benjamins",
+      "Aditya Mohan",
+      "David Salinas",
+      "Raghu Rajan",
+      "Frank Hutter",
+      "Holger Hoos",
+      "Marius Lindauer",
+      "Theresa Eimer"
+    ],
+    "summary": "Hyperparameters are a critical factor in reliably training well-performing reinforcement learning (RL) agents. Unfortunately, developing and evaluating automated approaches for tuning such hyperparameters is both costly and time-consuming. As a result, such approaches are often only evaluated on a single domain or algorithm, making comparisons difficult and limiting insights into their generalizability. We propose ARLBench, a benchmark for hyperparameter optimization (HPO) in RL that allows comparisons of diverse HPO approaches while being highly efficient in evaluation. To enable research into HPO in RL, even in settings with low compute resources, we select a representative subset of HPO tasks spanning a variety of algorithm and environment combinations. This selection allows for generating a performance profile of an automated RL (AutoRL) method using only a fraction of the compute previously necessary, enabling a broader range of researchers to work on HPO in RL. With the extensive and large-scale dataset on hyperparameter landscapes that our selection is based on, ARLBench is an efficient, flexible, and future-oriented foundation for research on AutoRL. Both the benchmark and the dataset are available at https://github.com/automl/arlbench.",
+    "published": "2024-09-27T15:22:28+00:00",
+    "updated": "2024-09-27T15:22:28+00:00",
+    "pdf_url": "https://arxiv.org/pdf/2409.18827v1"
+  },
+  "2507.02910v1": {
+    "title": "Causal-Paced Deep Reinforcement Learning",
+    "authors": [
+      "Geonwoo Cho",
+      "Jaegyun Im",
+      "Doyoon Kim",
+      "Sundong Kim"
+    ],
+    "summary": "Designing effective task sequences is crucial for curriculum reinforcement learning (CRL), where agents must gradually acquire skills by training on intermediate tasks. A key challenge in CRL is to identify tasks that promote exploration, yet are similar enough to support effective transfer. While recent approach suggests comparing tasks via their Structural Causal Models (SCMs), the method requires access to ground-truth causal structures, an unrealistic assumption in most RL settings. In this work, we propose Causal-Paced Deep Reinforcement Learning (CP-DRL), a curriculum learning framework aware of SCM differences between tasks based on interaction data approximation. This signal captures task novelty, which we combine with the agent's learnability, measured by reward gain, to form a unified objective. Empirically, CP-DRL outperforms existing curriculum methods on the Point Mass benchmark, achieving faster convergence and higher returns. CP-DRL demonstrates reduced variance with comparable final returns in the Bipedal Walker-Trivial setting, and achieves the highest average performance in the Infeasible variant. These results indicate that leveraging causal relationships between tasks can improve the structure-awareness and sample efficiency of curriculum reinforcement learning. We provide the full implementation of CP-DRL to facilitate the reproduction of our main results at https://github.com/Cho-Geonwoo/CP-DRL.",
+    "published": "2025-06-24T20:15:01+00:00",
+    "updated": "2025-06-24T20:15:01+00:00",
+    "pdf_url": "https://arxiv.org/pdf/2507.02910v1"
+  },
+  "2306.04338v1": {
+    "title": "Changing Data Sources in the Age of Machine Learning for Official Statistics",
+    "authors": [
+      "Cedric De Boom",
+      "Michael Reusens"
+    ],
+    "summary": "Data science has become increasingly essential for the production of official statistics, as it enables the automated collection, processing, and analysis of large amounts of data. With such data science practices in place, it enables more timely, more insightful and more flexible reporting. However, the quality and integrity of data-science-driven statistics rely on the accuracy and reliability of the data sources and the machine learning techniques that support them. In particular, changes in data sources are inevitable to occur and pose significant risks that are crucial to address in the context of machine learning for official statistics.\n  This paper gives an overview of the main risks, liabilities, and uncertainties associated with changing data sources in the context of machine learning for official statistics. We provide a checklist of the most prevalent origins and causes of changing data sources; not only on a technical level but also regarding ownership, ethics, regulation, and public perception. Next, we highlight the repercussions of changing data sources on statistical reporting. These include technical effects such as concept drift, bias, availability, validity, accuracy and completeness, but also the neutrality and potential discontinuation of the statistical offering. We offer a few important precautionary measures, such as enhancing robustness in both data sourcing and statistical techniques, and thorough monitoring. In doing so, machine learning-based official statistics can maintain integrity, reliability, consistency, and relevance in policy-making, decision-making, and public discourse.",
+    "published": "2023-06-07T11:08:12+00:00",
+    "updated": "2023-06-07T11:08:12+00:00",
+    "pdf_url": "https://arxiv.org/pdf/2306.04338v1"
+  },
+  "2006.16189v4": {
+    "title": "DOME: Recommendations for supervised machine learning validation in biology",
+    "authors": [
+      "Ian Walsh",
+      "Dmytro Fishman",
+      "Dario Garcia-Gasulla",
+      "Tiina Titma",
+      "Gianluca Pollastri",
+      "The ELIXIR Machine Learning focus group",
+      "Jen Harrow",
+      "Fotis E. Psomopoulos",
+      "Silvio C. E. Tosatto"
+    ],
+    "summary": "Modern biology frequently relies on machine learning to provide predictions and improve decision processes. There have been recent calls for more scrutiny on machine learning performance and possible limitations. Here we present a set of community-wide recommendations aiming to help establish standards of supervised machine learning validation in biology. Adopting a structured methods description for machine learning based on data, optimization, model, evaluation (DOME) will aim to help both reviewers and readers to better understand and assess the performance and limitations of a method or outcome. The recommendations are formulated as questions to anyone wishing to pursue implementation of a machine learning algorithm. Answers to these questions can be easily included in the supplementary material of published papers.",
+    "published": "2020-06-25T12:01:39+00:00",
+    "updated": "2021-01-07T07:29:24+00:00",
+    "pdf_url": "https://arxiv.org/pdf/2006.16189v4"
+  },
+  "2201.12150v2": {
+    "title": "Learning Curves for Decision Making in Supervised Machine Learning: A Survey",
+    "authors": [
+      "Felix Mohr",
+      "Jan N. van Rijn"
+    ],
+    "summary": "Learning curves are a concept from social sciences that has been adopted in the context of machine learning to assess the performance of a learning algorithm with respect to a certain resource, e.g., the number of training examples or the number of training iterations. Learning curves have important applications in several machine learning contexts, most notably in data acquisition, early stopping of model training, and model selection. For instance, learning curves can be used to model the performance of the combination of an algorithm and its hyperparameter configuration, providing insights into their potential suitability at an early stage and often expediting the algorithm selection process. Various learning curve models have been proposed to use learning curves for decision making. Some of these models answer the binary decision question of whether a given algorithm at a certain budget will outperform a certain reference performance, whereas more complex models predict the entire learning curve of an algorithm. We contribute a framework that categorises learning curve approaches using three criteria: the decision-making situation they address, the intrinsic learning curve question they answer and the type of resources they use. We survey papers from the literature and classify them into this framework.",
+    "published": "2022-01-28T14:34:32+00:00",
+    "updated": "2025-01-28T14:39:26+00:00",
+    "pdf_url": "https://arxiv.org/pdf/2201.12150v2"
+  }
+}
