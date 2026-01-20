@@ -833,6 +833,7 @@ packages:
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
+    deprecated: Use your platform's native DOMException instead
 
   node-fetch@2.7.0:
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
@@ -1370,6 +1371,7 @@ snapshots:
   rag-doc-loader@file:(openai@4.57.0(zod@3.23.8)):
     dependencies:
       '@langchain/community': 0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8))
+      '@langchain/openai': 0.2.8(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))
       '@neondatabase/serverless': 0.9.4
       dotenv: 16.4.5
       langchain: 0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))
