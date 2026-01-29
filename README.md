@@ -7,6 +7,9 @@ A repository for personal AI projects and experiments.
 - [**`ai-translator`**](./ai-translator/README.md): A simple AI translator that uses the OpenAI Gpt-4o-mini model to translate text from one language to another.
     - **Technologies**: React, TypeScript, Node.js, Tailwind CSS, OpenAI Gpt-4o-mini
 
+- [**`client-streamlit`**](./client-streamlit/README.md): A streamlit client for OpenAI.
+    - **Technologies**: Python, Streamlit
+
 - [**`hume-evi-cbt`**](./hume-evi-cbt/README.md): (Work in Progress) A conversational AI chatbot that provides cognitive behavioral therapy (CBT) based on the Hume AI platform.
     - **Technologies**: Hume AI, TypeScript, Next.js, Tailwind CSS
 
