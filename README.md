@@ -19,6 +19,9 @@ A repository for personal AI projects and experiments.
 - [**`llm-chat`**](./llm-chat/): Various protyped LLM chat application interfaces with react, next.js, streamlit and a server with consistent chat-history, indexer, file-management, personal knowledge base.
     - **Technologies**: Azure, Python, TypeScript, OpenAI
 
+- [**`llm-chat-2`**](./llm-chat-2/): Enhanced LLM-chat application with tool calling status, MCP integration and canvas/artifact UI for agentic workflows.
+    - **Technologies**: Python, TypeScript, OpenAI, Next.js, Tanstack Query, Zustand
+
 - [**`mcp`**](./mcp/): protyped MCP server.
     - **Technologies**: Python, FastMCP, Claude, OpenAI
 
