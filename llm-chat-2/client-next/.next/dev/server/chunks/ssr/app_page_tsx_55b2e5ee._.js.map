@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/Harsha/sde-dev/llm-chat-ecommerce/client-next/app/page.tsx"],"sourcesContent":["\"use client\";\n\n\nexport default function Home() {\n  return (\n    <main className=\"p-4\">\n      <div className=\"flex flex-col gap-4\">\n        <p>Welcome to the AI Chat App! Start a new conversation or search your chat history using the sidebar.</p>\n      </div>\n    </main>\n  );\n}\n"],"names":[],"mappings":";;;;;AAAA;;AAGe,SAAS;IACtB,qBACE,6VAAC;QAAK,WAAU;kBACd,cAAA,6VAAC;YAAI,WAAU;sBACb,cAAA,6VAAC;0BAAE;;;;;;;;;;;;;;;;AAIX"}}]
+}

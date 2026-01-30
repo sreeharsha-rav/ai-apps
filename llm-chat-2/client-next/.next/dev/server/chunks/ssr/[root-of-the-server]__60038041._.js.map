@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 18, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/Harsha/sde-dev/llm-chat-ecommerce/client-next/app/c/%5BchatId%5D/page.tsx"],"sourcesContent":["import { ChatList } from \"@/components/Chat\";\r\n\r\ninterface ChatPageProps {\r\n    params: Promise<{\r\n        chatId: string;\r\n    }>;\r\n}\r\n\r\nexport default async function ChatPage(props: ChatPageProps) {\r\n    const params = await props.params;\r\n\r\n    return (\r\n        <div className=\"flex flax-1 flex-col h-full\">\r\n            <div className=\"p-4 border-b\">\r\n                <h1 className=\"text-lg font-bold\">Chat {params.chatId}</h1>\r\n            </div>\r\n            <div className=\"flex-1 p-4\">\r\n                {/* Logic to load specific chat messages will go here */}\r\n                <p className=\"text-muted-foreground\">Displaying chat thread: {params.chatId}</p>\r\n            </div>\r\n        </div>\r\n    );\r\n}\r\n"],"names":[],"mappings":";;;;;;AAQe,eAAe,SAAS,KAAoB;IACvD,MAAM,SAAS,MAAM,MAAM,MAAM;IAEjC,qBACI,6VAAC;QAAI,WAAU;;0BACX,6VAAC;gBAAI,WAAU;0BACX,cAAA,6VAAC;oBAAG,WAAU;;wBAAoB;wBAAM,OAAO,MAAM;;;;;;;;;;;;0BAEzD,6VAAC;gBAAI,WAAU;0BAEX,cAAA,6VAAC;oBAAE,WAAU;;wBAAwB;wBAAyB,OAAO,MAAM;;;;;;;;;;;;;;;;;;AAI3F"}}]
+}

@@ -1,0 +1,12 @@
+[00:00:02.822] Server  LOG      ✓ Ready in 2.5s
+[00:03:17.566] Server  LOG      ○ Compiling / ...
+[00:03:43.051] Browser WARN    The `smooth` scroll behavior is not fully supported with dynamic size.
+[00:04:10.757] Browser WARN    The `smooth` scroll behavior is not fully supported with dynamic size.
+[00:05:54.019] Browser WARN    The `smooth` scroll behavior is not fully supported with dynamic size.
+[00:06:50.967] Browser WARN    The `smooth` scroll behavior is not fully supported with dynamic size.
+[00:08:01.603] Browser WARN    The `smooth` scroll behavior is not fully supported with dynamic size.
+[00:08:54.920] Browser WARN    Failed to scroll to index 9 after 10 attempts.
+[00:08:54.920] Browser WARN    Failed to scroll to index 9 after 10 attempts.
+[00:08:57.038] Browser WARN    Failed to scroll to index 9 after 10 attempts.
+[00:08:57.038] Browser WARN    Failed to scroll to index 9 after 10 attempts.
+[00:09:12.123] Browser WARN    The `smooth` scroll behavior is not fully supported with dynamic size.

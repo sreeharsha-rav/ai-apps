@@ -1,0 +1,10 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/chats/route": "app/api/chats/route.js",
+  "/c/[chatId]/page": "app/c/[chatId]/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/history/page": "app/history/page.js",
+  "/page": "app/page.js",
+  "/shop/page": "app/shop/page.js"
+}
