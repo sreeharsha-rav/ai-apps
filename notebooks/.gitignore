@@ -1,0 +1,16 @@
+# Virtual Environment
+.venv/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Python
+__pycache__
+*.pyc
+
+# Environment
+.env
+.env.local
+
+# Local Storage
+local_storage.json

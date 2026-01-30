@@ -1,0 +1,15 @@
+[project]
+name = "notebooks"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "dotenv>=0.9.9",
+    "ipykernel>=7.1.0",
+    "numpy>=2.4.1",
+    "openai>=2.16.0",
+    "openai-agents>=0.7.0",
+    "pandas>=3.0.0",
+    "pydantic>=2.12.5",
+]
