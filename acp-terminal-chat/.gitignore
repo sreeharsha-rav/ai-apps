@@ -1,0 +1,17 @@
+# Virtual environment
+venv/
+.venv/
+.venv
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables file
+.env
+.env.*.local
+
+# Chat history
+chat_history.json
+*.json
