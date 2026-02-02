@@ -1,0 +1,20 @@
+{
+    "id": "test-thread",
+    "title": "Markdown Feature Test",
+    "messages": [
+        {
+            "id": "1",
+            "role": "user",
+            "content": "Show me your markdown capabilities. Include code, tables, images (use a placeholder), and some HTML.",
+            "timestamp": "2024-01-01T10:00:00Z"
+        },
+        {
+            "id": "2",
+            "role": "assistant",
+            "content": "# Markdown Extravaganza\n\nI support a wide range of markdown features. Let's explore them!\n\n## 1. Code Blocks with Syntax Highlighting\n\n```typescript\nfunction greet(name: string): string {\n  const message = `Hello, ${name}!`;\n  console.log(message);\n  return message;\n}\n\n// Usage\ngreet(\"Antigravity\");\n```\n\n```python\ndef fibonacci(n):\n    if n <= 1: return n\n    return fibonacci(n-1) + fibonacci(n-2)\n\nprint([fibonacci(i) for i in range(10)])\n```\n\n## 2. Tables\n\n| Feature | Supported | Notes |\n| :--- | :---: | :--- |\n| Syntax Highlighting | ✅ | Using Prism |\n| GFM Tables | ✅ | Via remark-gfm |\n| HTML Rendering | ✅ | Via rehype-raw |\n| Sanitization | ✅ | Via rehype-sanitize |\n\n## 3. Images\n\n![Ocean View](https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=400&h=200)\n\n## 4. HTML Support (Sanitized)\n\n<div style=\"background-color: #f0fdf4; padding: 1rem; border-radius: 0.5rem; border: 1px solid #bbf7d0;\">\n  <h3 style=\"color: #166534; margin-top: 0;\">Custom HTML Card</h3>\n  <p>This is rendered using <code>rehype-raw</code>. It allows safe HTML tags while stripping out dangerous ones like <code>&lt;script&gt;</code>.</p>\n  <script>alert('This script should be stripped!')</script>\n  <button onclick=\"alert('This should be removed')\" class=\"px-4 py-2 bg-green-500 text-white rounded\">Interactive Button (should be sanitized)</button>\n</div>\n\n## 5. Standard Elements\n\n- **Bold Text**\n- *Italic Text*\n- [Link to GitHub](https://github.com)\n- > Blockquote: This is a powerful chat UI.\n\n### Task List\n- [x] Implement Markdown\n- [x] Add Syntax Highlighting\n- [ ] Deploy to Production\n",
+            "timestamp": "2024-01-01T10:01:00Z",
+            "total_tokens": 450
+        }
+    ],
+    "total_tokens": 500
+}
