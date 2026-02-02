@@ -3,7 +3,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useSendMessage, useGetChats } from "@/hooks/use-chat";
-import { Message, ChatItem } from "@/stores/ChatStore";
+import { Item, ChatItem } from "@/stores/ChatStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,22 +30,22 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
     const router = useRouter();
 
     const chat = chats?.find((c: ChatItem) => c.id === chatId);
-    const messages = chat?.messages || [];
+    const items = chat?.items || [];
     const isGenerating = sendMessageMutation.isPending;
 
     const rowVirtualizer = useVirtualizer({
-        count: messages.length,
+        count: items.length,
         getScrollElement: () => parentRef.current,
         estimateSize: () => 80,
         overscan: 5,
     });
 
-    // Auto-scroll to bottom on new messages
+    // Auto-scroll to bottom on new items
     useEffect(() => {
-        if (messages.length > 0) {
-            rowVirtualizer.scrollToIndex(messages.length - 1, { align: 'end', behavior: 'smooth' });
+        if (items.length > 0) {
+            rowVirtualizer.scrollToIndex(items.length - 1, { align: 'end', behavior: 'smooth' });
         }
-    }, [messages.length, rowVirtualizer]);
+    }, [items.length, rowVirtualizer]);
 
     const handleSend = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
@@ -100,7 +100,7 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
                             {chat.title || "Untitled Chat"}
                         </h1>
                         <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                            {messages.length} Messages • {chat.total_tokens || 0} Tokens
+                            {items.length} Messages • {chat.total_tokens || 0} Tokens
                         </p>
                     </div>
                 </div>
@@ -120,9 +120,9 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
                     className="max-w-3xl mx-auto py-6 px-4"
                 >
                     {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-                        const message = messages[virtualItem.index];
-                        const isLast = virtualItem.index === messages.length - 1;
-                        const showLoader = isLast && isGenerating && message.role === "assistant" && !message.content;
+                        const item = items[virtualItem.index];
+                        const isLast = virtualItem.index === items.length - 1;
+                        const showLoader = isLast && isGenerating && item.data.role === "assistant" && !item.data.content;
 
                         return (
                             <div
@@ -138,7 +138,7 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
                                 }}
                             >
                                 <ChatMessage
-                                    message={showLoader ? { ...message, content: "" } : message}
+                                    item={showLoader ? { ...item, data: { ...item.data, content: "" } } : item}
                                     isLoader={showLoader}
                                 />
                             </div>

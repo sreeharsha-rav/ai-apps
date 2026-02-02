@@ -1,17 +1,15 @@
 import { create } from "zustand";
 
-export interface Message {
+export interface Item {
   id: string;
-  role: "user" | "assistant";
-  content: string;
+  data: any;
   timestamp: Date;
-  total_tokens?: number;
 }
 
 export interface ChatItem {
   id: string;
   title: string;
-  messages: Message[];
+  items: Item[];
   total_tokens: number;
   createdAt: Date;
   updatedAt: Date;

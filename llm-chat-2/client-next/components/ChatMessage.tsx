@@ -8,15 +8,16 @@ import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Message } from "@/stores/ChatStore";
+import { Item } from "@/stores/ChatStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Bot, User, Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useChatStore } from "@/stores/ChatStore";
+import { Loader } from "@/components/prompt-kit/loader";
 
 interface ChatMessageProps {
-    message: Message;
+    item: Item;
     isLoader?: boolean;
 }
 
@@ -36,6 +37,7 @@ const ImageRenderer = ({ src, alt }: React.ImgHTMLAttributes<HTMLImageElement>) 
     return (
         <span className="block my-4 rounded-xl overflow-hidden border border-border/20 shadow-md bg-muted/20 relative min-h-[100px] flex items-center justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
+            {/* FUTURE: Use Next Image, optimize loading of images */}
             <img
                 src={src}
                 alt={alt}
@@ -86,9 +88,23 @@ const StaticComponents = {
     img: ImageRenderer as any,
 };
 
-export function ChatMessage({ message, isLoader }: ChatMessageProps) {
-    const isAssistant = message.role === "assistant";
+export function ChatMessage({ item, isLoader }: ChatMessageProps) {
+    const isAssistant = item.data.role === "assistant";
     const { activeCopiedId, setActiveCopiedId } = useChatStore();
+
+    let content = "";
+    // Best effort content extraction
+    if (typeof item.data.content === "string") {
+        content = item.data.content;
+    } else if (Array.isArray(item.data.content)) {
+        content = item.data.content
+            .map((c: any) => c.text || c.content || "")
+            .join("");
+    } else if (item.data.text) {
+        content = item.data.text;
+    } else if (item.data.type == "message" && Array.isArray(item.data.content)) {
+        content = item.data.content[0]?.text || "";
+    }
 
     const handleCopy = React.useCallback((text: string, id: string) => {
         navigator.clipboard.writeText(text);
@@ -117,7 +133,7 @@ export function ChatMessage({ message, isLoader }: ChatMessageProps) {
                 );
             }
             const codeContent = String(children).replace(/\n$/, "");
-            const codeId = `${message.id}-code-${match[1]}`;
+            const codeId = `${item.id}-code-${match[1]}`;
             const isCopied = activeCopiedId === codeId;
 
             return (
@@ -153,7 +169,7 @@ export function ChatMessage({ message, isLoader }: ChatMessageProps) {
                 </div>
             );
         },
-    }), [handleCopy, activeCopiedId, message.id]);
+    }), [handleCopy, activeCopiedId, item.id]);
 
     return (
         <div className={cn(
@@ -182,51 +198,40 @@ export function ChatMessage({ message, isLoader }: ChatMessageProps) {
                 )}>
                     <div className="max-w-none break-words overflow-hidden antialiased">
                         {isLoader ? (
-                            <div className="flex items-center gap-1">
-                                <span className="flex gap-0.5">
-                                    <span className="animate-bounce">.</span>
-                                    <span className="animate-bounce delay-100">.</span>
-                                    <span className="animate-bounce delay-200">.</span>
-                                </span>
-                            </div>
+                            <Loader variant="loading-dots" />
                         ) : (
                             <ReactMarkdown
                                 remarkPlugins={[remarkGfm, remarkBreaks]}
                                 rehypePlugins={[rehypeRaw, rehypeSanitize]}
                                 components={components}
                             >
-                                {message.content}
+                                {content}
                             </ReactMarkdown>
                         )}
                     </div>
                 </div>
                 <div className="flex items-center gap-2 px-1">
                     <button
-                        onClick={() => handleCopy(message.content, message.id)}
+                        onClick={() => handleCopy(content, item.id)}
                         className={cn(
                             "flex items-center gap-1 px-1.5 py-0.5 rounded-md transition-all",
                             "hover:bg-muted opacity-0 group-hover/message:opacity-100",
-                            activeCopiedId === message.id && "opacity-100 text-green-500 hover:text-green-600"
+                            activeCopiedId === item.id && "opacity-100 text-green-500 hover:text-green-600"
                         )}
                         title="Copy message"
                     >
-                        {activeCopiedId === message.id ? (
+                        {activeCopiedId === item.id ? (
                             <Check className="h-3 w-3" />
                         ) : (
                             <Copy className="h-3 w-3" />
                         )}
                         <span className="text-[10px] font-medium">
-                            {activeCopiedId === message.id ? "Copied" : "Copy"}
+                            {activeCopiedId === item.id ? "Copied" : "Copy"}
                         </span>
                     </button>
                     <span className="text-[10px] text-muted-foreground font-medium">
-                        {format(new Date(message.timestamp), "h:mm a")}
+                        {format(new Date(item.timestamp), "h:mm a")}
                     </span>
-                    {message.total_tokens ? (
-                        <span className="text-[10px] text-muted-foreground/50">
-                            • {message.total_tokens} tokens
-                        </span>
-                    ) : null}
                 </div>
             </div>
 

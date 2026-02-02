@@ -31,8 +31,12 @@ export default function TestChatPage() {
                     {(messages as any[]).map((message: any) => (
                         <ChatMessage
                             key={message.id}
-                            message={{
-                                ...message,
+                            item={{
+                                id: message.id,
+                                data: {
+                                    role: message.role,
+                                    content: message.content,
+                                },
                                 timestamp: new Date(message.timestamp)
                             }}
                         />
@@ -42,12 +46,14 @@ export default function TestChatPage() {
                 {/* Loader Preview */}
                 <div className="max-w-3xl mx-auto pb-10 px-4">
                     <ChatMessage
-                        message={{
+                        item={{
                             id: "loading",
-                            role: "assistant",
-                            content: "",
+                            data: {
+                                role: "assistant",
+                                content: "",
+                            },
                             timestamp: new Date()
-                        } as any}
+                        }}
                         isLoader={true}
                     />
                 </div>

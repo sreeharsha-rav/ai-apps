@@ -1,21 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChatItem, Message } from "@/stores/ChatStore";
+import { ChatItem, Item } from "@/stores/ChatStore";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
 // --- Types ---
-interface ServerMessage {
+interface ServerItem {
     id: string;
-    role: "user" | "assistant";
-    content: string;
+    data: any;
     timestamp: string;
-    total_tokens?: number;
 }
 
 interface ServerChat {
     id: string;
     title: string;
-    messages: ServerMessage[];
+    items: ServerItem[];
     total_tokens: number;
     created_at: string;
     updated_at: string;
@@ -30,13 +28,30 @@ const fetchChats = async (): Promise<ChatItem[]> => {
     return data.map((chat) => ({
         id: chat.id,
         title: chat.title,
-        messages: chat.messages.map((m) => ({
-            id: m.id,
-            role: m.role,
-            content: m.content,
-            timestamp: new Date(m.timestamp),
-            total_tokens: m.total_tokens
-        })),
+        items: chat.items.map((item) => {
+            // Best effort content normalization
+            let content = "";
+            const rawContent = item.data?.content;
+
+            if (typeof rawContent === "string") {
+                content = rawContent;
+            } else if (Array.isArray(rawContent)) {
+                // Handle new structure: [{type: 'input_text', text: '...'}, {type: 'output_text', text: '...'}]
+                content = rawContent
+                    .map(c => c.text || c.content || "")
+                    .join("");
+            }
+
+            return {
+                id: item.id,
+                data: {
+                    ...item.data,
+                    content: content,
+                    role: item.data?.role || "assistant"
+                },
+                timestamp: new Date(item.timestamp),
+            };
+        }),
         total_tokens: chat.total_tokens || 0,
         createdAt: new Date(chat.created_at || chat.updated_at),
         updatedAt: new Date(chat.updated_at)
@@ -50,7 +65,7 @@ const createChat = async (): Promise<ChatItem> => {
     return {
         id: data.id,
         title: data.title,
-        messages: [],
+        items: [],
         total_tokens: 0,
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
@@ -107,18 +122,22 @@ export const useSendMessage = () => {
 
     return useMutation({
         mutationFn: async ({ chatId, content }: { chatId: string, content: string }) => {
-            const userMessage: Message = {
+            const userItem: Item = {
                 id: uuidv4(),
-                role: "user",
-                content,
+                data: {
+                    role: "user",
+                    content,
+                },
                 timestamp: new Date(),
             };
 
-            const assistantMessageId = uuidv4();
-            const assistantMessage: Message = {
-                id: assistantMessageId,
-                role: "assistant",
-                content: "",
+            const assistantItemId = uuidv4();
+            const assistantItem: Item = {
+                id: assistantItemId,
+                data: {
+                    role: "assistant",
+                    content: "",
+                },
                 timestamp: new Date(),
             };
 
@@ -128,7 +147,7 @@ export const useSendMessage = () => {
                     if (chat.id === chatId) {
                         return {
                             ...chat,
-                            messages: [...chat.messages, userMessage, assistantMessage],
+                            items: [...chat.items, userItem, assistantItem],
                             updatedAt: new Date(),
                         };
                     }
@@ -174,45 +193,64 @@ export const useSendMessage = () => {
 
                         if (eventLine && dataLine) {
                             const eventType = eventLine[1].trim();
-                            const data = dataLine[1].trim(); // trim() handles potential trailing \n if regex missed it
+                            const rawData = dataLine[1].trim();
 
-                            if (eventType === "response.output_text.delta") {
-                                assistantContent += data;
+                            try {
+                                const jsonData = JSON.parse(rawData);
 
-                                // Incremental Update
-                                queryClient.setQueryData(["chats"], (old: ChatItem[] = []) => {
-                                    return old.map((chat) => {
-                                        if (chat.id === chatId) {
-                                            return {
-                                                ...chat,
-                                                messages: chat.messages.map((m) =>
-                                                    m.id === assistantMessageId
-                                                        ? { ...m, content: assistantContent }
-                                                        : m
-                                                ),
-                                            };
-                                        }
-                                        return chat;
-                                    });
-                                });
-                            } else if (eventType === "error") {
-                                toast.error("Stream Error");
-                                assistantContent += `\n\n${data}`; // Append error to chat bubble
-                                queryClient.setQueryData(["chats"], (old: ChatItem[] = []) => {
-                                    return old.map((chat) => {
-                                        if (chat.id === chatId) {
-                                            return {
-                                                ...chat,
-                                                messages: chat.messages.map((m) =>
-                                                    m.id === assistantMessageId
-                                                        ? { ...m, content: assistantContent }
-                                                        : m
-                                                ),
-                                            };
-                                        }
-                                        return chat;
-                                    });
-                                });
+                                // 1. Handle Text Deltas
+                                if (eventType === "response.output_text.delta") {
+                                    // The server sends us a constructed message object in 'data' for this event
+                                    // conforming to: { type: "message", role: "assistant", content: [{ type: "output_text", text: "..." }] }
+                                    const deltaText = jsonData.content?.[0]?.text || "";
+
+                                    if (deltaText) {
+                                        assistantContent += deltaText;
+
+                                        // Incremental Content Update
+                                        queryClient.setQueryData(["chats"], (old: ChatItem[] = []) => {
+                                            return old.map((chat) => {
+                                                if (chat.id === chatId) {
+                                                    return {
+                                                        ...chat,
+                                                        items: chat.items.map((item) =>
+                                                            item.id === assistantItemId
+                                                                ? { ...item, data: { ...item.data, content: assistantContent } }
+                                                                : item
+                                                        ),
+                                                    };
+                                                }
+                                                return chat;
+                                            });
+                                        });
+                                    }
+                                }
+
+                                // 2. Handle Item Done (Server confirms item persistence and gives real ID)
+                                else if (eventType === "response.output_item.done") {
+                                    const doneItem = jsonData.item;
+                                    if (doneItem && doneItem.type === "message" && doneItem.id) {
+                                        // Replace optimistic ID with real server ID
+                                        queryClient.setQueryData(["chats"], (old: ChatItem[] = []) => {
+                                            return old.map((chat) => {
+                                                if (chat.id === chatId) {
+                                                    return {
+                                                        ...chat,
+                                                        items: chat.items.map((item) =>
+                                                            item.id === assistantItemId
+                                                                ? { ...item, id: doneItem.id } // Update ID
+                                                                : item
+                                                        ),
+                                                    };
+                                                }
+                                                return chat;
+                                            });
+                                        });
+                                    }
+                                }
+
+                            } catch (e) {
+                                console.warn("Failed to parse SSE data JSON:", e, rawData);
                             }
                         }
                     }
@@ -230,10 +268,10 @@ export const useSendMessage = () => {
                         if (chat.id === chatId) {
                             return {
                                 ...chat,
-                                messages: chat.messages.map((m) =>
-                                    m.id === assistantMessageId
-                                        ? { ...m, content: `🚨 ${error.message || "Error"}` }
-                                        : m
+                                items: chat.items.map((item) =>
+                                    item.id === assistantItemId
+                                        ? { ...item, data: { ...item.data, content: `🚨 ${error.message || "Error"}` } }
+                                        : item
                                 ),
                             };
                         }
