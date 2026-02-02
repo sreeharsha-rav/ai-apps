@@ -23,11 +23,16 @@ interface ChatStore {
   updateChat: (id: string, title: string) => void;
   getChatById: (id: string) => ChatItem | undefined;
   isLoading: boolean;
+  activeCopiedId: string | null;
+  setActiveCopiedId: (id: string | null) => void;
 }
 
 export const useChatStore = create<ChatStore>((set, get) => ({
   chats: [],
   isLoading: false,
+  activeCopiedId: null,
+
+  setActiveCopiedId: (id: string | null) => set({ activeCopiedId: id }),
 
   setChats: (chats: ChatItem[]) => set({ chats }),
 

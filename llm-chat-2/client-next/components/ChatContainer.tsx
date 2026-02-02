@@ -16,6 +16,7 @@ import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { ChatSkeleton } from "./ChatSkeleton";
 import { ChatMessage } from "./ChatMessage";
+import { AutosizeTextarea } from "@/components/ui/autosize-textarea";
 
 interface ChatContainerProps {
     chatId: string;
@@ -57,6 +58,13 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
             await sendMessageMutation.mutateAsync({ chatId, content });
         } catch (error) {
             console.error("Failed to send message:", error);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            handleSend();
         }
     };
 
@@ -142,22 +150,22 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
             {/* Standard Input Area */}
             <div className="flex-none p-4 bg-background border-t border-border/50">
                 <div className="max-w-3xl mx-auto">
-                    <form
-                        onSubmit={handleSend}
-                        className="relative flex items-center group"
-                    >
-                        <Input
+                    <div className="relative flex items-end group bg-muted/50 border border-border/50 rounded-2xl focus-within:ring-1 focus-within:ring-primary/20 focus-within:border-primary/20 transition-all shadow-sm">
+                        <AutosizeTextarea
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder="Ask anything..."
-                            className="pr-14 py-6 rounded-2xl bg-muted/50 border-border/50 focus-visible:ring-1 focus-visible:ring-primary/20 text-base shadow-sm"
+                            className="w-full resize-none border-0 bg-transparent py-4 pl-4 pr-14 focus-visible:ring-0 focus-visible:ring-offset-0 text-base max-h-[200px]"
+                            minRows={1}
+                            maxRows={8}
                             disabled={sendMessageMutation.isPending}
                         />
                         <Button
-                            type="submit"
+                            onClick={() => handleSend()}
                             size="icon"
                             disabled={!inputValue.trim() || sendMessageMutation.isPending}
-                            className="absolute right-2 h-9 w-9 rounded-xl transition-all hover:scale-105 active:scale-95 bg-primary hover:bg-primary/90"
+                            className="absolute right-2 bottom-2 h-9 w-9 rounded-xl transition-all hover:scale-105 active:scale-95 bg-primary hover:bg-primary/90 mb-0.5"
                         >
                             {sendMessageMutation.isPending ? (
                                 <Loader className="h-4 w-4 animate-spin" />
@@ -165,7 +173,7 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
                                 <Send className="h-4 w-4" />
                             )}
                         </Button>
-                    </form>
+                    </div>
                     <p className="text-[10px] text-center text-muted-foreground mt-3 font-medium tracking-wide opacity-70">
                         AI can make mistakes. Check important info.
                     </p>

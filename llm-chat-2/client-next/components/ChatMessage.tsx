@@ -10,9 +10,10 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Message } from "@/stores/ChatStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bot, User } from "lucide-react";
+import { Bot, User, Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useChatStore } from "@/stores/ChatStore";
 
 interface ChatMessageProps {
     message: Message;
@@ -21,10 +22,19 @@ interface ChatMessageProps {
 
 export function ChatMessage({ message, isLoader }: ChatMessageProps) {
     const isAssistant = message.role === "assistant";
+    const { activeCopiedId, setActiveCopiedId } = useChatStore();
+
+    const handleCopy = (text: string, id: string) => {
+        navigator.clipboard.writeText(text);
+        setActiveCopiedId(id);
+        setTimeout(() => {
+            setActiveCopiedId(null);
+        }, 2000);
+    };
 
     return (
         <div className={cn(
-            "flex w-full gap-3 py-2",
+            "flex w-full gap-3 py-2 group/message",
             isAssistant ? "justify-start" : "justify-end"
         )}>
             {isAssistant && (
@@ -41,7 +51,7 @@ export function ChatMessage({ message, isLoader }: ChatMessageProps) {
                 !isAssistant && "items-end"
             )}>
                 <div className={cn(
-                    "px-4 py-2.5 rounded-2xl text-[14px] leading-relaxed",
+                    "px-4 py-2.5 rounded-2xl text-[14px] leading-relaxed relative",
                     isAssistant
                         ? "bg-muted/40 rounded-tl-none border border-border/10"
                         : "bg-primary text-primary-foreground rounded-tr-none shadow-sm",
@@ -61,7 +71,7 @@ export function ChatMessage({ message, isLoader }: ChatMessageProps) {
                                 remarkPlugins={[remarkGfm, remarkBreaks]}
                                 rehypePlugins={[rehypeRaw, rehypeSanitize]}
                                 components={{
-                                    p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed font-normal">{children}</p>,
+                                    p: ({ children }) => <div className="mb-2 last:mb-0 leading-relaxed font-normal">{children}</div>,
                                     hr: () => <hr className="my-4 border-border/50" />,
                                     ul: ({ children }) => <ul className="list-disc ml-6 mb-2 space-y-1">{children}</ul>,
                                     ol: ({ children }) => <ol className="list-decimal ml-6 mb-2 space-y-1">{children}</ol>,
@@ -90,10 +100,25 @@ export function ChatMessage({ message, isLoader }: ChatMessageProps) {
                                                 </code>
                                             );
                                         }
+                                        const codeContent = String(children).replace(/\n$/, "");
+                                        const codeId = `${message.id}-code-${match[1]}`;
+                                        const isCopied = activeCopiedId === codeId;
+
                                         return (
-                                            <div className="rounded-xl overflow-hidden my-4 border border-[#333333] shadow-xl">
+                                            <div className="rounded-xl overflow-hidden my-4 border border-[#333333] shadow-xl group/code">
                                                 <div className="flex items-center justify-between px-4 py-2 bg-[#252526] text-[11px] uppercase tracking-wider font-semibold text-[#858585] border-b border-[#333333]">
                                                     <span>{match[1]}</span>
+                                                    <button
+                                                        onClick={() => handleCopy(codeContent, codeId)}
+                                                        className="flex items-center gap-1.5 hover:text-white transition-colors"
+                                                    >
+                                                        {isCopied ? (
+                                                            <Check className="h-3 w-3 text-green-500" />
+                                                        ) : (
+                                                            <Copy className="h-3 w-3" />
+                                                        )}
+                                                        <span className="normal-case">{isCopied ? "Copied" : "Copy"}</span>
+                                                    </button>
                                                 </div>
                                                 <SyntaxHighlighter
                                                     style={vscDarkPlus}
@@ -107,7 +132,7 @@ export function ChatMessage({ message, isLoader }: ChatMessageProps) {
                                                         backgroundColor: "#1e1e1e",
                                                     }}
                                                 >
-                                                    {String(children).replace(/\n$/, "")}
+                                                    {codeContent}
                                                 </SyntaxHighlighter>
                                             </div>
                                         );
@@ -125,10 +150,11 @@ export function ChatMessage({ message, isLoader }: ChatMessageProps) {
                                         <td className="px-4 py-2 border-b border-border/10 text-sm">{children}</td>
                                     ),
                                     img: ({ src, alt }) => (
-                                        <div className="my-4 rounded-xl overflow-hidden border border-border/20 shadow-md">
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img src={src} alt={alt} className="max-w-full h-auto" />
-                                        </div>
+                                        // Use span with block display to avoid p > div nesting issues if markdown wraps image in p
+                                        <span className="block my-4 rounded-xl overflow-hidden border border-border/20 shadow-md">
+                                            {/* eslint-disable-next-line @next/next/no-img-element , FUTURE: Add image optimization*/}
+                                            <img src={src} alt={alt} className="max-w-full h-auto block" />
+                                        </span>
                                     ),
                                     a: ({ href, children }) => (
                                         <a
@@ -148,6 +174,24 @@ export function ChatMessage({ message, isLoader }: ChatMessageProps) {
                     </div>
                 </div>
                 <div className="flex items-center gap-2 px-1">
+                    <button
+                        onClick={() => handleCopy(message.content, message.id)}
+                        className={cn(
+                            "flex items-center gap-1 px-1.5 py-0.5 rounded-md transition-all",
+                            "hover:bg-muted opacity-0 group-hover/message:opacity-100",
+                            activeCopiedId === message.id && "opacity-100 text-green-500 hover:text-green-600"
+                        )}
+                        title="Copy message"
+                    >
+                        {activeCopiedId === message.id ? (
+                            <Check className="h-3 w-3" />
+                        ) : (
+                            <Copy className="h-3 w-3" />
+                        )}
+                        <span className="text-[10px] font-medium">
+                            {activeCopiedId === message.id ? "Copied" : "Copy"}
+                        </span>
+                    </button>
                     <span className="text-[10px] text-muted-foreground font-medium">
                         {format(new Date(message.timestamp), "h:mm a")}
                     </span>
