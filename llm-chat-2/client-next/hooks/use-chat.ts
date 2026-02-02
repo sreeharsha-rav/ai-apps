@@ -158,33 +158,64 @@ export const useSendMessage = () => {
                 if (!reader) throw new Error("No reader available");
 
                 let assistantContent = "";
+                let buffer = "";
 
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
 
-                    const chunk = new TextDecoder().decode(value);
-                    if (chunk.includes("🚨 Error:")) {
-                        toast.error(chunk.replace("🚨", "").trim());
-                    }
-                    assistantContent += chunk;
+                    buffer += new TextDecoder().decode(value);
+                    const lines = buffer.split("\n\n");
+                    buffer = lines.pop() || ""; // Keep incomplete chunk in buffer
 
-                    // 2. Incremental Update: Update Assistant Message Content
-                    queryClient.setQueryData(["chats"], (old: ChatItem[] = []) => {
-                        return old.map((chat) => {
-                            if (chat.id === chatId) {
-                                return {
-                                    ...chat,
-                                    messages: chat.messages.map((m) =>
-                                        m.id === assistantMessageId
-                                            ? { ...m, content: assistantContent }
-                                            : m
-                                    ),
-                                };
+                    for (const line of lines) {
+                        const eventLine = line.match(/event: (.*)\n/);
+                        const dataLine = line.match(/data: (.*)/); // Modified to not match end of line explicitly for more robust parsing
+
+                        if (eventLine && dataLine) {
+                            const eventType = eventLine[1].trim();
+                            const data = dataLine[1].trim(); // trim() handles potential trailing \n if regex missed it
+
+                            if (eventType === "response.output_text.delta") {
+                                assistantContent += data;
+
+                                // Incremental Update
+                                queryClient.setQueryData(["chats"], (old: ChatItem[] = []) => {
+                                    return old.map((chat) => {
+                                        if (chat.id === chatId) {
+                                            return {
+                                                ...chat,
+                                                messages: chat.messages.map((m) =>
+                                                    m.id === assistantMessageId
+                                                        ? { ...m, content: assistantContent }
+                                                        : m
+                                                ),
+                                            };
+                                        }
+                                        return chat;
+                                    });
+                                });
+                            } else if (eventType === "error") {
+                                toast.error("Stream Error");
+                                assistantContent += `\n\n${data}`; // Append error to chat bubble
+                                queryClient.setQueryData(["chats"], (old: ChatItem[] = []) => {
+                                    return old.map((chat) => {
+                                        if (chat.id === chatId) {
+                                            return {
+                                                ...chat,
+                                                messages: chat.messages.map((m) =>
+                                                    m.id === assistantMessageId
+                                                        ? { ...m, content: assistantContent }
+                                                        : m
+                                                ),
+                                            };
+                                        }
+                                        return chat;
+                                    });
+                                });
                             }
-                            return chat;
-                        });
-                    });
+                        }
+                    }
                 }
 
                 // Refetch to invalidate and get fresh tokens/metadata if needed
