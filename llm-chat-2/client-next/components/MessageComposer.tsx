@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { AutosizeTextarea } from "@/components/ui/autosize-textarea";
 import { Send, Loader } from "lucide-react";

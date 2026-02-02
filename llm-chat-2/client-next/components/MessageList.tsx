@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ChatMessage } from "./ChatMessage";
 import { Item } from "@/stores/ChatStore";

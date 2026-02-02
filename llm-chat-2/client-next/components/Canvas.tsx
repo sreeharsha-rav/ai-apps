@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -17,7 +16,7 @@ export function Canvas({ isOpen, onClose, content }: CanvasProps) {
             "flex flex-col h-full border-l border-border/50 bg-background transition-all duration-300 ease-in-out",
             isOpen ? "w-1/2 min-w-[400px]" : "w-0 overflow-hidden opacity-0"
         )}>
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
+            <div className="flex items-center justify-between px-4 py-3">
                 <h2 className="text-sm font-semibold">Canvas</h2>
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose}>
                     <X className="h-4 w-4" />
