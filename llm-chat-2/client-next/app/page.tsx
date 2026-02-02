@@ -72,6 +72,7 @@ export default function Home() {
           </div>
         </div>
 
+        {/* FUTURE: Add quick chat options */}
         {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-lg">
           {["Order Status", "Return Policy", "Product Search", "Support"].map((label) => (
             <Button

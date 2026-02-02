@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { ChatSkeleton } from "./ChatSkeleton";
+import { ChatMessage } from "./ChatMessage";
 
 interface ChatContainerProps {
     chatId: string;
@@ -127,19 +128,11 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
                                     width: '100%',
                                     transform: `translateY(${virtualItem.start}px)`,
                                 }}
-                                className="py-2"
                             >
-                                {showLoader ? (
-                                    <MessageItem
-                                        message={{
-                                            ...message,
-                                            content: "generating text.."
-                                        }}
-                                        isLoader={true}
-                                    />
-                                ) : (
-                                    <MessageItem message={message} />
-                                )}
+                                <ChatMessage
+                                    message={showLoader ? { ...message, content: "" } : message}
+                                    isLoader={showLoader}
+                                />
                             </div>
                         );
                     })}
@@ -182,88 +175,3 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
     );
 }
 
-function MessageItem({ message, isLoader }: { message: Message; isLoader?: boolean }) {
-    const isAssistant = message.role === "assistant";
-
-    return (
-        <div className={cn(
-            "flex w-full gap-3",
-            isAssistant ? "justify-start" : "justify-end"
-        )}>
-            {isAssistant && (
-                <Avatar className="h-8 w-8 border border-border/30 shrink-0 mt-1">
-                    <AvatarImage src="/ai-avatar.png" />
-                    <AvatarFallback className="bg-primary/5 text-primary">
-                        <Bot className="h-4 w-4" />
-                    </AvatarFallback>
-                </Avatar>
-            )}
-
-            <div className={cn(
-                "flex flex-col gap-1.5 max-w-[85%]",
-                !isAssistant && "items-end"
-            )}>
-                <div className={cn(
-                    "px-4 py-2.5 rounded-2xl text-[14px] leading-relaxed",
-                    isAssistant
-                        ? "bg-muted/40 rounded-tl-none border border-border/10"
-                        : "bg-primary text-primary-foreground rounded-tr-none shadow-sm",
-                    isLoader && "animate-pulse"
-                )}>
-                    <div className="max-w-none break-words">
-                        {isLoader ? (
-                            <div className="flex items-center gap-1">
-                                <span className="flex gap-0.5">
-                                    <span className="animate-bounce">.</span>
-                                    <span className="animate-bounce delay-100">.</span>
-                                    <span className="animate-bounce delay-200">.</span>
-                                </span>
-                            </div>
-                        ) : (
-                            <ReactMarkdown
-                                remarkPlugins={[remarkGfm, remarkBreaks]}
-                                components={{
-                                    p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed font-normal">{children}</p>,
-                                    pre: ({ children }) => (
-                                        <pre className="bg-background/50 p-3 rounded-xl overflow-x-auto my-3 text-[12px] border border-border/20">
-                                            {children}
-                                        </pre>
-                                    ),
-                                    code: ({ children }) => (
-                                        <code className="bg-muted-foreground/10 px-1.5 py-0.5 rounded text-[12px] font-mono">
-                                            {children}
-                                        </code>
-                                    ),
-                                    ul: ({ children }) => <ul className="list-disc ml-4 mb-2">{children}</ul>,
-                                    li: ({ children }) => <li className="mb-1">{children}</li>,
-                                    h1: ({ children }) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
-                                    h2: ({ children }) => <h2 className="text-base font-bold mb-2">{children}</h2>,
-                                }}
-                            >
-                                {message.content}
-                            </ReactMarkdown>
-                        )}
-                    </div>
-                </div>
-                <div className="flex items-center gap-2 px-1">
-                    <span className="text-[10px] text-muted-foreground font-medium">
-                        {format(new Date(message.timestamp), "h:mm a")}
-                    </span>
-                    {message.total_tokens ? (
-                        <span className="text-[10px] text-muted-foreground/50">
-                            • {message.total_tokens} tokens
-                        </span>
-                    ) : null}
-                </div>
-            </div>
-
-            {!isAssistant && (
-                <Avatar className="h-8 w-8 border border-border/30 shrink-0 mt-1">
-                    <AvatarFallback className="bg-muted/50 text-muted-foreground text-[10px] font-bold">
-                        <User className="h-4 w-4" />
-                    </AvatarFallback>
-                </Avatar>
-            )}
-        </div>
-    );
-}

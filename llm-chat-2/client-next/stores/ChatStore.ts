@@ -1,6 +1,4 @@
 import { create } from "zustand";
-import { v4 as uuidv4 } from "uuid";
-import { toast } from "sonner";
 
 export interface Message {
   id: string;

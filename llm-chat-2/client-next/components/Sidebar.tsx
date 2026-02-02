@@ -12,10 +12,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { ChatList, NewChatButton } from "@/components/Chat";
+import { NewChatButton } from "@/components/Chat";
 import { SearchChatButton } from "@/components/SearchChat";
 import { NavChatHistory } from "@/components/NavChatHistory";
-import { NavShop } from "@/components/NavShop";
 
 
 export const SidebarActions = () => {
@@ -64,7 +63,6 @@ export const SidebarComponent = () => {
         <NewChatButton />
       </SidebarHeader>
       <SidebarContent>
-        <NavShop />
         <NavChatHistory />
       </SidebarContent>
       <SidebarFooter>
