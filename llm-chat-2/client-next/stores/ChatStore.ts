@@ -10,6 +10,7 @@ export interface ChatItem {
   id: string;
   title: string;
   items: Item[];
+  canvas: { content: string; language: string } | null;
   total_tokens: number;
   createdAt: Date;
   updatedAt: Date;

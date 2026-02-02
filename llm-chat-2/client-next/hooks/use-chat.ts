@@ -15,6 +15,7 @@ interface ServerChat {
     title: string;
     items: ServerItem[];
     total_tokens: number;
+    canvas: { content: string; language: string } | null;
     created_at: string;
     updated_at: string;
 }
@@ -53,6 +54,7 @@ const fetchChats = async (): Promise<ChatItem[]> => {
             };
         }),
         total_tokens: chat.total_tokens || 0,
+        canvas: chat.canvas || null,
         createdAt: new Date(chat.created_at || chat.updated_at),
         updatedAt: new Date(chat.updated_at)
     }));
@@ -67,6 +69,7 @@ const createChat = async (): Promise<ChatItem> => {
         title: data.title,
         items: [],
         total_tokens: 0,
+        canvas: null,
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
     };
