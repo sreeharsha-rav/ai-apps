@@ -1,0 +1,117 @@
+{
+  "01KGF0PR2E74EEG7G9WDN1WM8Z": {
+    "id": "01KGF0PR2E74EEG7G9WDN1WM8Z",
+    "title": "hi, how are you?",
+    "items": [
+      {
+        "id": "01KGF0PR4BMBZ1X4M1CRPKW07W",
+        "data": {
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "hi, how are you?"
+            }
+          ],
+          "type": "message"
+        },
+        "timestamp": "2026-02-02T16:39:48.043113"
+      },
+      {
+        "id": "01KGF0PYSR2SB9HJM6744MQ446",
+        "data": {
+          "content": [
+            {
+              "annotations": [],
+              "text": "Hi — I'm doing well, thanks! How can I help you today?",
+              "type": "output_text",
+              "logprobs": []
+            }
+          ],
+          "role": "assistant",
+          "status": "completed",
+          "type": "message"
+        },
+        "timestamp": "2026-02-02T16:39:54.872580"
+      },
+      {
+        "id": "01KGF0QBR5E39N8ZR637JDA2KS",
+        "data": {
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "give me all samples of markdown"
+            }
+          ],
+          "type": "message"
+        },
+        "timestamp": "2026-02-02T16:40:08.133627"
+      },
+      {
+        "id": "01KGF0RETGZSZQWX5E5Z2G5J7Y",
+        "data": {
+          "content": [
+            {
+              "annotations": [],
+              "text": "Do you mean examples of Markdown syntax (how to write headings, lists, code, tables, etc.)? Below is a comprehensive set of commonly used Markdown samples (core CommonMark + common extensions like GitHub Flavored Markdown). For each feature I show the Markdown source (in a code block) and a one-line note about how it renders. Note that different platforms/renderers may support slightly different extensions (e.g., footnotes, definition lists, math).\n\nBasic text and headings\n```\n# H1\n## H2\n### H3\n\nThis is a paragraph.  (two spaces at end creates a line break)  \nThis is the next line of the same paragraph.\n```\nRenders: Headings H1/H2/H3 and a paragraph with a line break.\n\nEmphasis\n```\n*italic* _italic_\n**bold** __bold__\n***bold italic***\n~~strikethrough~~\n```\nRenders: italic, bold, bold italic, strikethrough (GFM).\n\nInline code and code blocks\n```\nInline code: `const x = 1;`\n\nFenced code block with language:\n```js\nfunction hello() {\n  console.log(\"Hello\");\n}\n```\n\nIndented code block:\n    line one\n    line two\n```\nRenders: inline code and syntax-highlighted fenced code block (if renderer supports language), and indented code block.\n\nBlockquotes\n```\n> This is a blockquote.\n>\n> > Nested quote.\n>\n> Quote with paragraph and list:\n> \n> - item 1\n> - item 2\n```\nRenders: quoted text and nested blockquote and list inside quote.\n\nLists\n```\nUnordered:\n- Item A\n- Item B\n  - Nested item B1\n\nOrdered:\n1. First\n2. Second\n   1. Sub-first\n\nMixed:\n1. First\n- Second (still allowed by many renderers)\n```\nRenders: ordered/unordered lists and nesting.\n\nLinks and autolinks\n```\nInline link: [OpenAI](https://openai.com)\n\nReference-style:\n[Google][g]\n[g]: https://google.com \"Google home\"\n\nAutolink: <http://example.com>\n```\nRenders: clickable links; autolink automatically becomes link.\n\nImages\n```\nInline image: ![Alt text](https://example.com/image.png \"Optional title\")\n\nReference-style image:\n![Logo][logo]\n[logo]: https://example.com/logo.png\n```\nRenders: images with alt text and optional title.\n\nTables (GFM / Common extensions)\n```\n| Name  | Age | City      |\n|-------|-----:|-----------|\n| Alice |  30 | New York  |\n| Bob   |  25 | San Francisco |\n```\nRenders: a table with alignment (right align Age).\n\nTask lists (GFM)\n```\n- [ ] Task one\n- [x] Task done\n```\nRenders: checkbox list (interactive checkboxes on some platforms).\n\nFootnotes (Pandoc/GFM-like renderers)\n```\nHere is a statement.[^1]\n\n[^1]: This is the footnote text.\n```\nRenders: footnote reference and note (not supported by all renderers).\n\nDefinition lists (Pandoc)\n```\nTerm 1\n: Definition one\n\nTerm 2\n: Definition two line 1\n: Definition two line 2\n```\nRenders: definition list (supported by some renderers like Pandoc).\n\nHorizontal rule\n```\n---\n***\n___\n```\nRenders: horizontal divider.\n\nInline HTML and raw HTML blocks\n```\nThis is <em>raw HTML</em> inline.\n\n<div style=\"border:1px solid #ccc; padding:6px\">\nHTML block is allowed in Markdown (renderer permitting).\n</div>\n```\nRenders: raw HTML if the renderer allows it (sanitization may remove some tags).\n\nEscaping characters\n```\nTo show a literal asterisk: \\*\nBackslash escapes let you show characters like \\*, \\`, \\_, \\{ \\}, etc.\n```\nRenders: shows literal Markdown characters.\n\nEmojis (GFM)\n```\nI love markdown! :sparkles: :heart:\n```\nRenders: emoji shortcodes to emoji (if platform supports).\n\nMentions and issues (GFM)\n```\nPing a user: @username\nReference issue: #123\n```\nRenders: platform-specific mention/issue links on systems like GitHub.\n\nYAML front matter (static site generators)\n```\n---\ntitle: \"My Post\"\ndate: 2026-02-01\ntags: [markdown, example]\n---\n# Post Title\n```\nRenders: front matter is metadata for processors (not shown in HTML content).\n\nMath (LaTeX) — renderer dependent (MathJax/Katex)\n```\nInline: Euler's identity $e^{i\\pi} + 1 = 0$.\n\nDisplay:\n$$\n\\int_{0}^{1} x^2 dx = \\frac{1}{3}\n$$\n```\nRenders: math when the renderer supports MathJax/Katex.\n\nDefinition of code + language identifiers (fenced)\n```\n```python\ndef add(a, b):\n    return a + b\n```\n```\nRenders: syntax-highlighted Python if supported.\n\nDiff or patch blocks (some renderers)\n```\n```diff\n+ added line\n- removed line\n```\n```\nRenders: colored diff style.\n\nCollapsible details (HTML)\n```\n<details>\n  <summary>Click to expand</summary>\n\n  Hidden content here, including lists, code, etc.\n</details>\n```\nRenders: collapsible section on supporting platforms.\n\nAdvanced: nested constructs example\n```\n> ### Blockquote heading\n> - list item 1\n> - list item 2\n>\n> ```js\n> // code inside blockquote\n> console.log('inside quote');\n> ```\n```\nRenders: blockquote containing heading, list, and fenced code block.\n\nEscaping a code fence\n```\nIf you need to show a fenced block in Markdown, you can fence it with more backticks:\n\n````markdown\n```js\nconsole.log(\"not executed\");\n```\n````\n\n```\nRenders: shows the fenced code block literally.\n\nSpecial characters and HTML entities\n```\nUse &amp; for & and &lt; for < when needed.\n```\nRenders: HTML entities.\n\nNotes on flavors and support\n- CommonMark is the standardized core spec (headings, emphasis, lists, code, blockquotes, links, images).\n- GitHub Flavored Markdown (GFM) adds tables, task lists, strikethrough, autolinks, and some other conveniences.\n- Pandoc/Markdown processors add footnotes, definition lists, citations, math, and more.\n- Static site generators and platforms may add front matter (YAML/TOML), special shortcodes, or sanitize HTML.\n\nIf you want:\n- A single-file cheatsheet PDF or printable reference.\n- Examples in a specific flavor (GitHub, CommonMark, Pandoc, Markdown-it).\n- A rendered preview of any of the above examples.\n\nTell me which format or flavor you prefer and I can produce a focused cheatsheet or a printable file.",
+              "type": "output_text",
+              "logprobs": []
+            }
+          ],
+          "role": "assistant",
+          "status": "completed",
+          "type": "message"
+        },
+        "timestamp": "2026-02-02T16:40:44.048876"
+      },
+      {
+        "id": "01KGF0RNVNP8ZNEGZXW7DPRY92",
+        "data": {
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "give me 2 sum code"
+            }
+          ],
+          "type": "message"
+        },
+        "timestamp": "2026-02-02T16:40:51.253825"
+      },
+      {
+        "id": "01KGF0S7ZGTQPZK52ENNDZFFTZ",
+        "data": {
+          "content": [
+            {
+              "annotations": [],
+              "text": "Here’s a standard O(n) hash-map solution to the Two Sum problem (find indices of two numbers that add to target). I’ll give concise implementations in Python, JavaScript, Java, and C++, plus complexity.\n\nPython\n```\ndef two_sum(nums, target):\n    lookup = {}\n    for i, num in enumerate(nums):\n        comp = target - num\n        if comp in lookup:\n            return [lookup[comp], i]\n        lookup[num] = i\n    return []  # or raise/return None if no solution\n# Example\nprint(two_sum([2, 7, 11, 15], 9))  # -> [0, 1]\n```\n\nJavaScript\n```\nfunction twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const comp = target - nums[i];\n    if (map.has(comp)) return [map.get(comp), i];\n    map.set(nums[i], i);\n  }\n  return [];\n}\n// Example: twoSum([2,7,11,15], 9) -> [0,1]\n```\n\nJava\n```\nimport java.util.*;\n\npublic int[] twoSum(int[] nums, int target) {\n    Map<Integer,Integer> map = new HashMap<>();\n    for (int i = 0; i < nums.length; i++) {\n        int comp = target - nums[i];\n        if (map.containsKey(comp)) return new int[] { map.get(comp), i };\n        map.put(nums[i], i);\n    }\n    return new int[] { -1, -1 }; // or throw\n}\n```\n\nC++\n```\n#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nvector<int> twoSum(vector<int>& nums, int target) {\n    unordered_map<int,int> m;\n    for (int i = 0; i < (int)nums.size(); ++i) {\n        int comp = target - nums[i];\n        auto it = m.find(comp);\n        if (it != m.end()) return { it->second, i };\n        m[nums[i]] = i;\n    }\n    return {}; // or throw\n}\n```\n\nComplexity\n- Time: O(n)\n- Space: O(n)\n\nIf you want a version that returns the values instead of indices, handles multiple pairs, or a specific language / coding-platform format (e.g., LeetCode), tell me which and I’ll adapt.",
+              "type": "output_text",
+              "logprobs": []
+            }
+          ],
+          "role": "assistant",
+          "status": "completed",
+          "type": "message"
+        },
+        "timestamp": "2026-02-02T16:41:09.808598"
+      }
+    ],
+    "canvas": {
+      "content": "# Hello Canvas\n\nThis is a **test** content sent from the server.\n\n- Item 1\n- Item 2\n\n```python\nprint('Hello World')\n```",
+      "language": "markdown"
+    },
+    "total_tokens": 2649,
+    "updated_at": "2026-02-02T16:41:09.935635",
+    "created_at": "2026-02-02T16:39:47.982582"
+  },
+  "01KGF1R8NM7C0Z6QK51NBMNA1A": {
+    "id": "01KGF1R8NM7C0Z6QK51NBMNA1A",
+    "title": "New Chat",
+    "items": [],
+    "canvas": null,
+    "total_tokens": 0,
+    "updated_at": "2026-02-02T16:58:06.324174",
+    "created_at": "2026-02-02T16:58:06.324174"
+  }
+}

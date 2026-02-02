@@ -1,0 +1,62 @@
+[
+    {
+        "id": "chat_mock_1",
+        "title": "Order #12345 Support",
+        "messages": [
+            {
+                "id": "m1",
+                "role": "user",
+                "content": "Hi, I'm checking the status of my order #12345.",
+                "timestamp": "2024-01-10T10:00:00Z"
+            },
+            {
+                "id": "m2",
+                "role": "assistant",
+                "content": "Hello! Let me check that for you... \n\nYour order **#12345** is currently **In Transit** and is expected to arrive by **Thursday, Jan 12th**.\n\n### Order Details:\n- **Item:** Premium Wireless Headphones\n- **Status:** Shipped\n- **Carrier:** Fedex",
+                "timestamp": "2024-01-10T10:00:15Z"
+            }
+        ],
+        "createdAt": "2024-01-10T10:00:00Z",
+        "updatedAt": "2024-01-10T10:00:15Z"
+    },
+    {
+        "id": "chat_mock_2",
+        "title": "Product Comparison: Keyboards",
+        "messages": [
+            {
+                "id": "m3",
+                "role": "user",
+                "content": "Can you compare the Mechanical Keyboard and the basic Office Keyboard?",
+                "timestamp": "2024-01-11T14:20:00Z"
+            },
+            {
+                "id": "m4",
+                "role": "assistant",
+                "content": "Certainly! Here's a quick comparison:\n\n| Feature | Mechanical Keyboard | Office Keyboard |\n| :--- | :--- | :--- |\n| **Switch Type** | Tactile Blue | Membrane |\n| **Durability** | 50M Clicks | 5M Clicks |\n| **Backlight** | RGB | None |\n| **Price** | $129.00 | $29.00 |\n\nIf you do a lot of typing or gaming, the **Mechanical Keyboard** is highly recommended for its tactile feedback and durability.",
+                "timestamp": "2024-01-11T14:20:30Z"
+            }
+        ],
+        "createdAt": "2024-01-11T14:20:00Z",
+        "updatedAt": "2024-01-11T14:20:30Z"
+    },
+    {
+        "id": "chat_mock_3",
+        "title": "Return Policy Inquiry",
+        "messages": [
+            {
+                "id": "m5",
+                "role": "user",
+                "content": "What is your return policy for electronics?",
+                "timestamp": "2024-01-12T09:15:00Z"
+            },
+            {
+                "id": "m6",
+                "role": "assistant",
+                "content": "Our return policy for electronics is as follows:\n\n1. **30-Day Window**: You can return any electronic item within 30 days of purchase.\n2. **Condition**: Items must be in their original packaging with all accessories.\n3. **Restocking Fee**: A 10% restocking fee applies to opened items.\n\nYou can initiate a return through your `Account Settings` or by speaking with our support team.",
+                "timestamp": "2024-01-12T09:15:20Z"
+            }
+        ],
+        "createdAt": "2024-01-12T09:15:00Z",
+        "updatedAt": "2024-01-12T09:15:20Z"
+    }
+]
