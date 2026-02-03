@@ -267,10 +267,39 @@ class ChatService:
             history_input = []
             for item in chat.items:
                 history_input.append(item.data)
+
+            # inject context about product with id extracted UPID, title, variant["shop"]["id"], variant["shop"]["name"], variant["shop"]["onlineStoreUrl"]
+            context = "<products_context>{products}</products_context>"
+            if chat.canvas and chat.canvas.items:
+                products = ""
+                for canvas_item in chat.canvas.items:
+                    if canvas_item.type == "product_list":
+                        product_list = canvas_item.content
+                        for product in product_list:
+                            product_upid = product.get("id", "").split("/")[-1] if product.get("id") else "unknown"
+                            product_title = product.get("title", "Unknown Product")
+                            
+                            # Shop info is in variants, not at product level
+                            variants = product.get("variants", [])
+                            if variants and len(variants) > 0:
+                                first_variant = variants[0]
+                                shop = first_variant.get("shop", {})
+                                product_shop_name = shop.get("name", "Unknown Shop")
+                                product_shop_domain = shop.get("onlineStoreUrl", "")
+                            else:
+                                product_shop_name = "Unknown Shop"
+                                product_shop_domain = ""
+                            
+                            products += f"<product id=\"{product.get('id', '')}\"><upid>{product_upid}</upid><title>{product_title}</title><shop_name>{product_shop_name}</shop_name><shop_domain>{product_shop_domain}</shop_domain></product>"
+                context = context.format(products=products)
+            logger.debug(f"\n-- Plugging in context --\n{context}\n-- End of context --\n")
+
+            user_message.data["content"][0]["text"] = user_message.data["content"][0]["text"] + "\n\n" + context
             history_input.append(user_message.data)
 
             kwargs = {
-                "model": AZURE_OPENAI_DEPLOYMENT,
+                # "model": AZURE_OPENAI_DEPLOYMENT,
+                "model": "gpt-5-mini",
                 "instructions": CURRENT_SYSTEM_PROMPT,
                 "input": history_input,
                 "stream": True,
@@ -359,15 +388,18 @@ class ChatService:
                                 
                                 if event.item.name == "search_global_products":
                                     if "offers" in output_data and isinstance(output_data["offers"], list):
+                                        logger.debug(f"- adding {event.item.name} results to canvas")
                                         products = output_data["offers"]
 
                                         # replace existing product list if exists, else append
-                                        if len(current_items) > 0:
-                                            for item in current_items:
-                                                if item.type == "product_list":
-                                                    item.content = products
-                                                    break
-                                        else:
+                                        found = False
+                                        for item in current_items:
+                                            if item.type == "product_list":
+                                                item.content = products
+                                                found = True
+                                                break
+                                        
+                                        if not found:
                                             current_items.append(
                                                 CanvasItem(
                                                     type="product_list",
@@ -376,22 +408,25 @@ class ChatService:
                                             )
                                 
                                 elif event.item.name == "get_global_product_details":
-                                    if "id" in output_data and "title" in output_data: 
-                                        product_detail = output_data
+                                    if output_data and output_data.get("product"):
+                                        logger.debug(f"- adding {event.item.name} results to canvas")
+                                        product_detail = output_data["product"]
 
                                         # replace existing product detail if exists, else append
-                                        if len(current_items) > 0:
-                                            for item in current_items:
-                                                if item.type == "product_detail":
-                                                    item.content = product_detail
-                                                    break
-                                        else:
+                                        found = False
+                                        for item in current_items:
+                                            if item.type == "product_detail":
+                                                item.content = product_detail
+                                                found = True
+                                                break
+                                        
+                                        if not found:
                                             current_items.append(
                                                 CanvasItem(
                                                     type="product_detail",
                                                     content=product_detail
                                                 )
-                                        )
+                                            )
                                 
                                 canvas_data = CanvasData(items=current_items)
                                 self.storage.update_chat_canvas(

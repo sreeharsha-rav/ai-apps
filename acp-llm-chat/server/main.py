@@ -12,7 +12,8 @@ from middleware.logging_middleware import LoggingMiddleware
 async def lifespan(app: FastAPI):
     # Startup: Create AsyncOpenAI client
     logger.info("Initializing AsyncOpenAI client...")
-    app.state.openai_client = AsyncOpenAI(base_url=AZURE_OPENAI_ENDPOINT, api_key=AZURE_OPENAI_KEY)
+    app.state.openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+    # app.state.openai_client = AsyncOpenAI(base_url=AZURE_OPENAI_ENDPOINT, api_key=AZURE_OPENAI_KEY)
     yield
     # Shutdown: Close client
     logger.info("Closing AsyncOpenAI client...")

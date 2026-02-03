@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { X, ExternalLink } from "lucide-react";
+import { X, ExternalLink, ShoppingBag, Store, ArrowRight, Share2, Tag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -7,6 +7,10 @@ import remarkBreaks from "remark-breaks";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import { CanvasItem } from "@/stores/ChatStore";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface CanvasProps {
     isOpen: boolean;
@@ -23,7 +27,9 @@ const ProductCard = ({ data }: { data: any }) => {
     let price = "N/A";
     if (priceInfo) {
         if (typeof priceInfo === 'object') {
-            price = `${priceInfo.amount || ''} ${priceInfo.currency || ''}`.trim();
+            const amount = parseFloat(priceInfo.amount);
+            const displayAmount = isNaN(amount) ? priceInfo.amount : (amount / 100).toFixed(2);
+            price = `${displayAmount} ${priceInfo.currency || ''}`.trim();
         } else if (typeof priceInfo === 'string') {
             price = priceInfo;
         }
@@ -54,6 +60,173 @@ const ProductCard = ({ data }: { data: any }) => {
         </div>
     )
 }
+
+const ProductDetailView = ({ data }: { data: any }) => {
+    // Inference from JSON sample
+    const p = data || {};
+    const variants = p.variants || [];
+    const mainVariant = variants.length > 0 ? variants[0] : {};
+
+    // Media logic: prefer top-level featuredVariantMedia, else mainVariant media, else top level media
+    const rawMedia = (p.featuredVariantMedia?.length ? p.featuredVariantMedia : null)
+        || (mainVariant.media?.length ? mainVariant.media : null)
+        || (p.media?.length ? p.media : []);
+
+    // Deduplicate media by URL
+    const uniqueMedia = Array.from(new Map(rawMedia.map((m: any) => [m.url, m])).values());
+
+    // Price
+    let price = "N/A";
+    const priceObj = mainVariant.price || p.price;
+    if (priceObj) {
+        const amount = parseFloat(priceObj.amount);
+        const displayAmount = isNaN(amount) ? priceObj.amount : (amount / 100).toFixed(2);
+        price = `${displayAmount} ${priceObj.currency || ''}`.trim();
+    }
+
+    // Shop
+    const shop = mainVariant.shop || {};
+
+    // Actions
+    const checkoutUrl = mainVariant.checkoutUrl;
+    const variantUrl = mainVariant.variantUrl || p.onlineStoreUrl;
+
+    return (
+        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Header / Title Section */}
+            <div className="space-y-2">
+                {shop.name && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Store className="h-4 w-4" />
+                        <span>{shop.name}</span>
+                    </div>
+                )}
+                <h1 className="text-2xl font-bold leading-tight">{p.title || mainVariant.displayName || "Product Details"}</h1>
+                <div className="text-xl font-bold text-primary">{price}</div>
+            </div>
+
+            {/* Image Gallery */}
+            {uniqueMedia.length > 0 ? (
+                <div className="w-full bg-muted/30 rounded-xl overflow-hidden border">
+                    <ScrollArea className="w-full whitespace-nowrap rounded-md border p-4">
+                        <div className="flex w-full space-x-4">
+                            {uniqueMedia.map((m: any, i: number) => (
+                                <figure key={i} className="shrink-0">
+                                    <div className="overflow-hidden rounded-md">
+                                        <img
+                                            src={m.url}
+                                            alt={m.altText || `Product Image ${i + 1}`}
+                                            className="aspect-[4/3] h-64 w-auto object-contain"
+                                        />
+                                    </div>
+                                </figure>
+                            ))}
+                        </div>
+                    </ScrollArea>
+                </div>
+            ) : (
+                <div className="w-full h-64 bg-muted rounded-xl flex items-center justify-center text-muted-foreground">
+                    No Images Available
+                </div>
+            )}
+
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row gap-3">
+                {checkoutUrl && (
+                    <Button className="flex-1 gap-2" size="lg" asChild>
+                        <a href={checkoutUrl} target="_blank" rel="noopener noreferrer">
+                            <ShoppingBag className="h-4 w-4" />
+                            Buy Now
+                        </a>
+                    </Button>
+                )}
+                {variantUrl && (
+                    <Button variant="outline" className="flex-1 gap-2" size="lg" asChild>
+                        <a href={variantUrl} target="_blank" rel="noopener noreferrer">
+                            View in Store
+                            <ExternalLink className="h-4 w-4" />
+                        </a>
+                    </Button>
+                )}
+            </div>
+
+            {/* USP Badge */}
+            {p.uniqueSellingPoint && (
+                <div className="bg-primary/5 border border-primary/20 p-4 rounded-lg flex items-start gap-3">
+                    <Tag className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <p className="text-sm text-primary/90 font-medium">{p.uniqueSellingPoint}</p>
+                </div>
+            )}
+
+            <Separator />
+
+            {/* Details Tabs */}
+            <Tabs defaultValue="overview" className="w-full">
+                <TabsList className="w-full justify-start overflow-x-auto">
+                    <TabsTrigger value="overview">Overview</TabsTrigger>
+                    {(p.topFeatures?.length > 0) && <TabsTrigger value="features">Features</TabsTrigger>}
+                    {(p.techSpecs?.length > 0 || p.attributes?.length > 0) && <TabsTrigger value="specs">Specs</TabsTrigger>}
+                    {(p.selectedOptions?.length > 0) && <TabsTrigger value="options">Options</TabsTrigger>}
+                </TabsList>
+
+                <TabsContent value="overview" className="mt-4 space-y-4">
+                    <div className="prose dark:prose-invert max-w-none text-sm leading-relaxed">
+                        {p.description || mainVariant.productDescription || "No description available."}
+                    </div>
+                </TabsContent>
+
+                <TabsContent value="features" className="mt-4">
+                    <ul className="grid gap-3">
+                        {p.topFeatures?.map((feature: string, idx: number) => (
+                            <li key={idx} className="flex gap-2 text-sm">
+                                <span className="text-primary">•</span>
+                                <span>{feature}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </TabsContent>
+
+                <TabsContent value="specs" className="mt-4 space-y-6">
+                    {p.techSpecs?.length > 0 && (
+                        <div className="space-y-3">
+                            <h4 className="font-semibold text-sm">Technical Specifications</h4>
+                            <ul className="grid gap-2 text-sm text-muted-foreground">
+                                {p.techSpecs.map((spec: string, i: number) => (
+                                    <li key={i} className="border-l-2 border-primary/20 pl-3">{spec}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
+                    {p.attributes?.length > 0 && (
+                        <div className="space-y-3">
+                            <h4 className="font-semibold text-sm">Attributes</h4>
+                            <div className="flex flex-wrap gap-2">
+                                {p.attributes.map((attr: any, i: number) => (
+                                    <Badge key={i} variant="secondary" className="font-normal">
+                                        <span className="font-semibold mr-1">{attr.name}:</span>
+                                        {attr.values?.join(", ")}
+                                    </Badge>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </TabsContent>
+
+                <TabsContent value="options" className="mt-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        {p.selectedOptions?.map((opt: any, i: number) => (
+                            <div key={i} className="p-3 border rounded-lg">
+                                <span className="text-xs text-muted-foreground uppercase font-bold">{opt.name}</span>
+                                <div className="font-medium">{opt.value}</div>
+                            </div>
+                        ))}
+                    </div>
+                </TabsContent>
+            </Tabs>
+        </div>
+    );
+};
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -119,7 +292,7 @@ export function Canvas({ isOpen, onClose, data }: CanvasProps) {
                         <TabsContent value="details" className="space-y-6">
                             {productDetailItems.map((item, idx) => (
                                 <div key={item.id || idx}>
-                                    <ProductCard data={item.content} />
+                                    <ProductDetailView data={item.content} />
                                 </div>
                             ))}
                         </TabsContent>
