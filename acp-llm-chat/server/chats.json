@@ -107,11 +107,283 @@
   },
   "01KGF1R8NM7C0Z6QK51NBMNA1A": {
     "id": "01KGF1R8NM7C0Z6QK51NBMNA1A",
-    "title": "New Chat",
-    "items": [],
-    "canvas": null,
-    "total_tokens": 0,
-    "updated_at": "2026-02-02T16:58:06.324174",
+    "title": "hi",
+    "items": [
+      {
+        "id": "01KGFCDNMYAV4MVYX1VRQ7QTKC",
+        "data": {
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "hi"
+            }
+          ],
+          "type": "message"
+        },
+        "timestamp": "2026-02-02T20:04:33.502209"
+      },
+      {
+        "id": "01KGFCDRC824CR6C3KB5842CER",
+        "data": {
+          "server_label": "shopify-catalog-mcp",
+          "tools": [
+            {
+              "input_schema": {
+                "type": "object",
+                "properties": {
+                  "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of products to return up to a maximum of 100. Default is 10.",
+                    "minimum": 1,
+                    "maximum": 300,
+                    "default": 10
+                  },
+                  "max_price": {
+                    "type": "number",
+                    "description": "The maximum price the buyer is willing to pay, without the unit.",
+                    "minimum": 0
+                  },
+                  "min_price": {
+                    "type": "number",
+                    "description": "The minimum price the buyer is willing to pay, without the unit.",
+                    "minimum": 0
+                  },
+                  "query": {
+                    "type": "string",
+                    "description": "The search query to find related products eg. 'shoes' 'blue jeans'. Required unless a saved_catalog is provided that already contains a query. When in doubt, always provide a query as fallback."
+                  },
+                  "include_secondhand": {
+                    "type": "boolean",
+                    "description": "When true, include secondhand products. Otherwise, only first-hand products may be shown."
+                  },
+                  "ships_to": {
+                    "type": "string",
+                    "description": "The countries to ship to (ISO country code)"
+                  },
+                  "ships_from": {
+                    "type": "string",
+                    "description": "The countries to ship from (ISO country code)"
+                  },
+                  "shop_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "requires_selling_plan": {
+                    "type": "boolean",
+                    "description": "When true, includes only subcscription products, when false, includes only non-subscription products. Omit for all products."
+                  },
+                  "products_limit": {
+                    "type": "integer",
+                    "description": "The maximum number of products to return per universal product.",
+                    "minimum": 1,
+                    "maximum": 10,
+                    "default": 10
+                  },
+                  "saved_catalog": {
+                    "type": "string",
+                    "description": "The slug of a saved catalog. When provided, saved catalog filters always take precedence. Additional parameters not in the saved catalog are still applied. Note: saved catalogs may or may not contain a query - if they don't, you must provide the query parameter explicitly."
+                  },
+                  "available_for_sale": {
+                    "type": "boolean",
+                    "description": "When true, include only products available for sale. Otherwise, unavailable products may be shown."
+                  },
+                  "context": {
+                    "type": "string",
+                    "description": "Additional information about the request such as user demographics, mood, location, or other relevant details that could help in tailoring the response appropriately."
+                  }
+                },
+                "required": [
+                  "context"
+                ]
+              },
+              "name": "search_global_products",
+              "annotations": {
+                "read_only": false
+              },
+              "description": "Use this tool when buyers are searching for products and haven't provided a specific shop.\nFor example:\n- \"I'm looking for a pair of shoes\"\n- \"Could you find me some blue jeans?\"\n- \"I need a new dress, I'm a size 10 and I like the color blue\"\n\nYou can also use a saved catalog slug to search using saved catalog filters.\n"
+            },
+            {
+              "input_schema": {
+                "type": "object",
+                "properties": {
+                  "upid": {
+                    "type": "string",
+                    "description": "The universal product ID (in Base62 encoded format). Provide either upid or variant_id, not both."
+                  },
+                  "_gsid": {
+                    "type": "string",
+                    "description": "Reference to the Global Search which generated the URL. Optional, and pre-populated in Global Search results."
+                  },
+                  "available_for_sale": {
+                    "type": "boolean",
+                    "description": "When true, include only products available for sale. Otherwise, unavailable products may be shown."
+                  },
+                  "context": {
+                    "type": "string",
+                    "description": "Additional information about the request such as user demographics, mood, location, or other relevant details that could help in tailoring the response appropriately."
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of offers to return for the product.",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 10
+                  },
+                  "product_options": {
+                    "type": "array",
+                    "description": "Product options like color, size, etc.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "values": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "values"
+                      ]
+                    }
+                  },
+                  "query": {
+                    "type": "string",
+                    "description": "Keyword(s) for search."
+                  },
+                  "include_secondhand": {
+                    "type": "boolean",
+                    "description": "When true, include secondhand products."
+                  },
+                  "ships_from": {
+                    "type": "string",
+                    "description": "The countries to ship from (ISO country code)"
+                  },
+                  "ships_to": {
+                    "type": "string",
+                    "description": "The countries to ship to (ISO country code)"
+                  },
+                  "shop_id": {
+                    "type": "string",
+                    "description": "Filter products by shop ID. Can be a numeric shop ID (e.g. '68393009375') or a Shop GID (e.g. 'gid://shopify/Shop/68393009375')"
+                  },
+                  "variant_id": {
+                    "type": "integer",
+                    "description": "The Shopify variant ID. Provide either variant_id or upid, not both."
+                  },
+                  "product_id": {
+                    "type": "integer",
+                    "description": "Will force this product to be the first result if no query is provided."
+                  },
+                  "contextualize_pricing": {
+                    "type": "boolean",
+                    "description": "When true, return contextualized pricing based on buyer location"
+                  },
+                  "option_preferences": {
+                    "type": "string",
+                    "description": "Comma-separated list of option names in order of preference for relaxing filters when no match is found for passed product_options (e.g., 'Color,Size,Material' , Color is most important to match)"
+                  }
+                }
+              },
+              "name": "get_global_product_details",
+              "annotations": {
+                "read_only": false
+              },
+              "description": "Use this tool when a buyer is asking about a specific product and you know the product ID.\nThis tool takes a universal product ID (UPID) and returns detailed information about the product.\n\nFor example:\n- When a buyer asks \"Tell me more about this product\" and provides a product link or ID\n- When looking up detailed product information for a specific product the buyer has mentioned\n- When you need to show information about variants, pricing, and availability of a specific product\n"
+            }
+          ],
+          "type": "mcp_list_tools",
+          "error": null
+        },
+        "timestamp": "2026-02-02T20:04:36.296028"
+      },
+      {
+        "id": "01KGFCDVA5ARWDD1TAYF8Z0NR2",
+        "data": {
+          "content": [
+            {
+              "annotations": [],
+              "text": "Hi — how can I help you today? Are you looking for a specific product or need recommendations? If it's a product search, tell me what you're looking for (keywords, budget, size, color, where to ship to/from) and I’ll search for options.",
+              "type": "output_text",
+              "logprobs": []
+            }
+          ],
+          "role": "assistant",
+          "status": "completed",
+          "type": "message"
+        },
+        "timestamp": "2026-02-02T20:04:39.301219"
+      },
+      {
+        "id": "01KGFCKCP8SPRTV49SXCCVP33B",
+        "data": {
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "give me blue shoes for casual way"
+            }
+          ],
+          "type": "message"
+        },
+        "timestamp": "2026-02-02T20:07:40.936936"
+      },
+      {
+        "id": "01KGFCKMV7H9JV0D3RC9MVSJ1K",
+        "data": {
+          "arguments": "{\"limit\":12,\"max_price\":500,\"min_price\":0,\"query\":\"blue casual shoes\",\"include_secondhand\":false,\"ships_to\":\"\",\"ships_from\":\"\",\"shop_ids\":[],\"requires_selling_plan\":false,\"products_limit\":5,\"saved_catalog\":\"\",\"available_for_sale\":true,\"context\":\"User requested blue shoes for casual wear; no size, gender, or location provided. Show a variety of styles and price ranges.\"}",
+          "name": "search_global_products",
+          "server_label": "shopify-catalog-mcp",
+          "type": "mcp_call",
+          "approval_request_id": null,
+          "error": {
+            "type": "mcp_tool_execution_error",
+            "content": [
+              {
+                "type": "text",
+                "text": "You are not authorized to use this tool",
+                "annotations": null,
+                "meta": null
+              }
+            ]
+          },
+          "output": null,
+          "status": "failed"
+        },
+        "timestamp": "2026-02-02T20:07:49.287975"
+      },
+      {
+        "id": "01KGFCM1C4CBB0XWZS3Y2WXEK0",
+        "data": {
+          "content": [
+            {
+              "annotations": [],
+              "text": "I can help — quick question before I search: what size, gender (or unisex), budget, and shipping country should I use? Any preferred style (sneakers, slip-ons, loafers, canvas, suede, athletic-casual)?\n\nI don’t currently have access to the store catalog tool, but here are some popular blue casual shoes you might consider (styles and typical price ranges) to narrow things down:\n\n- Vans Old Skool (navy) — classic skate/casual, canvas/suede, ~$60–80  \n- Converse Chuck Taylor All Star (navy) — canvas low/high-top, timeless casual, ~$50–65  \n- Adidas Continental 80 / Samba (blue colorways) — retro-casual sneakers, ~$70–100  \n- Nike Air Force 1 (blue options) — casual/streetwear, cushioned, ~$90–120  \n- New Balance 574 / 327 (blue) — comfy everyday sneakers, ~$80–120  \n- Sperry Top-Sider (navy) — casual boat shoe, good for summer, ~$70–110  \n- TOMS Alpargata slip-on (navy) — easy slip-on casual, ~$40–60  \n- Clarks Desert Boot (blue suede variants) — smart-casual, ~$90–150\n\nTell me your size, budget, style preference, and shipping country and I’ll either search the catalog for exact matches or recommend specific models/shops.",
+              "type": "output_text",
+              "logprobs": []
+            }
+          ],
+          "role": "assistant",
+          "status": "completed",
+          "type": "message"
+        },
+        "timestamp": "2026-02-02T20:08:02.116005"
+      }
+    ],
+    "canvas": {
+      "content": "# Hello Canvas\n\nThis is a **test** content sent from the server.\n\n- Item 1\n- Item 2\n\n```python\nprint('Hello World')\n```",
+      "language": "markdown"
+    },
+    "total_tokens": 2773,
+    "updated_at": "2026-02-02T20:08:02.254076",
     "created_at": "2026-02-02T16:58:06.324174"
   }
 }
