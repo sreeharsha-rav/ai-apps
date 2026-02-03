@@ -232,6 +232,21 @@ export const useSendMessage = () => {
                                 // 2. Handle Item Done (Server confirms item persistence and gives real ID)
                                 else if (eventType === "response.output_item.done") {
                                     const doneItem = jsonData.item;
+
+                                    // Check for MCP failures in the item
+                                    if (doneItem && doneItem.type === "mcp_call" && doneItem.status === "failed") {
+                                        let errorMessage = "Tool execution failed";
+                                        // Try to extract error message from content or error field
+                                        if (doneItem.error) {
+                                            if (typeof doneItem.error === 'string') errorMessage = doneItem.error;
+                                            else if (doneItem.error.message) errorMessage = doneItem.error.message;
+                                            else if (doneItem.error.content && Array.isArray(doneItem.error.content)) {
+                                                errorMessage = doneItem.error.content.map((c: any) => c.text).join(' ');
+                                            }
+                                        }
+                                        toast.error(errorMessage);
+                                    }
+
                                     if (doneItem && doneItem.type === "message" && doneItem.id) {
                                         // Replace optimistic ID with real server ID
                                         queryClient.setQueryData(["chats"], (old: ChatItem[] = []) => {
@@ -250,6 +265,18 @@ export const useSendMessage = () => {
                                             });
                                         });
                                     }
+                                }
+
+                                // 3. Handle Direct Error Events
+                                else if (eventType === "response.mcp_call.failed") {
+                                    // Ensure we don't double toast if item.done also covers it, 
+                                    // but granular events are sometimes faster.
+                                    // Only toast if we can extract a specific immediate error
+                                    console.log("MCP Call Failed Event:", jsonData);
+                                }
+                                else if (eventType === "error") {
+                                    // General stream errors
+                                    toast.error("Stream Error: " + (jsonData.message || "Unknown error"));
                                 }
 
                             } catch (e) {

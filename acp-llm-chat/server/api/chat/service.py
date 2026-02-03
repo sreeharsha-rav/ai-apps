@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import AsyncGenerator, List, Dict, Optional, Any
-import json
 from datetime import datetime, timedelta
 from ulid import ULID
 from fastapi import HTTPException
@@ -23,8 +22,9 @@ from openai.types.responses import (
     ResponseCompletedEvent,
     ResponseFailedEvent
 )
+import traceback
 
-from config.settings import SHOPIFY_CATALOG_CLIENT_ID, SHOPIFY_CATALOG_CLIENT_SECRET
+from config.settings import AZURE_OPENAI_DEPLOYMENT, SHOPIFY_CATALOG_CLIENT_ID, SHOPIFY_CATALOG_CLIENT_SECRET
 from config.loggers import logger
 from .prompt import CURRENT_SYSTEM_PROMPT
 from .models import ChatRequest, Item, CanvasData, ChatHistory
@@ -39,10 +39,6 @@ def _format_sse(event_type: str, data: any, event_id: str = None) -> str:
     if event_id is None:
         event_id = str(ULID())
     
-    # Ensure data is a JSON string
-    if not isinstance(data, str):
-        data = json.dumps(data)
-    
     # SSE format:
     # id: <id>\n
     # event: <event_type>\n
@@ -53,7 +49,7 @@ def _format_sse(event_type: str, data: any, event_id: str = None) -> str:
 # Shopify Auth
 # ---------------------
 
-SHOPIFY_TOKEN_URL = "https://api.shopify.com/auth/authorize"
+SHOPIFY_TOKEN_URL = "https://api.shopify.com/auth/access_token"
 SHOPIFY_CATALOG_MCP_URL="https://discover.shopifyapps.com/global/mcp"
 # SHOPIFY_CHECKOUT_MCP_URL="https://{shop-domain}/api/ucp/mcp"
 
@@ -106,7 +102,7 @@ class ShopifyAuth:
                 )
 
         except Exception as e:
-            logger.error(f"Failed to fetch access token: {e}")
+            logger.error(f"Failed to fetch access token: {e}", exc_info=True)
             raise e
 
     async def get_valid_token(self) -> str:
@@ -128,16 +124,17 @@ class ChatService:
             self.shopify_auth = None
             logger.warning("Shopify authentication not configured. Shopify catalog, checkout features will not be available.")
 
-    def _build_tools(self) -> List[Dict[str, Any]]:
+    async def _build_tools(self) -> List[Dict[str, Any]]:
         tools = []
         if self.shopify_auth:
+            access_token = await self.shopify_auth.get_valid_token()
             shopify_tools = [
                 {
                     "type": "mcp",
                     "server_label": "shopify-catalog-mcp",
                     "server_url": SHOPIFY_CATALOG_MCP_URL,
                     "headers": {
-                        "Authorization": "Bearer {access_token}"
+                        "Authorization": f"Bearer {access_token}"
                     },
                     "require_approval": "never",
                     "allowed_tools": ["search_global_products", "get_global_product_details"]
@@ -161,7 +158,7 @@ class ChatService:
         try:
             return self.storage.get_all_chats()
         except Exception as e:
-            logger.error(f"Failed to fetch history: {e}")
+            logger.error(f"Failed to fetch history: {e}", exc_info=True)
             raise HTTPException(status_code=500, detail="Internal server error while fetching history")
 
     async def get_chat(self, chat_id: str) -> ChatHistory:
@@ -173,7 +170,7 @@ class ChatService:
         except HTTPException:
             raise
         except Exception as e:
-            logger.error(f"Failed to fetch chat {chat_id}: {e}")
+            logger.error(f"Failed to fetch chat {chat_id}: {e}", exc_info=True)
             raise HTTPException(status_code=500, detail="Internal server error")
 
     async def clear_all_chats(self) -> Dict[str, str]:
@@ -181,7 +178,7 @@ class ChatService:
             self.storage.clear()
             return {"message": "All history cleared"}
         except Exception as e:
-            logger.error(f"Failed to clear history: {e}")
+            logger.error(f"Failed to clear history: {e}", exc_info=True)
             raise HTTPException(status_code=500, detail="Failed to clear history")
 
     async def delete_chat(self, chat_id: str) -> Dict[str, str]:
@@ -189,7 +186,7 @@ class ChatService:
             self.storage.delete_chat(chat_id)
             return {"message": f"Chat {chat_id} deleted"}
         except Exception as e:
-            logger.error(f"Failed to delete chat {chat_id}: {e}")
+            logger.error(f"Failed to delete chat {chat_id}: {e}", exc_info=True)
             raise HTTPException(status_code=500, detail="Failed to delete chat")
 
     async def create_chat(self) -> ChatHistory:
@@ -197,7 +194,7 @@ class ChatService:
             chat = self.storage.get_or_create_chat()
             return chat
         except Exception as e:
-            logger.error(f"Failed to create chat: {e}")
+            logger.error(f"Failed to create chat: {e}", exc_info=True)
             raise HTTPException(status_code=500, detail="Failed to create chat")
 
     async def update_chat_title(self, chat_id: str, title: str) -> ChatHistory:
@@ -210,7 +207,7 @@ class ChatService:
                 raise HTTPException(status_code=404, detail="Chat not found")
             return updated_chat
         except Exception as e:
-            logger.error(f"Failed to update title for chat {chat_id}: {e}")
+            logger.error(f"Failed to update title for chat {chat_id}: {e}", exc_info=True)
             raise HTTPException(status_code=500, detail="Failed to update title")
 
     async def stream_chat(self, request: ChatRequest) -> AsyncGenerator[str, None]:
@@ -243,7 +240,7 @@ class ChatService:
                 self.storage.update_chat_title(chat_id, new_title)
 
         except Exception as e:
-            logger.error(f"Storage error before streaming: {e}")
+            logger.error(f"Storage error before streaming: {e}", exc_info=True)
             # Proceeding to try and get AI response at least
 
         total_tokens = 0
@@ -255,14 +252,14 @@ class ChatService:
             history_input.append(user_message.data)
 
             kwargs = {
-                "model": "gpt-5-mini",
+                "model": AZURE_OPENAI_DEPLOYMENT,
                 "instructions": CURRENT_SYSTEM_PROMPT,
                 "input": history_input,
                 "stream": True,
                 "store": False
             }
 
-            tools = self._build_tools()
+            tools = await self._build_tools()
             if tools:
                 logger.debug(f"Adding tools to kwargs: {tools}")
                 kwargs["tools"] = tools
@@ -272,41 +269,41 @@ class ChatService:
             async for event in response_stream:
                 if isinstance(event, ResponseCreatedEvent):
                     logger.debug(f"{event.type}")
-                    yield _format_sse(event_type=event.type, data=event.model_dump())
+                    yield _format_sse(event_type=event.type, data=event)
 
                 # Output Item Added events
                 elif isinstance(event, ResponseOutputItemAddedEvent):
                     logger.debug(f"{event.type}: index {event.output_index} - item={event.item.type}")
-                    yield _format_sse(event_type=event.type, data=event.model_dump())
+                    yield _format_sse(event_type=event.type, data=event)
 
                 # MCP events
                 elif isinstance(event, ResponseMcpListToolsInProgressEvent):
                     logger.debug(f"{event.type}: index {event.output_index}")
-                    yield _format_sse(event_type=event.type, data=event.model_dump())
+                    yield _format_sse(event_type=event.type, data=event)
                 elif isinstance(event, ResponseMcpListToolsCompletedEvent):
                     logger.debug(f"{event.type}: index {event.output_index}")
-                    yield _format_sse(event_type=event.type, data=event.model_dump())
+                    yield _format_sse(event_type=event.type, data=event)
                 elif isinstance(event, ResponseMcpListToolsFailedEvent):
                     logger.debug(f"{event.type}: index {event.output_index}")
-                    yield _format_sse(event_type=event.type, data=event.model_dump())
+                    yield _format_sse(event_type=event.type, data=event)
 
                 elif isinstance(event, ResponseMcpCallArgumentsDoneEvent):
                     logger.debug(f"{event.type}: index {event.output_index}")
-                    yield _format_sse(event_type=event.type, data=event.model_dump())
+                    yield _format_sse(event_type=event.type, data=event)
 
                 elif isinstance(event, ResponseMcpCallInProgressEvent):
                     logger.debug(f"{event.type}: index {event.output_index}")
-                    yield _format_sse(event_type=event.type, data=event.model_dump())
+                    yield _format_sse(event_type=event.type, data=event)
                 elif isinstance(event, ResponseMcpCallCompletedEvent):
                     logger.debug(f"{event.type}: index {event.output_index}")
-                    yield _format_sse(event_type=event.type, data=event.model_dump())
+                    yield _format_sse(event_type=event.type, data=event)
                 elif isinstance(event, ResponseMcpCallFailedEvent):
                     logger.debug(f"{event.type}: index {event.output_index}")
-                    yield _format_sse(event_type=event.type, data=event.model_dump())
+                    yield _format_sse(event_type=event.type, data=event)
                 
                 # Text Delta events
                 elif isinstance(event, ResponseTextDeltaEvent):
-                    logger.debug(f"{event.type}[{event.output_index}] seq_idx={event.sequence_number} content_idx={event.content_index}")
+                    # logger.debug(f"{event.type}[{event.output_index}] seq_idx={event.sequence_number} content_idx={event.content_index}")
                     text_data = {
                         "type": "message",
                         "role": "assistant",
@@ -326,18 +323,18 @@ class ChatService:
                     
                     # MCP items
                     if item_event.type == "mcp_list_tools":
-                        storage_item = Item(data=item_event.model_dump(exclude=["id"]))
+                        storage_item = Item(data=item_event.model_dump())
                         self.storage.save_item(chat_id, storage_item)
                     elif item_event.type == "mcp_call":
-                        storage_item = Item(data=item_event.model_dump(exclude=["id"]))
+                        storage_item = Item(data=item_event.model_dump())
                         self.storage.save_item(chat_id, storage_item)
                     
                     # Message items
                     elif item_event.type == "message":
-                        storage_item = Item(data=item_event.model_dump(exclude=["id"]))
+                        storage_item = Item(data=item_event.model_dump())
                         self.storage.save_item(chat_id, storage_item)
 
-                    yield _format_sse(event_type=event.type, data=event.model_dump())
+                    yield _format_sse(event_type=event.type, data=item_event)
                 
                 # Completion events
                 elif isinstance(event, ResponseCompletedEvent):
@@ -366,7 +363,7 @@ class ChatService:
 
         except Exception as e:
             error_type = type(e).__name__
-            logger.error(f"OpenAI Stream Error [{error_type}]: {str(e)}")
+            logger.error(f"OpenAI Stream Error [{error_type}]: {str(e)} - traceback: {traceback.format_exc()}", exc_info=True)
             
             # Map errors to user friendly messages
             error_msg = "Error: Internal server error."
@@ -383,5 +380,4 @@ class ChatService:
             yield _format_sse("error", error_payload)
             
         finally:
-            # update total tokens
             self.storage.update_chat_tokens(chat_id, total_tokens)

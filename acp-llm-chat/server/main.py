@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from openai import AsyncOpenAI
 
 from api.chat.routes import router as chat_router
-from config.settings import OPENAI_API_KEY
+from config.settings import OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_KEY
 from config.loggers import logger
 from middleware.logging_middleware import LoggingMiddleware
 
@@ -12,7 +12,7 @@ from middleware.logging_middleware import LoggingMiddleware
 async def lifespan(app: FastAPI):
     # Startup: Create AsyncOpenAI client
     logger.info("Initializing AsyncOpenAI client...")
-    app.state.openai_client: AsyncOpenAI = AsyncOpenAI(api_key=OPENAI_API_KEY)
+    app.state.openai_client = AsyncOpenAI(base_url=AZURE_OPENAI_ENDPOINT, api_key=AZURE_OPENAI_KEY)
     yield
     # Shutdown: Close client
     logger.info("Closing AsyncOpenAI client...")
