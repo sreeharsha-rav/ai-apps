@@ -6,11 +6,17 @@ export interface Item {
   timestamp: Date;
 }
 
+export interface CanvasItem {
+  id: string;
+  type: string; // "product", "markdown", etc.
+  content: any;
+}
+
 export interface ChatItem {
   id: string;
   title: string;
   items: Item[];
-  canvas: { content: string; language: string } | null;
+  canvas: { items: CanvasItem[] } | null;
   total_tokens: number;
   createdAt: Date;
   updatedAt: Date;

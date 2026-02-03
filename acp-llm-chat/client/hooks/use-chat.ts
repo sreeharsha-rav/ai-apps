@@ -15,7 +15,7 @@ interface ServerChat {
     title: string;
     items: ServerItem[];
     total_tokens: number;
-    canvas: { content: string; language: string } | null;
+    canvas: { items: any[], content?: string, language?: string } | null; // Handle both new and old structure temporarily
     created_at: string;
     updated_at: string;
 }
@@ -54,7 +54,17 @@ const fetchChats = async (): Promise<ChatItem[]> => {
             };
         }),
         total_tokens: chat.total_tokens || 0,
-        canvas: chat.canvas || null,
+        canvas: chat.canvas ? (
+            chat.canvas.items ? { items: chat.canvas.items } :
+                // Backward compatibility: Convert legacy content string to a markdown item
+                chat.canvas.content ? {
+                    items: [{
+                        id: "legacy-content",
+                        type: "markdown",
+                        content: chat.canvas.content
+                    }]
+                } : null
+        ) : null,
         createdAt: new Date(chat.created_at || chat.updated_at),
         updatedAt: new Date(chat.updated_at)
     }));
@@ -277,6 +287,14 @@ export const useSendMessage = () => {
                                 else if (eventType === "error") {
                                     // General stream errors
                                     toast.error("Stream Error: " + (jsonData.message || "Unknown error"));
+                                }
+
+                                // 4. Handle Canvas Update
+                                else if (eventType === "canvas.update") {
+                                    // Invalidate to fetch fresh chat data including canvas
+                                    queryClient.invalidateQueries({ queryKey: ["chats"] });
+                                    // Optional: We could also optimistically update the canvas in the cache here
+                                    // if we wanted to be super fast, but invalidation is safer.
                                 }
 
                             } catch (e) {

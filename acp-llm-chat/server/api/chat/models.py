@@ -3,9 +3,13 @@ from typing import List, Optional, Any
 from datetime import datetime
 from ulid import ULID
 
+class CanvasItem(BaseModel):
+    id: str = Field(default_factory=lambda: str(ULID()))
+    type: str # e.g., "product_list", "product_detail", "markdown"
+    content: Any
+
 class CanvasData(BaseModel):
-    content: str = ""
-    language: str = "markdown"
+    items: List[CanvasItem] = Field(default_factory=list)
 
 class Item(BaseModel):
     id: str = Field(default_factory=lambda: str(ULID()))

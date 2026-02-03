@@ -31,7 +31,7 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
     const isGenerating = sendMessageMutation.isPending;
 
     // Get Canvas content from chat object
-    const canvasContent = chat?.canvas?.content || null;
+    const canvasData = chat?.canvas || null;
 
     const handleSend = async () => {
         if (!inputValue.trim() || sendMessageMutation.isPending) return;
@@ -95,7 +95,7 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
             <Canvas
                 isOpen={isCanvasOpen}
                 onClose={() => setCanvasOpen(false)}
-                content={canvasContent}
+                data={canvasData}
             />
         </div>
     );

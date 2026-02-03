@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from ulid import ULID
 from fastapi import HTTPException
 import httpx
+import json
 from openai import AsyncOpenAI
 from openai.types.responses import (
     ResponseCreatedEvent,
@@ -27,7 +28,7 @@ import traceback
 from config.settings import AZURE_OPENAI_DEPLOYMENT, SHOPIFY_CATALOG_CLIENT_ID, SHOPIFY_CATALOG_CLIENT_SECRET
 from config.loggers import logger
 from .prompt import CURRENT_SYSTEM_PROMPT
-from .models import ChatRequest, Item, CanvasData, ChatHistory
+from .models import ChatRequest, Item, CanvasData, ChatHistory, CanvasItem
 from .storage import ChatStore
 
 # --------------------
@@ -39,6 +40,23 @@ def _format_sse(event_type: str, data: any, event_id: str = None) -> str:
     if event_id is None:
         event_id = str(ULID())
     
+    # Pre-process data to handle Pydantic serialization issues
+    try:
+        if hasattr(data, "type") and data.type == "mcp_call" and hasattr(data, "error"):
+            # McpCall error field expects str but sometimes gets dict from backend
+            if data.error and not isinstance(data.error, str):
+                import json
+                try:
+                     # If it's a dict or other object, stringify it to satisfy Pydantic schema
+                    if isinstance(data.error, dict):
+                         data.error = json.dumps(data.error)
+                    else:
+                         data.error = str(data.error)
+                except Exception:
+                    data.error = str(data.error)
+    except Exception as e:
+        logger.warning(f"Failed to normalize MCP error field: {e}")
+
     # SSE format:
     # id: <id>\n
     # event: <event_type>\n
@@ -319,22 +337,93 @@ class ChatService:
                 # Output Item Done events
                 elif isinstance(event, ResponseOutputItemDoneEvent):
                     logger.debug(f"{event.type}: index {event.output_index} - item={event.item.type}")
-                    item_event = event.item
                     
                     # MCP items
-                    if item_event.type == "mcp_list_tools":
-                        storage_item = Item(data=item_event.model_dump())
+                    if event.item.type == "mcp_list_tools":
+                        storage_item = Item(data=event.item.model_dump())
                         self.storage.save_item(chat_id, storage_item)
-                    elif item_event.type == "mcp_call":
-                        storage_item = Item(data=item_event.model_dump())
-                        self.storage.save_item(chat_id, storage_item)
-                    
-                    # Message items
-                    elif item_event.type == "message":
-                        storage_item = Item(data=item_event.model_dump())
+                    elif event.item.type == "mcp_call":
+                        storage_item = Item(data=event.item.model_dump())
                         self.storage.save_item(chat_id, storage_item)
 
-                    yield _format_sse(event_type=event.type, data=item_event)
+                        # --- CANVAS events ---
+                        if event.item.status == "completed" and event.item.output:
+
+                            if chat.canvas:
+                                current_items = chat.canvas.items
+                            else:
+                                current_items = []
+                            
+                            try:
+                                output_data = json.loads(event.item.output)
+                                
+                                if event.item.name == "search_global_products":
+                                    if "offers" in output_data and isinstance(output_data["offers"], list):
+                                        products = output_data["offers"]
+
+                                        # replace existing product list if exists, else append
+                                        if len(current_items) > 0:
+                                            for item in current_items:
+                                                if item.type == "product_list":
+                                                    item.content = products
+                                                    break
+                                        else:
+                                            current_items.append(
+                                                CanvasItem(
+                                                    type="product_list",
+                                                    content=products
+                                                )
+                                            )
+                                
+                                elif event.item.name == "get_global_product_details":
+                                    if "id" in output_data and "title" in output_data: 
+                                        product_detail = output_data
+
+                                        # replace existing product detail if exists, else append
+                                        if len(current_items) > 0:
+                                            for item in current_items:
+                                                if item.type == "product_detail":
+                                                    item.content = product_detail
+                                                    break
+                                        else:
+                                            current_items.append(
+                                                CanvasItem(
+                                                    type="product_detail",
+                                                    content=product_detail
+                                                )
+                                        )
+                                
+                                canvas_data = CanvasData(items=current_items)
+                                self.storage.update_chat_canvas(
+                                    chat_id=chat_id,
+                                    canvas_data=canvas_data
+                                )
+                                yield _format_sse("canvas.update", canvas_data.model_dump())
+                        
+                            except Exception as e:
+                                logger.warning(f"Failed to parse MCP output for canvas update: {e} - traceback: {traceback.format_exc()}")
+                                error_item = CanvasItem(
+                                    type="error",
+                                    content={
+                                        "message": str(e),
+                                        "traceback": traceback.format_exc()
+                                    }
+                                )
+                                current_items.append(error_item)
+                                canvas_data = CanvasData(items=current_items)           # FUTURE: optimize canvas data update
+                                self.storage.update_chat_canvas(
+                                    chat_id=chat_id,
+                                    canvas_data=canvas_data
+                                )
+                                yield _format_sse("canvas.update", canvas_data.model_dump())
+                        # ---------------------------
+                    
+                    # Message items
+                    elif event.item.type == "message":
+                        storage_item = Item(data=event.item.model_dump())
+                        self.storage.save_item(chat_id, storage_item)
+
+                    yield _format_sse(event_type=event.type, data=event.item)
                 
                 # Completion events
                 elif isinstance(event, ResponseCompletedEvent):
@@ -349,13 +438,6 @@ class ChatService:
                 # Failed events
                 elif isinstance(event, ResponseFailedEvent):
                     yield _format_sse(event_type=event.type, data=event.model_dump())
-
-            # TODO: update canvas content with MCP call results, web results, tool results etc..
-            test_canvas = CanvasData(
-                content="# Hello Canvas\n\nThis is a **test** content sent from the server.\n\n- Item 1\n- Item 2\n\n```python\nprint('Hello World')\n```",
-                language="markdown"
-            )
-            self.storage.update_chat_canvas(chat_id, test_canvas)
 
         except GeneratorExit:
             logger.warning(f"Stream interrupted (client disconnected or server shutdown) for chat {chat_id}")
