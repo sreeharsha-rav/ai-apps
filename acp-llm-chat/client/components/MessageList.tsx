@@ -11,8 +11,11 @@ interface MessageListProps {
 export function MessageList({ items, isGenerating }: MessageListProps) {
     const parentRef = useRef<HTMLDivElement>(null);
 
+    // Filter out non-message items (like mcp_list_tools, mcp_call traces) to avoid empty bubbles
+    const displayItems = items.filter(item => item.data.type === "message" || !item.data.type);
+
     const rowVirtualizer = useVirtualizer({
-        count: items.length,
+        count: displayItems.length,
         getScrollElement: () => parentRef.current,
         estimateSize: () => 80,
         overscan: 5,
@@ -20,10 +23,10 @@ export function MessageList({ items, isGenerating }: MessageListProps) {
 
     // Auto-scroll to bottom on new items
     useEffect(() => {
-        if (items.length > 0) {
-            rowVirtualizer.scrollToIndex(items.length - 1, { align: 'end', behavior: 'smooth' });
+        if (displayItems.length > 0) {
+            rowVirtualizer.scrollToIndex(displayItems.length - 1, { align: 'end', behavior: 'smooth' });
         }
-    }, [items.length, rowVirtualizer]);
+    }, [displayItems.length, rowVirtualizer]);
 
     return (
         <div
@@ -39,8 +42,8 @@ export function MessageList({ items, isGenerating }: MessageListProps) {
                 className="max-w-3xl mx-auto py-6 px-4"
             >
                 {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-                    const item = items[virtualItem.index];
-                    const isLast = virtualItem.index === items.length - 1;
+                    const item = displayItems[virtualItem.index];
+                    const isLast = virtualItem.index === displayItems.length - 1;
                     const showLoader = isLast && isGenerating && item.data.role === "assistant" && !item.data.content;
 
                     // Clean up item for loader state

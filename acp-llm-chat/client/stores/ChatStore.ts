@@ -4,6 +4,11 @@ export interface Item {
   id: string;
   data: any;
   timestamp: Date;
+  metadata?: {
+    status?: "thinking" | "tool_call" | "streaming" | "completed" | "error";
+    statusMessage?: string;
+    reasoning?: string;
+  };
 }
 
 export interface CanvasItem {

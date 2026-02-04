@@ -152,6 +152,10 @@ export const useSendMessage = () => {
                     content: "",
                 },
                 timestamp: new Date(),
+                metadata: {
+                    status: "thinking",
+                    statusMessage: "Thinking...",
+                }
             };
 
             // 1. Optimistic Update: Add User Message & Empty Assistant Message
@@ -211,8 +215,63 @@ export const useSendMessage = () => {
                             try {
                                 const jsonData = JSON.parse(rawData);
 
-                                // 1. Handle Text Deltas
-                                if (eventType === "response.output_text.delta") {
+                                // 0. Handle Output Item Added (Start of new items like MCP calls)
+                                if (eventType === "response.output_item.added") {
+                                    const item = jsonData.item;
+                                    if (item) {
+                                        if (item.type === "mcp_call") {
+                                            // Update status to tool call
+                                            queryClient.setQueryData(["chats"], (old: ChatItem[] = []) => {
+                                                return old.map((chat) => {
+                                                    if (chat.id === chatId) {
+                                                        return {
+                                                            ...chat,
+                                                            items: chat.items.map((it) =>
+                                                                it.id === assistantItemId
+                                                                    ? {
+                                                                        ...it,
+                                                                        metadata: {
+                                                                            ...it.metadata,
+                                                                            status: "tool_call",
+                                                                            statusMessage: `Using tool ${item.name || "..."}...`
+                                                                        }
+                                                                    }
+                                                                    : it
+                                                            ),
+                                                        };
+                                                    }
+                                                    return chat;
+                                                });
+                                            });
+                                        } else if (item.type === "reasoning") {
+                                            queryClient.setQueryData(["chats"], (old: ChatItem[] = []) => {
+                                                return old.map((chat) => {
+                                                    if (chat.id === chatId) {
+                                                        return {
+                                                            ...chat,
+                                                            items: chat.items.map((it) =>
+                                                                it.id === assistantItemId
+                                                                    ? {
+                                                                        ...it,
+                                                                        metadata: {
+                                                                            ...it.metadata,
+                                                                            status: "thinking",
+                                                                            statusMessage: "Reasoning..."
+                                                                        }
+                                                                    }
+                                                                    : it
+                                                            ),
+                                                        };
+                                                    }
+                                                    return chat;
+                                                });
+                                            });
+                                        }
+                                    }
+                                }
+
+                                // 0.1 Handle Text Delta (Standard streaming)
+                                else if (eventType === "response.output_text.delta") {
                                     // The server sends us a constructed message object in 'data' for this event
                                     // conforming to: { type: "message", role: "assistant", content: [{ type: "output_text", text: "..." }] }
                                     const deltaText = jsonData.content?.[0]?.text || "";
@@ -228,7 +287,11 @@ export const useSendMessage = () => {
                                                         ...chat,
                                                         items: chat.items.map((item) =>
                                                             item.id === assistantItemId
-                                                                ? { ...item, data: { ...item.data, content: assistantContent } }
+                                                                ? {
+                                                                    ...item,
+                                                                    data: { ...item.data, content: assistantContent },
+                                                                    metadata: { status: "streaming" } // Clear any loader status
+                                                                }
                                                                 : item
                                                         ),
                                                     };
@@ -237,6 +300,62 @@ export const useSendMessage = () => {
                                             });
                                         });
                                     }
+                                }
+
+                                // 0.2 Handle Reasoning Delta
+                                else if (eventType === "response.reasoning_text.delta") {
+                                    const deltaReasoning = jsonData.delta?.text || jsonData.delta || ""; // jsonData is { type: "reasoning", index: ..., delta: ... }
+
+                                    if (deltaReasoning) {
+                                        queryClient.setQueryData(["chats"], (old: ChatItem[] = []) => {
+                                            return old.map((chat) => {
+                                                if (chat.id === chatId) {
+                                                    return {
+                                                        ...chat,
+                                                        items: chat.items.map((it) =>
+                                                            it.id === assistantItemId
+                                                                ? {
+                                                                    ...it,
+                                                                    metadata: {
+                                                                        ...it.metadata,
+                                                                        status: "thinking",
+                                                                        statusMessage: "Reasoning...",
+                                                                        reasoning: (it.metadata?.reasoning || "") + deltaReasoning
+                                                                    }
+                                                                }
+                                                                : it
+                                                        ),
+                                                    };
+                                                }
+                                                return chat;
+                                            });
+                                        });
+                                    }
+                                }
+
+                                // 1.1 Handle MCP Progress
+                                else if (eventType === "response.mcp_call.in_progress") {
+                                    queryClient.setQueryData(["chats"], (old: ChatItem[] = []) => {
+                                        return old.map((chat) => {
+                                            if (chat.id === chatId) {
+                                                return {
+                                                    ...chat,
+                                                    items: chat.items.map((it) =>
+                                                        it.id === assistantItemId
+                                                            ? {
+                                                                ...it,
+                                                                metadata: {
+                                                                    status: "tool_call",
+                                                                    statusMessage: `Executing tool...`
+                                                                }
+                                                            }
+                                                            : it
+                                                    ),
+                                                };
+                                            }
+                                            return chat;
+                                        });
+                                    });
                                 }
 
                                 // 2. Handle Item Done (Server confirms item persistence and gives real ID)

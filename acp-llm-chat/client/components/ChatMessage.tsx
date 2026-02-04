@@ -197,9 +197,7 @@ export function ChatMessage({ item, isLoader }: ChatMessageProps) {
                     isLoader && "animate-pulse"
                 )}>
                     <div className="max-w-none break-words overflow-hidden antialiased">
-                        {isLoader ? (
-                            <Loader variant="loading-dots" />
-                        ) : (
+                        {content && (
                             <ReactMarkdown
                                 remarkPlugins={[remarkGfm, remarkBreaks]}
                                 rehypePlugins={[rehypeRaw, rehypeSanitize]}
@@ -207,6 +205,23 @@ export function ChatMessage({ item, isLoader }: ChatMessageProps) {
                             >
                                 {content}
                             </ReactMarkdown>
+                        )}
+
+                        {(isLoader || (item.metadata?.status && item.metadata.status !== "streaming" && item.metadata.status !== "completed")) && (
+                            <div className={cn("flex flex-col gap-2", content && "mt-4 pt-2 border-t border-border/10")}>
+                                <div className="flex items-center gap-3">
+                                    <Loader
+                                        variant="text-shimmer"
+                                        className="text-xs"
+                                        text={item.metadata?.statusMessage || "Thinking..."}
+                                    />
+                                </div>
+                                {item.metadata?.reasoning && (
+                                    <div className="text-xs text-muted-foreground/80 bg-background/50 p-3 rounded-lg border border-border/20 font-mono mt-1 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-[300px] overflow-y-auto">
+                                        {item.metadata.reasoning}
+                                    </div>
+                                )}
+                            </div>
                         )}
                     </div>
                 </div>

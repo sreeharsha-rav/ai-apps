@@ -21,7 +21,8 @@ from openai.types.responses import (
     ResponseOutputItemAddedEvent,
     ResponseOutputItemDoneEvent,
     ResponseCompletedEvent,
-    ResponseFailedEvent
+    ResponseFailedEvent,
+    ResponseReasoningTextDeltaEvent
 )
 import traceback
 
@@ -269,7 +270,7 @@ class ChatService:
                 history_input.append(item.data)
 
             # inject context about product with id extracted UPID, title, variant["shop"]["id"], variant["shop"]["name"], variant["shop"]["onlineStoreUrl"]
-            context = "<products_context>{products}</products_context>"
+            context = ""
             if chat.canvas and chat.canvas.items:
                 products = ""
                 for canvas_item in chat.canvas.items:
@@ -291,7 +292,7 @@ class ChatService:
                                 product_shop_domain = ""
                             
                             products += f"<product id=\"{product.get('id', '')}\"><upid>{product_upid}</upid><title>{product_title}</title><shop_name>{product_shop_name}</shop_name><shop_domain>{product_shop_domain}</shop_domain></product>"
-                context = context.format(products=products)
+                context = f"<products_context>{products}</products_context>"
             logger.debug(f"\n-- Plugging in context --\n{context}\n-- End of context --\n")
 
             user_message.data["content"][0]["text"] = user_message.data["content"][0]["text"] + "\n\n" + context
@@ -308,7 +309,13 @@ class ChatService:
 
             tools = await self._build_tools()
             if tools:
-                logger.debug(f"Adding tools to kwargs: {tools}")
+                tools_str = ""
+                for tool in tools:
+                    if tool["type"] == "mcp":
+                        tools_str += f"{tool['type']}"
+                        tools_str += f": {tool['server_label']}\n"
+
+                logger.debug(f"Adding tools to kwargs:\n{tools_str}")
                 kwargs["tools"] = tools
             
             response_stream = await self.client.responses.create(**kwargs)
@@ -362,6 +369,15 @@ class ChatService:
                         ]
                     }
                     yield _format_sse(event_type=event.type, data=text_data)
+                
+                # Reasoning Delta events
+                elif isinstance(event, ResponseReasoningTextDeltaEvent):
+                     reasoning_data = {
+                        "type": "reasoning",
+                        "index": event.output_index,
+                        "delta": event.delta
+                     }
+                     yield _format_sse(event_type="response.reasoning_text.delta", data=reasoning_data)
                 
                 # Output Item Done events
                 elif isinstance(event, ResponseOutputItemDoneEvent):

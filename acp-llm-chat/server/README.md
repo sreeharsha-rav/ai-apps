@@ -1,6 +1,13 @@
-# LLM Chat API
+# UCP LLM Chat API
 
-This is a FastAPI application that provides a streaming chat interface using OpenAI's GPT-5 model.
+This is a FastAPI application that provides a streaming chat interface using OpenAI's GPT-5 model
+
+**Features**
+- Streaming chat interface
+- OpenAI GPT-5 model
+- MCP calls
+- Canvas UI
+- Shopify catalog and checkout features
 
 
 ## Requirements
@@ -9,6 +16,7 @@ This is a FastAPI application that provides a streaming chat interface using Ope
 - UV
 - OpenAI API Key
 - Azure OpenAI Deployment
+- Shopify Catalog Client ID and Secret
 
 ## Setup
 
