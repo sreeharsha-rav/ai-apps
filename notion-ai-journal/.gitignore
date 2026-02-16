@@ -20,3 +20,6 @@ chats.json
 storage.json
 context.json
 chat_context.json
+
+# notion tokens (sensitive data!)
+.notion-tokens.json

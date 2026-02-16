@@ -8,6 +8,7 @@ from openai.types.responses import (
 )
 from app.llm import OpenAIQueryHandler
 from app.store import LocalJSONChatStore, LocalJSONContextStore
+from app.commands import COMMANDS
 
 def render_history(console: Console, history: list):
     """Renders the chat history to the console."""
@@ -51,7 +52,10 @@ def chat_with_openai():
 
     context = context_store.get_context()
     
-    console.print(Panel("[bold green]Chat started![/bold green] Type 'load' to load chat history.\nType 'exit' or 'quit' to end.\n[yellow]Type 'clear' to clear chat history.[/yellow]", 
+    console.print(Panel("[bold green]Chat started![/bold green] Type 'load' to load chat history.\n"
+                       "Type 'exit' or 'quit' to end.\n"
+                       "[yellow]Type 'clear' to clear chat history.[/yellow]\n"
+                       "[cyan]Notion commands: notion-login, notion-status, notion-logout, notion-refresh[/cyan]", 
                        title="OpenAI Chat", border_style="cyan"))
     
     try:
@@ -76,6 +80,11 @@ def chat_with_openai():
             if user_message.lower() == "load":
                 context = context_store.get_context()
                 render_history(console, store.get_history())
+                continue
+
+            if user_message.lower() in COMMANDS:
+                handler = COMMANDS[user_message.lower()]
+                handler(console)
                 continue
 
             console.print(Panel(Markdown(user_message), title="You", border_style="cyan"))
