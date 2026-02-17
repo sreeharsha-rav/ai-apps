@@ -57,7 +57,7 @@ class OpenAIQueryHandler(BaseQueryHandler):
         Build tools config dynamically so the Bearer token is always fresh.
         """
         try:
-            # TODO
+            # TODO: add notion OAuth here
             return []
         except Exception as e:
             logger.error(f"Failed to build tools: {e}")

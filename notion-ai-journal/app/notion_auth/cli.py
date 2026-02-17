@@ -1,4 +1,3 @@
-import sys
 import webbrowser
 import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -29,7 +28,6 @@ from app.config import (
     NOTION_CALLBACK_URI,
 )
 
-# Constants are imported from config
 
 # Global state for callback (shared within this module)
 _callback_result: Dict[str, Any] = {
@@ -43,9 +41,7 @@ class CallbackHandler(BaseHTTPRequestHandler):
     """HTTP handler for OAuth callback."""
     
     def do_GET(self):
-        """Handle GET request to /callback."""
-        global _callback_result
-        
+        """Handle GET request to /callback."""   
         parsed_url = urlparse(self.path)
         
         if parsed_url.path != '/callback':
@@ -71,7 +67,7 @@ class CallbackHandler(BaseHTTPRequestHandler):
             html = f"""
             <html>
                 <body style="font-family: sans-serif; text-align: center; padding-top: 50px;">
-                    <h1 style="color: red;">❌ Authorization Failed</h1>
+                    <h1 style="color: red;">Authorization Failed</h1>
                     <p>Error: {error}</p>
                     <p>{error_description or ''}</p>
                     <p>You can close this window.</p>
@@ -92,7 +88,7 @@ class CallbackHandler(BaseHTTPRequestHandler):
             html = """
             <html>
                 <body style="font-family: sans-serif; text-align: center; padding-top: 50px;">
-                    <h1 style="color: green;">✅ Authorization Successful!</h1>
+                    <h1 style="color: green;">Authorization Successful!</h1>
                     <p>You can close this window and return to the terminal.</p>
                     <script>
                         // Auto-close after 3 seconds
@@ -123,9 +119,7 @@ def start_callback_server(console: Console):
     return server
 
 def handle_login(console: Console):
-    """Execute the OAuth login flow."""
-    global _callback_result
-    
+    """Execute the OAuth login flow."""  
     # Reset state
     _callback_result = {
         'code': None,
