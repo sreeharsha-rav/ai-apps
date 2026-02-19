@@ -1,0 +1,10 @@
+[project]
+name = "ms-semantic-kernel"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "azure-identity>=1.25.2",
+    "semantic-kernel>=1.36.0",
+]
