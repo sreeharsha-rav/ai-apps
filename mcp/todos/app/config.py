@@ -10,6 +10,7 @@ class Settings:
         self.ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
         self.SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL")
         self.ROOT_URL = os.getenv("ROOT_URL", "http://localhost:8000")
+        self.MCP_MOUNT_PREFIX = os.getenv("MCP_MOUNT_PREFIX", "/mcp")
         self.JWT_ALGORITHM = "HS256"
         
         if not self.SECRET_KEY:

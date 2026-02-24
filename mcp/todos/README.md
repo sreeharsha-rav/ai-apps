@@ -23,11 +23,13 @@ app/
   schemas.py   # Pydantic models
   services/    # AuthService, TodoService
   database/    # SQLAlchemy models, repositories, session
+Dockerfile
+docker-compose.yml
 ```
 
 ---
 
-## Setup
+## Running Locally
 
 **1. Install dependencies**
 ```bash
@@ -37,9 +39,10 @@ uv sync
 **2. Create a `.env` file**
 ```env
 SECRET_KEY=your-secret-key-here
-ACCESS_TOKEN_EXPIRE_MINUTES=30
+ACCESS_TOKEN_EXPIRE_MINUTES=120
 SQLALCHEMY_DATABASE_URL=sqlite:///./todos.db
 ROOT_URL=http://localhost:8000
+MCP_MOUNT_PREFIX=/mcp
 ```
 
 **3. Run the server**
@@ -47,52 +50,69 @@ ROOT_URL=http://localhost:8000
 uv run uvicorn app.main:app --reload
 ```
 
-The server starts at `http://localhost:8000`. The database tables are created automatically on first run.
+The server starts at `http://localhost:8000`. Database tables are created automatically on first run.
 
 ---
 
-## Testing the REST API with Swagger
+## Running with Docker
 
-Open **[http://localhost:8000/api/docs](http://localhost:8000/api/docs)**
+**1. Copy and fill in your `.env`**
+```bash
+cp .env.sample .env
+# Edit .env — set a real SECRET_KEY
+```
 
-### Flow
+**2. Build and start**
+```bash
+docker compose up --build
+```
 
-**1. Register a user**
-- `POST /api/auth/register` → `{ "username": "alice", "password": "secret" }`
+The SQLite database is stored in a named Docker volume (`todos-data`) and persists across restarts and rebuilds.
 
-**2. Log in and copy the token**
-- `POST /api/auth/login` → returns `{ "access_token": "...", "token_type": "bearer" }`
-
-**3. Authorize in Swagger**
-- Click **Authorize** (🔒) → paste your token → **Authorize**
-
-**4. Use the todo endpoints**
-- `GET /api/todos` — list todos
-- `POST /api/todos` — create a todo
-- `GET /api/todos/{id}` — get one
-- `PUT /api/todos/{id}` — update
-- `DELETE /api/todos/{id}` — delete
+**3. Stop**
+```bash
+docker compose down           # Keeps data
+docker compose down -v        # Also deletes the database volume
+```
 
 ---
 
-## Testing the MCP Server with MCP Inspector
+## REST API
 
-### Prerequisites
+Open **[http://localhost:8000/api/docs](http://localhost:8000/api/docs)** for interactive Swagger UI.
+
+### Auth flow
+
+```bash
+# Register
+curl -X POST http://localhost:8000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username": "alice", "password": "secret"}'
+
+# Get a token
+curl -X POST http://localhost:8000/api/auth/token \
+  -d "username=alice&password=secret"
+```
+
+### Todo endpoints
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/api/todos` | List all todos |
+| `POST` | `/api/todos` | Create a todo |
+| `GET` | `/api/todos/{id}` | Get one |
+| `PUT` | `/api/todos/{id}` | Update |
+| `DELETE` | `/api/todos/{id}` | Delete |
+
+---
+
+## MCP Server
+
+### Connect with MCP Inspector
+
 ```bash
 npx @modelcontextprotocol/inspector
 ```
-
-### Get a JWT token first
-
-```bash
-curl -X POST http://localhost:8000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"username": "alice", "password": "secret"}'
-```
-
-Copy the `access_token` from the response.
-
-### Connect in MCP Inspector
 
 | Field | Value |
 |---|---|
@@ -100,9 +120,9 @@ Copy the `access_token` from the response.
 | **URL** | `http://localhost:8000/mcp/` |
 | **Auth header** | `Authorization: Bearer <your-token>` |
 
-> ⚠️ Use the trailing slash: `http://localhost:8000/mcp/` — the server redirects `POST /mcp` → `/mcp/`.
+> ⚠️ Use the trailing slash: `http://localhost:8000/mcp/`
 
-### Available MCP Tools
+### Available Tools
 
 | Tool | Description |
 |---|---|
@@ -112,7 +132,7 @@ Copy the `access_token` from the response.
 | `update_todo` | Update all fields of an existing todo |
 | `delete_todo` | Permanently delete a todo by UUID |
 
-### Discovery endpoints (OAuth/auth metadata)
+### Discovery endpoints
 
 ```
 GET /.well-known/oauth-protected-resource/mcp

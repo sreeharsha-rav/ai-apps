@@ -1,0 +1,16 @@
+services:
+  todos-app:
+    build: .
+    container_name: todos-mcp
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env                        # Loads SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, ROOT_URL
+    environment:
+      - SQLALCHEMY_DATABASE_URL=sqlite:////app/data/todos.db   # Overrides .env — uses volume path
+    volumes:
+      - todos-data:/app/data        # SQLite DB persists across restarts/rebuilds
+    restart: unless-stopped
+
+volumes:
+  todos-data:                       # Named volume managed by Docker
