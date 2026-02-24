@@ -6,8 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from jose import jwt, JWTError
 from sqlalchemy.exc import SQLAlchemyError
 import logging
-
-from app.middleware import LogRequestsMiddleware, configure_logging
 from app.services import (
     AuthService,
     TodoService,
@@ -21,32 +19,20 @@ from app.schemas import (
     TodoRequest,
     TodoResponse
 )
-from app.database.models import Base
-from app.database.db import engine
 from app.config import settings
 
-# Setup Logging
+
 logger = logging.getLogger(__name__)
-configure_logging()
 
 # Constants
 SECRET_KEY = settings.SECRET_KEY
-ALGORITHM = "HS256"
+ALGORITHM = settings.JWT_ALGORITHM
 
-# Initialize FastAPI app
+
 api = FastAPI(
     title="Todos API",
     description="A simple API to manage todos with validation and error handling.",
     version="1.0.0"
-)
-
-# CORS Middleware
-api.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
 )
 
 # Exception Handlers
@@ -72,11 +58,7 @@ async def general_exception_handler(request: Request, exc: Exception):
         content={"detail": "An unexpected error occurred. Internal server error."},
     )
 
-# Middleware
-api.add_middleware(LogRequestsMiddleware)
 
-# Database Setup
-Base.metadata.create_all(bind=engine)
 
 # Security
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
@@ -102,14 +84,14 @@ async def get_current_user(token: str = Depends(oauth2_scheme), auth_service: Au
 # Auth Endpoints
 # ----------------------------------
 @api.post("/auth/register", status_code=status.HTTP_201_CREATED)
-async def register(register_request: RegisterRequest, auth_service: AuthService = Depends(get_auth_service)):
+async def register(register_request: RegisterRequest, auth_service: AuthService = Depends(get_auth_service)) -> dict:
     """
     Register a new user.
     """
     return auth_service.register_user(register_request.username, register_request.password)
 
 @api.post("/auth/login", status_code=status.HTTP_200_OK)
-async def login(login_request: LoginRequest, auth_service: AuthService = Depends(get_auth_service)):
+async def login(login_request: LoginRequest, auth_service: AuthService = Depends(get_auth_service)) -> dict:
     """
     Login a user.
     """
@@ -117,7 +99,7 @@ async def login(login_request: LoginRequest, auth_service: AuthService = Depends
     return {"message": "Login successful."}
 
 @api.post("/auth/token", status_code=status.HTTP_200_OK, response_model=TokenResponse)
-async def token(form_data: OAuth2PasswordRequestForm = Depends(), auth_service: AuthService = Depends(get_auth_service)):
+async def token(form_data: OAuth2PasswordRequestForm = Depends(), auth_service: AuthService = Depends(get_auth_service)) -> TokenResponse:
     """
     Get JWT token for a user.
     """
@@ -126,7 +108,7 @@ async def token(form_data: OAuth2PasswordRequestForm = Depends(), auth_service: 
     return TokenResponse(access_token=access_token, token_type="bearer")
 
 @api.get("/auth/me", status_code=status.HTTP_200_OK)
-async def me(user = Depends(get_current_user)):
+async def me(user = Depends(get_current_user)) -> dict:
     """
     Get the current user.
     """
@@ -136,7 +118,7 @@ async def me(user = Depends(get_current_user)):
 # Todos Endpoints
 # ----------------------------------
 @api.get("/todos", status_code=status.HTTP_200_OK, response_model=List[TodoResponse])
-async def read_all_todos(user = Depends(get_current_user), todo_service: TodoService = Depends(get_todo_service)):
+async def read_all_todos(user = Depends(get_current_user), todo_service: TodoService = Depends(get_todo_service)) -> List[TodoResponse]:
     """
     Get all todos for the authenticated user.
     """
@@ -145,7 +127,7 @@ async def read_all_todos(user = Depends(get_current_user), todo_service: TodoSer
 @api.get("/todos/{todo_id}", status_code=status.HTTP_200_OK, response_model=TodoResponse)
 async def read_todo_by_id(todo_id: str = Path(...), 
                           user = Depends(get_current_user), 
-                          todo_service: TodoService = Depends(get_todo_service)):
+                          todo_service: TodoService = Depends(get_todo_service)) -> TodoResponse:
     """
     Get a specific todo by ID for the authenticated user.
     """
@@ -154,7 +136,7 @@ async def read_todo_by_id(todo_id: str = Path(...),
 @api.post("/todos", status_code=status.HTTP_201_CREATED)
 async def create_todo(todo_request: TodoRequest, 
                       user = Depends(get_current_user), 
-                      todo_service: TodoService = Depends(get_todo_service)):
+                      todo_service: TodoService = Depends(get_todo_service)) -> dict:
     """
     Create a new todo for the authenticated user.
     """
@@ -164,7 +146,7 @@ async def create_todo(todo_request: TodoRequest,
 async def update_todo(todo_request: TodoRequest, 
                       todo_id: str = Path(...), 
                       user = Depends(get_current_user), 
-                      todo_service: TodoService = Depends(get_todo_service)):
+                      todo_service: TodoService = Depends(get_todo_service)) -> None:
     """
     Update an existing todo for the authenticated user.
     """
@@ -173,7 +155,7 @@ async def update_todo(todo_request: TodoRequest,
 @api.delete("/todos/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_todo(todo_id: str = Path(...), 
                       user = Depends(get_current_user), 
-                      todo_service: TodoService = Depends(get_todo_service)):
+                      todo_service: TodoService = Depends(get_todo_service)) -> None:
     """
     Delete a specific todo by ID for the authenticated user.
     """ 

@@ -1,13 +1,30 @@
 from sqlalchemy.orm import Session
-from typing import List, Optional
+from typing import List, Optional, Type, TypeVar, Generic
 from app.database.models import User, Todo
 
-class UserRepository:
-    def __init__(self, db: Session):
-        self.db = db
+T = TypeVar("T")
 
-    def get_by_id(self, user_id: str) -> Optional[User]:
-        return self.db.query(User).filter(User.id == user_id).first()
+class BaseRepository(Generic[T]):
+    def __init__(self, db: Session, model: Type[T]):
+        self.db = db
+        self.model = model
+
+    def get_by_id(self, id: str) -> Optional[T]:
+        return self.db.query(self.model).filter(self.model.id == id).first()
+
+    def delete(self, entity: T) -> None:
+        self.db.delete(entity)
+        self.db.commit()
+
+    def save(self, entity: T) -> T:
+        self.db.add(entity)
+        self.db.commit()
+        self.db.refresh(entity)
+        return entity
+
+class UserRepository(BaseRepository[User]):
+    def __init__(self, db: Session):
+        super().__init__(db, User)
 
     def get_by_username(self, username: str) -> Optional[User]:
         return self.db.query(User).filter(User.username == username).first()
@@ -15,14 +32,11 @@ class UserRepository:
     def create(self, username: str, password_raw: str) -> User:
         user = User(username=username)
         user.password = password_raw
-        self.db.add(user)
-        self.db.commit()
-        self.db.refresh(user)
-        return user
+        return self.save(user)
 
-class TodoRepository:
+class TodoRepository(BaseRepository[Todo]):
     def __init__(self, db: Session):
-        self.db = db
+        super().__init__(db, Todo)
 
     def get_all_by_user(self, user_id: str) -> List[Todo]:
         return self.db.query(Todo).filter(Todo.owner == user_id).all()
@@ -32,17 +46,7 @@ class TodoRepository:
 
     def create(self, todo_data: dict, user_id: str) -> Todo:
         todo = Todo(**todo_data, owner=user_id)
-        self.db.add(todo)
-        self.db.commit()
-        self.db.refresh(todo)
-        return todo
+        return self.save(todo)
 
     def update(self, todo: Todo) -> Todo:
-        self.db.add(todo)
-        self.db.commit()
-        self.db.refresh(todo)
-        return todo
-
-    def delete(self, todo: Todo) -> None:
-        self.db.delete(todo)
-        self.db.commit()
+        return self.save(todo)

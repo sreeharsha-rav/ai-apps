@@ -9,6 +9,8 @@ class Settings:
         self.SECRET_KEY = os.getenv("SECRET_KEY")
         self.ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
         self.SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL")
+        self.ROOT_URL = os.getenv("ROOT_URL", "http://localhost:8000")
+        self.JWT_ALGORITHM = "HS256"
         
         if not self.SECRET_KEY:
             raise ValueError("SECRET_KEY is not set in environment variables.")
