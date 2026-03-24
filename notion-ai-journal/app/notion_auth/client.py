@@ -67,8 +67,8 @@ def register_client(metadata: OAuthMetadata, redirect_uri: str) -> ClientCredent
         raise ValueError("Server does not support dynamic client registration")
     
     registration_request = ClientRegistration(
-        client_name="notion-oauth-py FastAPI Client",
-        client_uri="https://github.com/learn-typescript",  # TODO: Replace with actual client URI
+        client_name="notion-oauth Agentic Journal Client",
+        client_uri="https://github.com/sreeharsha-rav/ai-apps/notion-ai-journal",  # TODO: Replace with actual client URI
         redirect_uris=[redirect_uri],
         grant_types=["authorization_code", "refresh_token"],
         response_types=["code"],

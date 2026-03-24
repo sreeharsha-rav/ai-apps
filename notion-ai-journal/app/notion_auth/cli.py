@@ -121,12 +121,10 @@ def start_callback_server(console: Console):
 def handle_login(console: Console):
     """Execute the OAuth login flow."""  
     # Reset state
-    _callback_result = {
-        'code': None,
-        'state': None,
-        'error': None,
-        'received': False
-    }
+    _callback_result['code'] = None
+    _callback_result['state'] = None
+    _callback_result['error'] = None
+    _callback_result['received'] = False
 
     console.print(Panel.fit(
         "[bold blue]🔐 Notion OAuth Authentication[/bold blue]\n"

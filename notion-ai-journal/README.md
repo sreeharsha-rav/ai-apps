@@ -7,9 +7,8 @@ Agentic notion journal workflow.
 ## Requirements
 
 - Python 3.11
+- Notion Account
 - OpenAI API Key
-- Azure OpenAI Deployment
-- Shopify Catalog API
 - uv
 
 ## Getting Started

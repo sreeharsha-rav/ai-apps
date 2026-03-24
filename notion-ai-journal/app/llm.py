@@ -24,6 +24,8 @@ from openai.types.responses import (
 )
 from app.config import OPENAI_API_KEY
 from app.utils import logger
+from app.notion_auth.storage import load_tokens
+import time
 
 
 class BaseQueryHandler:
@@ -56,9 +58,32 @@ class OpenAIQueryHandler(BaseQueryHandler):
         """
         Build tools config dynamically so the Bearer token is always fresh.
         """
+        tokens = load_tokens()
+        if not tokens or not tokens.access_token:
+            raise ValueError("Notion authentication required. Please type 'notion-login' to authenticate.")
+            
+        token_age_ms = int(time.time() * 1000) - tokens.updated_at
+        expires_in_ms = (tokens.expires_in or 3600) * 1000
+        remaining_seconds = (expires_in_ms - token_age_ms) // 1000
+        
+        if remaining_seconds <= 0:
+            raise ValueError("Notion token expired. Please type 'notion-refresh' or 'notion-login' to re-authenticate.")
+
+        NOTION_ACCESS_TOKEN = tokens.access_token
+        
         try:
-            # TODO: add notion OAuth here
-            return []
+            return [
+                {
+                    "type": "mcp",
+                    "server_label": "notion-mcp",
+                    "server_description": "A Notion MCP server to assist with notion tasks.",
+                    "server_url": "https://mcp.notion.com/mcp",
+                    "headers": {
+                        "Authorization": f"Bearer {NOTION_ACCESS_TOKEN}",
+                    },
+                    "require_approval": "never",
+                }
+            ]
         except Exception as e:
             logger.error(f"Failed to build tools: {e}")
             return []
@@ -66,14 +91,13 @@ class OpenAIQueryHandler(BaseQueryHandler):
     def get_streaming_response(self, history: list[dict]) -> Generator[Any, None, None]:
         """Get a streaming response from OpenAI."""
         try:
-            # tools = self._build_tools()
+            tools = self._build_tools()
             
             response_stream = self.openai_client.responses.create(
                 model=self.model,
                 instructions=self.system_instruction,
                 input=history,
-                # tools=[],
-                # tool_choice="auto",
+                tools=tools,
                 stream=True,
                 store=False
             )
@@ -131,5 +155,4 @@ class OpenAIQueryHandler(BaseQueryHandler):
                     
         except Exception as e:
             logger.error(f"Error getting streaming response: {e}")
-            # Yield nothing or raise error depending on desired behavior.
-            # Here we just log and stop.
+            raise e
