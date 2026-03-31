@@ -1,0 +1,25 @@
+# python
+__pycache__/
+*.pyc
+
+# vscode
+.vscode/
+
+# virtual environment
+venv/
+.venv
+
+# environment variables
+.env
+.env.local
+
+# chat history and context
+chat_history.json
+chat.json
+chats.json
+storage.json
+context.json
+chat_context.json
+
+# notion tokens (sensitive data!)
+.notion-tokens.json

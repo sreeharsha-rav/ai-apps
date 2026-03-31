@@ -3,8 +3,9 @@ import os
 from abc import ABC, abstractmethod
 from typing import List
 from openai.types.responses import ResponseInputItemParam
-from core.utils import logger
-from core.models import Context
+
+from app.core.models import ChatContext
+from app.config.utils import logger
 
 class ChatStore(ABC):
     """
@@ -28,7 +29,7 @@ class ChatStore(ABC):
 
 class InMemoryChatStore(ChatStore):
     """
-    Simples in-memory list storage.
+    Simple in-memory list storage.
     """
     def __init__(self):
         self._history: List[ResponseInputItemParam] = []
@@ -47,7 +48,7 @@ class LocalJSONChatStore(ChatStore):
     """
     File-based JSON storage for persistence.
     """
-    def __init__(self, file_path: str = "_history.json"):
+    def __init__(self, file_path: str = "chat_history.json"):
         self.file_path = file_path
         self._history: List[ResponseInputItemParam] = self._load()
 
@@ -99,29 +100,28 @@ class LocalJSONChatStore(ChatStore):
         self._history = []
         self._save()
 
-
 class LocalJSONContextStore:
     """
-    File-based JSON storage for Context.
+    File-based JSON storage for Chat Context.
     """
-    def __init__(self, file_path: str = "_context.json"):
+    def __init__(self, file_path: str = "chat_context.json"):
         self.file_path = file_path
-        self._context: Context = self._load()
+        self._context: ChatContext = self._load()
 
-    def _load(self) -> Context:
+    def _load(self) -> ChatContext:
         if not os.path.exists(self.file_path):
             logger.debug(f"Context file {self.file_path} not found. Starting with empty context.")
-            return Context()
+            return ChatContext()
         try:
             with open(self.file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 logger.debug(f"Loaded context from {self.file_path}")
-                return Context(**data)
+                return ChatContext(**data)
         except Exception as e:
             logger.error(f"Failed to load context from {self.file_path}: {e}")
-            return Context()
+            return ChatContext()
 
-    def save(self, context: Context) -> None:
+    def save(self, context: ChatContext) -> None:
         try:
             self._context = context
             with open(self.file_path, "w", encoding="utf-8") as f:
@@ -130,10 +130,10 @@ class LocalJSONContextStore:
         except Exception as e:
             logger.error(f"Failed to save context: {e}")
 
-    def get_context(self) -> Context:
+    def get_context(self) -> ChatContext:
         return self._context
 
     def clear(self) -> None:
-        logger.info("Clearing context")
-        self._context = Context()
+        logger.info("Clearing shopping context")
+        self._context = ChatContext()
         self.save(self._context)

@@ -1,0 +1,1 @@
+"""Shopify Authentication Module."""
