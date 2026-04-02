@@ -8,14 +8,14 @@ from openai.types.responses import (
     ResponseOutputItemDoneEvent,
     ResponseOutputMessage
 )
-from agents import Runner, RawResponsesStreamEvent, AgentUpdatedStreamEvent, RunItemStreamEvent
+from agents import Runner, SQLiteSession, RawResponsesStreamEvent, AgentUpdatedStreamEvent, RunItemStreamEvent
 from app.core.llm import OpenAIQueryHandler
 from app.core.agents import generic_agent
 from app.core.store import LocalJSONChatStore, LocalJSONContextStore
 from app.core.prompts import CURRENT_SYSTEM_PROMPT
 from app.commands import COMMANDS
 
-def render_history(console: Console, history: list):
+def render_llm_history(console: Console, history: list):
     """Renders the chat history to the console."""
     if not history:
         console.print("[yellow]No chat history found.[/yellow]")
@@ -85,7 +85,7 @@ def chat_with_llm():
 
             if user_message.lower() == "load":
                 context = context_store.get_context()
-                render_history(console, store.get_history())
+                render_llm_history(console, store.get_history())
                 continue
 
             if user_message.lower() in COMMANDS:
@@ -129,14 +129,43 @@ def chat_with_llm():
     except KeyboardInterrupt:
         console.print("\n[bold red]Exiting...[/bold red]")
 
+
+async def render_agent_history(console: Console, session: SQLiteSession, agent_name: str):
+    """
+    Render the agent history from session in the console.
+    """
+    items = await session.get_items()
+    if not items:
+        console.print(Panel("[yellow]No agent history found.[/yellow]", border_style="yellow"))
+        return
+    
+    for item in items:
+        if isinstance(item, dict):
+            role = item.get("role")
+            item_type = item.get("type")
+            content = item.get("content", [])
+            
+            if role == "user":
+                text = content
+                if text:
+                    console.print(Panel(text, title="You", border_style="cyan"))
+            
+            elif role == "assistant":
+                if item_type == "message":
+                    text = ""
+                    for part in content:
+                        # The OpenAI response API uses "output_text" for message parts
+                        if part.get("type") in ["text", "output_text"]:
+                            text += part.get("text", "")
+                if text:
+                    console.print(Panel(Markdown(text), title=agent_name, border_style="green"))
+
 async def chat_with_agent():
     console = Console()
-    
-    # TODO: update to Agent session storage
-    store = LocalJSONChatStore("agent_history.json")
-    context_store = LocalJSONContextStore("agent_context.json")
+    session = SQLiteSession("agent_session_1", "agent_session_1.db")
+    # context_store = LocalJSONContextStore("agent_context.json")     # TODO: change to Agent Context
 
-    context = context_store.get_context()
+    # context = context_store.get_context()
     
     console.print(Panel("[bold green]Agent started![/bold green] Type 'load' to load agent history.\n"
                        "Type 'exit' or 'quit' to end.\n"
@@ -163,15 +192,15 @@ async def chat_with_agent():
                 break
 
             if user_message.lower() == "clear":
-                store.clear()
-                context_store.clear()
-                context = context_store.get_context()
-                console.print(Panel("[bold yellow]Chat history and context cleared![/bold yellow]", border_style="yellow"))
+                await session.clear_session()
+                # context_store.clear()
+                # context = context_store.get_context()
+                console.print(Panel("[bold yellow]Agent session cleared![/bold yellow]", border_style="yellow"))
                 continue
 
             if user_message.lower() == "load":
-                context = context_store.get_context()
-                render_history(console, store.get_history())
+                # context = context_store.get_context()
+                await render_agent_history(console, session, generic_agent.name)
                 continue
 
             if user_message.lower() in COMMANDS:
@@ -180,13 +209,6 @@ async def chat_with_agent():
                 continue
 
             console.print(Panel(Markdown(user_message), title="You", border_style="cyan"))
-            
-            # Create user message object and store it
-            user_item = {
-                "role": "user",
-                "content": [{"type": "input_text", "text": user_message}]
-            }
-            store.add_item(user_item)
 
             console.print()  # Add spacing
             
@@ -195,7 +217,8 @@ async def chat_with_agent():
                     text_buffer = ""
                     result = Runner.run_streamed(
                         starting_agent=generic_agent,
-                        input=store.get_history()
+                        input=user_message,
+                        session=session
                     )
                     async for event in result.stream_events():
                         
@@ -205,11 +228,11 @@ async def chat_with_agent():
                                 text_buffer += event.data.delta
                                 live.update(Panel(Markdown(text_buffer), 
                                                 title=f"[bold green]{generic_agent.name}[/bold green]", border_style="green"))
-                        
-                        # 2. Update History (Completed Output Items)
-                        elif isinstance(event, RunItemStreamEvent):
-                            if isinstance(event.item.raw_item, ResponseOutputMessage):      # TODO: extend to mcp call, tool call, etc
-                                store.add_item(event.item.raw_item)
+                    
+                    # 2. View usage
+                    usage = result.context_wrapper.usage
+                    usage_str = f"Requests: {usage.requests}\nInput Tokens: {usage.input_tokens}\nOutput Tokens: {usage.output_tokens}\nTotal Tokens: {usage.total_tokens}"
+                    console.print(Panel(usage_str, title="[yellow]Usage[/yellow]", border_style="yellow"))
             except (KeyboardInterrupt, asyncio.CancelledError):
                 console.print(Panel("[yellow]Generation interrupted by user.[/yellow]", border_style="yellow"))
                 break
@@ -218,8 +241,8 @@ async def chat_with_agent():
                 # Provide a more detailed error message
                 error_details = f"{type(e).__name__}: {str(e)}"
                 console.print(Panel(f"[bold red]Generation Error:[/bold red]\n{error_details}", border_style="red"))
-                if store.get_history():
-                    store.get_history().pop() # pop the user input since it failed
+                if await session.get_items():
+                    await session.pop_item()
             
             # End of stream for this turn
             
