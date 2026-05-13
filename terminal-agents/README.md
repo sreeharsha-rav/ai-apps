@@ -42,3 +42,8 @@ source .venv/bin/activate
 ```bash
 uv run python -m app.main
 ```
+
+# TODOS
+
+- File Session [https://github.com/openai/openai-agents-python/blob/main/examples/memory/file_session.py]
+- research Agent v0 [https://github.com/openai/openai-agents-python/tree/main/examples/research_bot]
