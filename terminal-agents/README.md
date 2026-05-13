@@ -1,6 +1,6 @@
 # Terminal Agents
 
-Terminal Agents is a framework for building terminal-based AI agents.
+Terminal Agents is a framework for building terminal-based AI agents across multiple LLM providers like OpenAI, Anthropic, Google Gemini.
 
 ## Features
 
@@ -14,6 +14,8 @@ Terminal Agents is a framework for building terminal-based AI agents.
 - Python 3.12
 - Notion Account
 - OpenAI API Key
+- Anthropic API Key
+- Google Gemini API Key
 - uv
 
 ## Getting Started
