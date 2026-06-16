@@ -13,7 +13,7 @@ importers:
         version: 0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8))
       '@langchain/openai':
         specifier: ^0.2.8
-        version: 0.2.8(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))
+        version: 0.2.8
       '@neondatabase/serverless':
         specifier: ^0.9.4
         version: 0.9.4
@@ -21,8 +21,8 @@ importers:
         specifier: ^16.4.5
         version: 16.4.5
       langchain:
-        specifier: ^0.2.17
-        version: 0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))
+        specifier: ^0.2.20
+        version: 0.2.20(openai@4.57.0(zod@3.23.8))
       rag-doc-loader:
         specifier: 'file:'
         version: file:(openai@4.57.0(zod@3.23.8))
@@ -615,8 +615,8 @@ packages:
     resolution: {integrity: sha512-p/nXbhSEcu3pZRdkW1OfJhpsVtW1gd4Wa1fnQc9YLiTfAjn0312eMKimbdIQzuZl9aa9xUGaRlP9T/CJE/ditQ==}
     engines: {node: '>=0.10.0'}
 
-  langchain@0.2.17:
-    resolution: {integrity: sha512-wFn7wo+XGzqYrv3KJLmMZ1M6BHx12C3YUSASOa03rcDsBzRL5onxhKAC/g4xAIqlAHrJYgU6Jb/T/S6uJ6UdkQ==}
+  langchain@0.2.20:
+    resolution: {integrity: sha512-tbels6Rr524iMM3VOQ4aTGnEOOjAA1BQuBR8u/8gJ2yT48lMtIQRAN32Y4KVjKK+hEWxHHlmLBrtgLpTphFjNA==}
     engines: {node: '>=18'}
     peerDependencies:
       '@aws-sdk/client-s3': '*'
@@ -631,7 +631,6 @@ packages:
       '@langchain/anthropic': '*'
       '@langchain/aws': '*'
       '@langchain/cohere': '*'
-      '@langchain/community': '*'
       '@langchain/google-genai': '*'
       '@langchain/google-vertexai': '*'
       '@langchain/groq': '*'
@@ -668,7 +667,7 @@ packages:
       peggy: ^3.0.2
       playwright: '*'
       puppeteer: '*'
-      pyodide: ^0.24.1
+      pyodide: '>=0.24.1 <0.27.0'
       redis: '*'
       sonix-speech-recognition: '*'
       srt-parser-2: '*'
@@ -702,8 +701,6 @@ packages:
       '@langchain/aws':
         optional: true
       '@langchain/cohere':
-        optional: true
-      '@langchain/community':
         optional: true
       '@langchain/google-genai':
         optional: true
@@ -809,6 +806,14 @@ packages:
         optional: true
       langchain:
         optional: true
+      openai:
+        optional: true
+
+  langsmith@0.1.68:
+    resolution: {integrity: sha512-otmiysWtVAqzMx3CJ4PrtUBhWRG5Co8Z4o7hSZENPjlit9/j3/vm3TSvbaxpDYakZxtMjhkcJTqrdYFipISEiQ==}
+    peerDependencies:
+      openai: '*'
+    peerDependenciesMeta:
       openai:
         optional: true
 
@@ -1015,14 +1020,14 @@ snapshots:
 
   '@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8))':
     dependencies:
-      '@langchain/core': 0.2.31(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))
-      '@langchain/openai': 0.2.8(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))
+      '@langchain/core': 0.2.31(openai@4.57.0(zod@3.23.8))
+      '@langchain/openai': 0.2.8
       binary-extensions: 2.3.0
       expr-eval: 2.0.2
       flat: 5.0.2
       js-yaml: 4.1.0
-      langchain: 0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))
-      langsmith: 0.1.49(@langchain/core@0.2.31(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))
+      langchain: 0.2.20(openai@4.57.0(zod@3.23.8))
+      langsmith: 0.1.49(@langchain/core@0.2.31(openai@4.57.0(zod@3.23.8)))(langchain@0.2.20(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))
       uuid: 10.0.0
       zod: 3.23.8
       zod-to-json-schema: 3.23.2(zod@3.23.8)
@@ -1046,13 +1051,13 @@ snapshots:
       - peggy
       - pyodide
 
-  '@langchain/core@0.2.31(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))':
+  '@langchain/core@0.2.31(openai@4.57.0(zod@3.23.8))':
     dependencies:
       ansi-styles: 5.2.0
       camelcase: 6.3.0
       decamelize: 1.2.0
       js-tiktoken: 1.0.14
-      langsmith: 0.1.49(@langchain/core@0.2.31(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))
+      langsmith: 0.1.68(openai@4.57.0(zod@3.23.8))
       mustache: 4.2.0
       p-queue: 6.6.2
       p-retry: 4.6.2
@@ -1060,26 +1065,23 @@ snapshots:
       zod: 3.23.8
       zod-to-json-schema: 3.23.2(zod@3.23.8)
     transitivePeerDependencies:
-      - langchain
       - openai
 
-  '@langchain/openai@0.2.8(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))':
+  '@langchain/openai@0.2.8':
     dependencies:
-      '@langchain/core': 0.2.31(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))
+      '@langchain/core': 0.2.31(openai@4.57.0(zod@3.23.8))
       js-tiktoken: 1.0.14
       openai: 4.57.0(zod@3.23.8)
       zod: 3.23.8
       zod-to-json-schema: 3.23.2(zod@3.23.8)
     transitivePeerDependencies:
       - encoding
-      - langchain
 
-  '@langchain/textsplitters@0.0.3(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))':
+  '@langchain/textsplitters@0.0.3(openai@4.57.0(zod@3.23.8))':
     dependencies:
-      '@langchain/core': 0.2.31(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))
+      '@langchain/core': 0.2.31(openai@4.57.0(zod@3.23.8))
       js-tiktoken: 1.0.14
     transitivePeerDependencies:
-      - langchain
       - openai
 
   '@neondatabase/serverless@0.9.4':
@@ -1244,29 +1246,27 @@ snapshots:
 
   jsonpointer@5.0.1: {}
 
-  langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)):
+  langchain@0.2.20(openai@4.57.0(zod@3.23.8)):
     dependencies:
-      '@langchain/core': 0.2.31(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))
-      '@langchain/openai': 0.2.8(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))
-      '@langchain/textsplitters': 0.0.3(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))
+      '@langchain/core': 0.2.31(openai@4.57.0(zod@3.23.8))
+      '@langchain/openai': 0.2.8
+      '@langchain/textsplitters': 0.0.3(openai@4.57.0(zod@3.23.8))
       binary-extensions: 2.3.0
       js-tiktoken: 1.0.14
       js-yaml: 4.1.0
       jsonpointer: 5.0.1
-      langsmith: 0.1.49(@langchain/core@0.2.31(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))
+      langsmith: 0.1.68(openai@4.57.0(zod@3.23.8))
       openapi-types: 12.1.3
       p-retry: 4.6.2
       uuid: 10.0.0
       yaml: 2.5.0
       zod: 3.23.8
       zod-to-json-schema: 3.23.2(zod@3.23.8)
-    optionalDependencies:
-      '@langchain/community': 0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8))
     transitivePeerDependencies:
       - encoding
       - openai
 
-  langsmith@0.1.49(@langchain/core@0.2.31(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)):
+  langsmith@0.1.49(@langchain/core@0.2.31(openai@4.57.0(zod@3.23.8)))(langchain@0.2.20(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)):
     dependencies:
       '@types/uuid': 10.0.0
       commander: 10.0.1
@@ -1275,8 +1275,19 @@ snapshots:
       semver: 7.6.3
       uuid: 10.0.0
     optionalDependencies:
-      '@langchain/core': 0.2.31(langchain@0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))
-      langchain: 0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))
+      '@langchain/core': 0.2.31(openai@4.57.0(zod@3.23.8))
+      langchain: 0.2.20(openai@4.57.0(zod@3.23.8))
+      openai: 4.57.0(zod@3.23.8)
+
+  langsmith@0.1.68(openai@4.57.0(zod@3.23.8)):
+    dependencies:
+      '@types/uuid': 10.0.0
+      commander: 10.0.1
+      p-queue: 6.6.2
+      p-retry: 4.6.2
+      semver: 7.6.3
+      uuid: 10.0.0
+    optionalDependencies:
       openai: 4.57.0(zod@3.23.8)
 
   make-error@1.3.6: {}
@@ -1370,9 +1381,10 @@ snapshots:
   rag-doc-loader@file:(openai@4.57.0(zod@3.23.8)):
     dependencies:
       '@langchain/community': 0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8))
+      '@langchain/openai': 0.2.8
       '@neondatabase/serverless': 0.9.4
       dotenv: 16.4.5
-      langchain: 0.2.17(@langchain/community@0.2.31(@neondatabase/serverless@0.9.4)(openai@4.57.0(zod@3.23.8)))(openai@4.57.0(zod@3.23.8))
+      langchain: 0.2.20(openai@4.57.0(zod@3.23.8))
     transitivePeerDependencies:
       - '@aws-crypto/sha256-js'
       - '@aws-sdk/client-bedrock-agent-runtime'
