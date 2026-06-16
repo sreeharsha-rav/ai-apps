@@ -15,7 +15,7 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
-    "@langchain/community": "^0.2.31",
+    "@langchain/community": "^0.3.41",
     "@langchain/openai": "^0.2.8",
     "@neondatabase/serverless": "^0.9.4",
     "dotenv": "^16.4.5",
