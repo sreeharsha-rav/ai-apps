@@ -19,3 +19,7 @@ wheels/
 .secrets
 .secrets/*.env
 .secrets/*.json
+
+# Data
+data/*
+outputs/*
